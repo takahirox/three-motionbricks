@@ -6,12 +6,17 @@ import { Inference } from './inference';
 import { Keyboard } from './input';
 import { decode, encode, positions, targetsFor, type Intent } from './motion';
 import { MotionPlayer } from './player';
+import model from '../model-source.json';
 import './style.css';
 
+const modelUrl = import.meta.env.PROD ? model.url : new URL(`${import.meta.env.BASE_URL}assets/mmm_v6_soma_fp32.onnx`, location.href).href;
+document.getElementById('model-source')!.textContent = import.meta.env.PROD
+  ? 'Start downloads 758 MB from NVIDIA’s upstream repository. Browser caching is temporary; later visits may download again.'
+  : 'Start loads the local 758 MB model. Run npm run assets:model first.';
 const element = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const status = element('status'), start = element<HTMLButtonElement>('start');
 const report: Record<string, unknown> = {time: new Date().toISOString(), userAgent: navigator.userAgent,
-  secureContext: isSecureContext, webgpu: Boolean(navigator.gpu), model: 'mmm_v6_soma_fp32.onnx',
+  secureContext: isSecureContext, webgpu: Boolean(navigator.gpu), model: modelUrl,
   provider: 'webgpu', strictGpu: new URL(location.href).searchParams.has('strictGpu'), cpuFallback: new URL(location.href).searchParams.has('strictGpu') ? 'disabled' : 'ORT default WASM for unsupported or shape operations', samples: []};
 const updateReport = () => {element('diagnostics').textContent = JSON.stringify(report, null, 2);};
 const fail = (error: unknown) => {
@@ -48,17 +53,24 @@ async function main() {
   let inference: Inference | undefined, running = false, pending = false;
   let lastIntent: Intent = {x: 0, z: 0, speed: 0};
   let latency = 0;
-  status.textContent = 'SOMA ready. Start to load the local model.'; start.disabled = false;
+  status.textContent = navigator.gpu ? 'SOMA ready. Start to load the model.'
+    : 'SOMA ready. WebGPU is unavailable. Use a supported desktop browser on localhost or HTTPS.';
+  start.disabled = false;
   updateReport();
   start.onclick = async () => {
-    inference?.dispose(); inference = new Inference(); start.disabled = true;
+    inference?.dispose(); start.disabled = true;
     running = false; pending = true; report.error = undefined;
-    status.textContent = 'Loading model and compiling WebGPU kernels…';
+    status.textContent = 'Connecting to model host…';
     try {
-      const result = await inference.load(new URL(`${import.meta.env.BASE_URL}assets/mmm_v6_soma_fp32.onnx`, location.href).href);
+      inference = new Inference();
+      const result = await inference.load(modelUrl, received => {
+        status.textContent = received < model.bytes
+          ? `Downloading model: ${(received / 1_000_000).toFixed(0)} / 758 MB (${Math.floor(received / model.bytes * 100)}%)…`
+          : 'Model downloaded. Compiling WebGPU kernels; this may take a minute…';
+      });
       report.loadMs = Math.round(result.milliseconds); report.gpu = result.gpu; report.runtime = result.runtime; report.samples = []; updateReport();
       running = true; status.textContent = 'Model loaded. Generating first motion…';
-    } catch (error) {inference.dispose(); fail(error);}
+    } catch (error) {inference?.dispose(); fail(error);}
     finally {pending = false;}
   };
   async function generate() {

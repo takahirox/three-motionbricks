@@ -13,7 +13,7 @@ header p {color: #9fb7c2; font-size: 12px;}
 button {font: inherit; cursor: pointer; border: 1px solid #8ad3be; background: #9de2ca; color: #10251f; padding: 9px 14px; border-radius: 7px; margin-bottom: 16px;}
 button:disabled {opacity: .55; cursor: default;}
 :focus-visible {outline: 3px solid #fff; outline-offset: 4px;}
-.controls {font-size: 12px; color: #b5c6ce;}
+.controls, .model-info {font-size: 12px; color: #b5c6ce;}
 kbd {font: inherit; color: #e7f0f3;}
 dl {display: grid; grid-template-columns: 1fr 1fr; margin: 0; font-size: 12px;}
 dt {color: #9fb7c2;}

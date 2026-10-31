@@ -49,7 +49,8 @@ for the changed files and the repository's actual tooling, following the
 a TypeScript/Vite browser demo. Use `npm test` for motion math,
 queue and asset regressions, and `npm run build` for type and production bundling
 checks. Browser/model checks are documented in the README and `docs/validation.md`.
-No CI workflow is configured. Match checks to the change and preserve required
+The Pages workflow runs the fast tests, production build and artifact checks on
+`main` before deployment. Match checks to the change and preserve required
 regression coverage.
 
 For documentation and templates, validate Issue-template metadata, Markdown

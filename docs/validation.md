@@ -1,10 +1,12 @@
-# MVP validation for Issue #5
+# Demo validation
+
+## MVP validation for Issue #5
 
 Validation performed on 2026-10-31. Source model and asset revisions, hashes and
 licenses are in [assets.md](assets.md). The
 [production browser report](validation-report.json) preserves the measured run.
 
-## Environment and mandatory acceptance
+### Environment and mandatory acceptance
 
 Node 26.12.1, npm 11.20.0, Three.js 0.187.0, ONNX Runtime Web 1.31.1,
 TypeScript 7.0.2, Vite 8.3.5, Playwright 1.64.1. The isolated headless system
@@ -47,7 +49,7 @@ chunk warning. The worker uses a locally served ~28.7 MB Asyncify WASM payload.
 The model is ~758 MB and is not part of Git. Total peak browser/GPU memory was
 not measured. No external model conversion was needed to run inference.
 
-## Operator support and the GPU-only blocker
+### Operator support and the GPU-only blocker
 
 The official opset-17 graph loads and runs unchanged with
 `executionProviders: ['webgpu']`. In ORT 1.31.1 this permits its default WASM/CPU
@@ -86,7 +88,7 @@ Pairing it with the older JSEP WASM produces a runtime initialization error;
 the worker explicitly imports the matching package-exported Asyncify artifact.
 No CDN, COOP/COEP headers or WASM multithreading are required (one WASM thread).
 
-## Optional validation and remaining limits
+### Optional validation and remaining limits
 
 Other desktop GPUs, Chrome/Edge releases, Safari and Firefox are untested.
 Additional visual motion-quality review and lower-memory device measurements
@@ -98,4 +100,37 @@ from root and authored body-pose constraints; these replace the official
 clip-derived target blend space.
 Foot IK, exact speed tracking and production animation polish are not provided.
 
-Required post-merge verification: **None required**.
+Required post-merge verification for Issue #5: **None required**.
+
+## Pages deployment validation for Issue #7
+
+Validation on 2026-10-31 uses the same Node 26.12.1 / npm 11.20.0 and isolated
+system Chrome 156 / Apple Metal environment described above. The workflow selects
+Node 24; hosted Actions execution is pending until the change reaches `main`.
+
+| Pre-merge check | Result |
+| --- | --- |
+| `npm ci` | Pass; lockfile install, zero reported vulnerabilities |
+| `npm test` | Pass: all six existing regressions plus a fast worker/timer test proving progress does not prematurely resolve loading, active transfers can exceed 15 minutes, idle loads fail, and inference retains its shorter timeout |
+| `npm run build` | Pass: types and production bundling; existing large-JS-chunk warning remains |
+| `npm run check:pages` | Pass: ten files, 31.2 MB uncompressed, local WASM/body/manifest/notices/licenses present, correct HTML base, no weights or LFS pointers |
+| Build with local model/partial-file probes | Pass: even ignored ONNX/LFS-pointer and partial-download files in `public/assets/` stay out of production |
+| Artifact guard negative probes | Pass: rejects an injected ONNX file and an unresolved LFS pointer in `dist/` |
+| Workflow validation | YAML parsed with Ruby/Psych; manually reviewed action inputs, current official action releases, main/manual triggers, job permissions, artifact path, deployment dependency, environment and serialized concurrency |
+| Browser smoke in development and `/three-motionbricks/` production preview | Pass: character/rendering, input/blur, narrow layout, no initial HTTP errors, production remote-model URL, missing model HTTP 404, LFS-pointer payload, failed network request, missing character, unavailable-WebGPU message and WebGL preview |
+| Remote hosting | Pass: pinned media payload HEAD 200 and ranged GET 206 with exact length, binary prefix and `Access-Control-Allow-Origin: *` for the public Pages origin; see [hosting evidence](assets.md#public-hosting-and-caching) |
+| Production-preview `test:browser -- --model` | Failed on the initial implementation: the load reached its 15-minute absolute timeout before generating motion. A subsequent bounded diagnostic confirmed a slow active transfer (about 7 MB after 30 seconds). Loading now resets its 15-minute idle deadline on download progress instead of aborting an active transfer. Full download/session/inference success remains unverified in this run; the Issue #5 local-model evidence above does not verify this new loading path. |
+
+The production build always excludes local weights and uses the pinned remote
+model. This supersedes the local-model production-build behavior measured for
+Issue #5 above. The page discloses the 758 MB download, links the model terms,
+reports download/compilation progress, and allows retry on loading/inference
+failures. Browser checks are intentionally local validation, not part of the
+lightweight deployment pipeline.
+
+Required post-merge verification: **pending**. Configure the repository's Pages
+source as **GitHub Actions**, verify the `main` deployment succeeds and the public
+HTTPS URL serves all resources, then repeat inference/keyboard and graceful
+failure checks on the published origin as described in the
+[README](../README.md#github-pages-deployment). No workflow was dispatched and
+no repository setting was changed during implementation.
