@@ -112,8 +112,11 @@ errors. The second runs the official model through walk, run, turn
 and stop over successive generations. To use an installed Chrome, set
 `CHROME_BIN` to its executable. `DEMO_URL` selects another local server, such as
 `http://127.0.0.1:4173/three-motionbricks/` for a production preview (which tests
-the actual remote download and CORS). Reports/screenshots are written
-to ignored `.artifacts/`. Browser tests require actual browser/GPU support and
+the actual remote download and CORS). The real-model check allows slow downloads
+while progress continues, with a 15½-minute watchdog for an unchanged loading
+status. It logs progress every 30 seconds and saves a `loading.json` timeline
+alongside reports/screenshots in ignored `.artifacts/`.
+Browser tests require actual browser/GPU support and
 are separate from the fast math/queue/asset tests.
 
 ## GitHub Pages deployment
