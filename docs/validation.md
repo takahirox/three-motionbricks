@@ -119,7 +119,23 @@ Node 24; hosted Actions execution is pending until the change reaches `main`.
 | Workflow validation | YAML parsed with Ruby/Psych; manually reviewed action inputs, current official action releases, main/manual triggers, job permissions, artifact path, deployment dependency, environment and serialized concurrency |
 | Browser smoke in development and `/three-motionbricks/` production preview | Pass: character/rendering, input/blur, narrow layout, no initial HTTP errors, production remote-model URL, missing model HTTP 404, LFS-pointer payload, failed network request, missing character, unavailable-WebGPU message and WebGL preview |
 | Remote hosting | Pass: pinned media payload HEAD 200 and ranged GET 206 with exact length, binary prefix and `Access-Control-Allow-Origin: *` for the public Pages origin; see [hosting evidence](assets.md#public-hosting-and-caching) |
-| Production-preview `test:browser -- --model` | Failed on the initial implementation: the load reached its 15-minute absolute timeout before generating motion. A subsequent bounded diagnostic confirmed a slow active transfer (about 7 MB after 30 seconds). Loading now resets its 15-minute idle deadline on download progress instead of aborting an active transfer. Full download/session/inference success remains unverified in this run; the Issue #5 local-model evidence above does not verify this new loading path. |
+| Production-preview `test:browser -- --model` | Pass with the revised smoke: direct pinned remote-model download, WebGPU session creation and keyboard walk/run/turn/stop at `/three-motionbricks/`; 13 generations, no page errors. See the [remote-model report](pages-validation-report.json). |
+
+The full remote-model rerun used a fresh isolated Chrome with the production
+preview at `http://127.0.0.1:4173/three-motionbricks/`. Download plus session
+creation took 3,932,888 ms (65 minutes 33 seconds). The first motion generation
+took 186 ms; later requests took 44–59 ms. W and Shift+W traveled toward −Z,
+D changed travel toward +X, and releasing the keys stopped motion. The measured
+maximum displayed root step was 0.091 meters, final stopped travel was 0.010
+meters over the last second, and the minimum inspected head height above the
+root was 0.547 meters. The final screenshot showed the upright SOMA character.
+
+The smoke now allows loading to continue while its status advances, with a
+15½-minute idle watchdog instead of a fixed total deadline. It logs progress
+every 30 seconds and writes `.artifacts/loading.json`; the committed report
+retains ten-minute samples and each movement result. This run crossed the old
+930-second limit while downloading and completed successfully. Its load time
+includes the slow upstream transfer and is not an inference-speed measurement.
 
 The production build always excludes local weights and uses the pinned remote
 model. This supersedes the local-model production-build behavior measured for

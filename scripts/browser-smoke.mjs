@@ -11,6 +11,36 @@ const browser = await chromium.launch({executablePath: process.env.CHROME_BIN ||
   headless: true, args: ['--enable-unsafe-webgpu']});
 const output = new URL('../.artifacts/', import.meta.url);
 await mkdir(output, {recursive: true});
+
+async function waitForModel(page) {
+  const started = performance.now(), timeline = [];
+  let previousStatus, lastProgress = started, lastLog = -Infinity;
+  try {
+    for (;;) {
+      const state = await page.evaluate(() => ({
+        status: document.querySelector('#status').textContent,
+        generations: Number(document.querySelector('#generations').textContent),
+      }));
+      const now = performance.now();
+      // The UI reports increasing downloaded MB, then compilation and generation.
+      // Keep allowing active downloads; a fixed total timeout cuts off slow hosts.
+      if (state.status !== previousStatus) {
+        previousStatus = state.status; lastProgress = now;
+      }
+      if (now - lastLog >= 30000 || state.generations > 0 || state.status.startsWith('Blocked:')) {
+        const entry = {elapsedSeconds: Math.round((now - started) / 1000), ...state};
+        timeline.push(entry); console.log(JSON.stringify(entry)); lastLog = now;
+      }
+      if (state.status.startsWith('Blocked:') || state.generations > 0) return;
+      // Allow the application's 15-minute idle watchdog to surface its own error.
+      assert.ok(now - lastProgress < 930000, `Model loading stalled: ${state.status}`);
+      await page.waitForTimeout(1000);
+    }
+  } finally {
+    await writeFile(new URL('loading.json', output), JSON.stringify(timeline, null, 2));
+  }
+}
+
 try {
   const page = await browser.newPage({viewport: {width: 1280, height: 850}});
   const errors = [];
@@ -43,8 +73,9 @@ try {
   await page.setViewportSize({width: 1280, height: 850});
   if (!realModel) await page.route(/mmm_v6_soma_fp32\.onnx$/, route => route.fulfill({status:404,body:'Missing model'}));
   await page.locator('#start').click();
-  await page.waitForFunction(() => document.querySelector('#status').textContent.startsWith('Blocked:') || Number(document.querySelector('#generations').textContent) > 0,
-    undefined, {timeout: realModel ? 930000 : 30000});
+  if (realModel) await waitForModel(page);
+  else await page.waitForFunction(() => document.querySelector('#status').textContent.startsWith('Blocked:') || Number(document.querySelector('#generations').textContent) > 0,
+    undefined, {timeout: 30000});
   const getReport = () => page.locator('#diagnostics').textContent().then(JSON.parse);
   let report = await getReport();
   if (!realModel || strictGpu) {
