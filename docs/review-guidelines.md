@@ -24,11 +24,20 @@ documentation. For applicable UI changes, review the result against the canonica
 ## Evaluate validation
 
 Use the [validation guidance](development-flow.md#implementation-and-validation).
-Checks must fit the changed files and actual repository tooling. Verify that
-reported passes, failures, skips and unavailable or unperformed checks match what
-was actually done, with reasons for gaps. For documentation and templates, check
-metadata, Markdown structure, links, anchors, consistency and whitespace; unrelated
-runtime checks or new tooling are not required.
+Checks must fit the changed files and actual repository tooling. Apply the
+[test and CI performance principles](testing-ci-principles.md):
+
+> Does this change provide sufficient confidence with the lightest appropriate
+> validation, without redundant execution?
+
+For new or expanded checks, identify the additional defect coverage, overlap with
+existing checks, and added execution and maintenance cost. Preserve necessary
+assertions, regressions, and integration coverage when checks move between layers.
+
+Verify that reported passes, failures, skips and unavailable or unperformed
+checks match what was actually done, with reasons for gaps. For documentation and
+templates, check metadata, Markdown structure, links, anchors, consistency and
+whitespace; unrelated runtime checks or new tooling are not required.
 
 Mandatory pre-merge criteria must be achievable and verifiable before merge.
 Keep optional validation separate. Human input, subjective review, physical

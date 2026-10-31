@@ -9,7 +9,8 @@ Start with the [Issue template](.github/ISSUE_TEMPLATE/issue.md) and follow the
 [development flow](docs/development-flow.md), including the
 [English collaboration convention](docs/development-flow.md#collaboration-language).
 Use the [PR template](.github/pull_request_template.md) and the
-[review and merge guidelines](docs/review-guidelines.md).
+[review and merge guidelines](docs/review-guidelines.md), together with the
+[test and CI performance principles](docs/testing-ci-principles.md).
 [AGENTS.md](AGENTS.md) is the entry point for AI contributors.
 
 ## UI/UX and layout

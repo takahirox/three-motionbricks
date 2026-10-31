@@ -44,10 +44,12 @@ repository's own Task workflow owns implementation and review.
 ## Implementation and validation
 
 Inspect the current tree and repository instructions before editing. Choose checks
-for the changed files and the repository's actual tooling. This initial baseline
-contains documentation and templates; no runtime build or test tooling is
-configured. Do not invent commands or copy another repository's setup as if it
-existed here. Future code changes must perform their own applicable checks.
+for the changed files and the repository's actual tooling, following the
+[test and CI performance principles](testing-ci-principles.md). The current tree
+contains documentation and templates; no runtime build, test commands or CI
+workflows are configured. Do not invent commands or copy another repository's
+setup as if it existed here. Future UI, runtime, test, or CI/build changes must
+perform their own applicable checks and preserve required regression coverage.
 
 For documentation and templates, validate Issue-template metadata, Markdown
 structure, relative links and heading anchors, consistency, and whitespace using
