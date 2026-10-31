@@ -2,6 +2,7 @@
 import * as ort from 'onnxruntime-web/webgpu';
 import wasmUrl from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.wasm?url';
 import type { Features } from './motion';
+import model from '../model-source.json';
 
 ort.env.wasm.numThreads = 1;
 ort.env.wasm.wasmPaths = {wasm: wasmUrl};
@@ -22,10 +23,28 @@ self.onmessage = async (event: MessageEvent<{type: string; url?: string; feature
     if (type === 'load') {
       const adapter = await self.navigator.gpu?.requestAdapter();
       if (!adapter) throw new Error('WebGPU adapter unavailable. Use a supported desktop browser on localhost or HTTPS.');
-      const response = await fetch(event.data.url!);
-      if (!response.ok) throw new Error(`Model HTTP ${response.status}. Run npm run assets:model; see README.`);
-      const buffer = await response.arrayBuffer();
-      if (buffer.byteLength < 1_000_000) throw new Error('Model is missing or is a Git LFS pointer. Run npm run assets:model.');
+      let response: Response;
+      try {response = await fetch(event.data.url!);}
+      catch {throw new Error('Cannot reach the model host. Check your connection or content blocker and retry. See README for local setup.');}
+      if (!response.ok) throw new Error(`Model HTTP ${response.status}. The host may be unavailable; retry later. For local setup, run npm run assets:model.`);
+      if (!response.body) throw new Error('The model host returned no download body. Retry later.');
+      const reader = response.body.getReader();
+      // Stream into one buffer instead of retaining hundreds of MB of chunks.
+      const buffer = new Uint8Array(model.bytes);
+      let received = 0, reportedAt = 0;
+      try {
+        while (true) {
+          const {value, done} = await reader.read();
+          if (done) break;
+          if (received + value.length > buffer.length) throw new Error('Model download is larger than the pinned official model.');
+          buffer.set(value, received); received += value.length;
+          if (performance.now() - reportedAt > 250) {
+            self.postMessage({type: 'progress', id, received}); reportedAt = performance.now();
+          }
+        }
+        if (received !== model.bytes) throw new Error('Model download is incomplete or is a Git LFS pointer. Retry; for local setup run npm run assets:model.');
+      } finally {await reader.cancel(); reader.releaseLock();}
+      self.postMessage({type: 'progress', id, received});
       // WebGPU executes supported kernels; ORT uses WASM for graph/shape operations.
       session = await ort.InferenceSession.create(buffer, {executionProviders: ['webgpu'],
         graphOptimizationLevel: 'all', logSeverityLevel: event.data.verbose ? 0 : 2, logVerbosityLevel: event.data.verbose ? 1 : 0,

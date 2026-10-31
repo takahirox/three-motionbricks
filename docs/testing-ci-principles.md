@@ -6,12 +6,17 @@ integration coverage when changing where or how checks run.
 
 ## Current repository
 
-The TypeScript/Vite demo has fast motion math, input, queue and bundled-asset
-checks (`npm test`), a type/production build (`npm run build`), and explicit browser
+The TypeScript/Vite demo has fast motion math, input, queue, inference-lifecycle and bundled-asset
+checks (`npm test`), a type/production build (`npm run build`), a Pages artifact
+check (`npm run check:pages`), and explicit browser
 smoke checks (`npm run test:browser`, with `--model` for the official weights).
 Browser artifacts and downloaded weights are ignored. Model tests exercise the
-actual GPU boundary and are not duplicated by unit tests. No CI workflow is
-configured. See [validation evidence](validation.md) for measured results.
+actual GPU boundary and are not duplicated by unit tests. The Pages workflow runs
+fast tests, one build and an artifact check on `main` before publishing; it does
+not download weights or install a browser. The artifact check catches accidental
+weight inclusion, LFS pointers, missing files and HTML base-path regressions at
+low cost; browser checks cover actual worker/WASM loading and remote CORS.
+See [validation evidence](validation.md) for measured results.
 Documentation checks still cover links, consistency and `git diff --check`.
 
 ## Principles
@@ -48,7 +53,7 @@ Documentation checks still cover links, consistency and `git diff --check`.
    browser/renderer/compiler setup, large fixtures, long emulation loops, and growth
    from multiplying combinations. Retain meaningful assertions and required coverage.
 6. **Maintain an execution-time budget.** The normal-CI baseline and target are
-   currently unmeasured and unset because no CI exists. Local initial runtime
+   currently unmeasured and unset for hosted Actions. Local initial runtime
    check measurements are recorded in `validation.md`. Establish a repository-specific
    baseline and target from actual runs during future test/CI performance work,
    monitor growth, and investigate work exceeding the target. Track elapsed feedback

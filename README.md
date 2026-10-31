@@ -4,6 +4,12 @@ A browser demo of a native, skinned SOMA humanoid controlled with the keyboard.
 MotionBricks generates each motion segment locally with ONNX Runtime Web's
 WebGPU provider. Three.js renders the character, ground and follow/orbit camera.
 
+**Public demo:** [takahirox.github.io/three-motionbricks](https://takahirox.github.io/three-motionbricks/)
+(available after the first successful Pages deployment). No installation or backend
+is required. Select **Start local inference** to download the 758 MB model from
+the pinned upstream host and run it on your device. Review the model terms linked
+in the page before starting; use a desktop WebGPU browser with enough memory.
+
 ## Setup
 
 Use Node.js 22.12+ (Node 24+ recommended), npm, and a desktop browser exposing a
@@ -85,8 +91,14 @@ npm run build
 npm run preview
 ```
 
-The production build includes the local model if downloaded. Start the server
-before running the browser smoke checks:
+Production builds use `/three-motionbricks/` as the base path and fetch the model
+remotely, even if a local model is installed. Only reviewed SOMA assets and their
+notices/licenses are published; weights and partial downloads are excluded.
+`npm run preview` serves the build at `http://127.0.0.1:4173/three-motionbricks/`.
+Run `npm run check:pages` to check the artifact for missing resources, incorrect
+HTML base paths, weights and unresolved Git LFS pointers.
+
+Start the development or preview server before running browser smoke checks:
 
 ```sh
 npx playwright install chromium
@@ -95,12 +107,55 @@ npm run test:browser -- --model
 ```
 
 The first browser check covers rendering, keyboard/blur, narrow layout and the
-missing-model and unavailable-WebGPU errors. The second runs the official model through walk, run, turn
+missing-model, network, Git LFS pointer, missing-character and unavailable-WebGPU
+errors. The second runs the official model through walk, run, turn
 and stop over successive generations. To use an installed Chrome, set
 `CHROME_BIN` to its executable. `DEMO_URL` selects another local server, such as
-`http://127.0.0.1:4173/` for a production preview. Reports/screenshots are written
+`http://127.0.0.1:4173/three-motionbricks/` for a production preview (which tests
+the actual remote download and CORS). Reports/screenshots are written
 to ignored `.artifacts/`. Browser tests require actual browser/GPU support and
-are separate from the fast math/queue/asset tests. No post-merge check is required.
+are separate from the fast math/queue/asset tests.
+
+## GitHub Pages deployment
+
+One-time repository setup: in **Settings → Pages → Build and deployment**, choose
+**Source: GitHub Actions**. GitHub Actions must be enabled for this repository.
+If the `github-pages` environment has branch restrictions, allow `main`.
+No model upload, Git LFS setup, backend, custom headers or repository secret is
+needed.
+
+[deploy-pages.yml](.github/workflows/deploy-pages.yml) runs on every push to `main`.
+To redeploy manually, use **Actions → Deploy demo to GitHub Pages → Run workflow**
+with branch `main`; other branches are skipped. The build job uses Node 24,
+`npm ci` with npm download caching, `npm test`, `npm run build` and
+`npm run check:pages`, then uploads **only `dist/`** with the official
+`upload-pages-artifact` action. A dependent job runs `configure-pages` and
+`deploy-pages` in the `github-pages` environment. Build access is `contents: read`;
+only deployment gets `pages: write` and `id-token: write`. One deployment runs at
+a time, allowing the active deployment to finish and retaining the latest waiting
+revision. See [GitHub's custom workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+
+The static site is about 31 MB before compression, including the 1.34 MB native
+SOMA GLB and 28.75 MB ORT WASM. The **757,864,273-byte model (758 MB / 723 MiB)**
+is downloaded separately from NVIDIA's pinned GitHub media/LFS payload URL only
+when inference starts. It is never uploaded to Pages. This endpoint was checked
+for payload availability and permissive CORS; hosting evidence, licenses and
+caching details are in [assets.md](docs/assets.md#public-hosting-and-caching).
+Upstream availability/bandwidth is outside this repository's control. HTTP caching
+is temporary (currently five minutes); no durable model cache is promised, so a
+later visit may download the entire model again. First load also compiles GPU
+kernels and requires several GB of browser/GPU memory. Download progress and
+actionable host/WebGPU/inference errors appear in the panel. Loading fails after
+15 minutes without download progress (including compilation) and can be retried;
+an active slow transfer can continue longer. Inference stays entirely in the browser.
+
+Required post-merge verification for Issue #7 (pending until published): confirm
+the `main` workflow succeeds, open the public HTTPS URL, and check that JS, CSS,
+worker, WASM and character assets load without 404s. Start inference on a supported
+WebGPU device to verify the remote model download and keyboard walk/run/turn/stop.
+Also confirm a browser without WebGPU shows the explicit support message, and
+blocking the model request shows a useful error with retry. A local preview check
+does not establish that GitHub Pages has been configured or deployed successfully.
 
 ## Contributing
 

@@ -54,9 +54,10 @@ the upstream asset CC-BY-4.0 terms; see [notices](../THIRD_PARTY_NOTICES.md).
 The pretrained weights use the
 [NVIDIA Open Model Agreement](https://github.com/NVlabs/motionbricks/blob/54fc563aeaaf819a753d72cc9fdc6713989cdd43/motionbricks/assets/onnx/LICENSE.md),
 not the code's Apache license. Obtain and use them under those terms. This
-repository does not redistribute weights. A production build copies any locally
-installed weights into `dist/`; review the agreement before distributing or
-hosting that build. The demo makes no inference requests to an external service.
+repository does not redistribute weights. Development loads the locally downloaded
+file; production loads the same pinned upstream URL from [model-source.json](../model-source.json).
+Production builds exclude weights even if installed locally. The demo makes no
+inference requests to an external service.
 
 MotionBricks' Bones-derived BVH clips have a separate
 [sample data evaluation license](https://github.com/NVlabs/motionbricks/blob/54fc563aeaaf819a753d72cc9fdc6713989cdd43/assets/motions/LICENSE.txt).
@@ -66,3 +67,45 @@ targets constrain the full body, with a relaxed standing stance for stopping.
 These poses are never played as animation; only ONNX-generated motion is queued.
 This replaces Scene Preview's clip-derived target blend spaces and may produce
 less polished motion.
+
+## Public hosting and caching
+
+GitHub Pages hosts the app, worker, matching ORT WASM, native SOMA GLB, manifest,
+and asset notices/licenses. `vite.config.ts` uses an explicit reviewed asset
+allowlist rather than copying `public/` into production. Builds fail for unresolved
+LFS pointers in those assets; `npm run check:pages` also scans the complete artifact
+before upload. Do not add weights or other unreviewed/restricted assets to the
+allowlist. SOMA needs no external textures or identity models.
+
+The browser directly fetches the official FP32 weights at:
+
+```text
+https://media.githubusercontent.com/media/NVlabs/motionbricks/54fc563aeaaf819a753d72cc9fdc6713989cdd43/motionbricks/assets/onnx/soma/mmm_v6_soma_fp32.onnx
+```
+
+This is the **media payload**, not the GitHub HTML/raw Git LFS pointer. The model
+terms remain the NVIDIA Open Model Agreement linked above; fetching directly does
+not relicense it. Visitors see the size and terms before starting the download.
+No evaluation-licensed motion data is fetched.
+
+Availability/CORS check on 2026-10-31, with request header
+`Origin: https://takahirox.github.io`: HEAD returned HTTP 200,
+`Content-Length: 757864273`, `Content-Type: application/octet-stream`,
+`Access-Control-Allow-Origin: *`, `Accept-Ranges: bytes`,
+`Cache-Control: max-age=300`, and ETag matching the SHA-256 above. A ranged GET
+returned HTTP 206 with `Content-Range: bytes 0-127/757864273`, the same CORS/cache
+headers and binary ONNX data, not an LFS pointer. These are measured upstream
+responses, not a hosting guarantee. Recheck after changing the source URL; the
+production-preview real-model browser smoke also exercises an actual cross-origin
+GET from a worker.
+
+The first inference start transfers approximately 758 MB of weights, in addition
+to the site's roughly 31 MB uncompressed total. Streaming reports progress and
+checks the exact expected payload length before ORT loads the graph. The local
+downloader additionally verifies SHA-256. Normal HTTP browser caching follows the
+host's headers; large responses may not be retained, cache can be evicted, and
+future visits can redownload all weights. There is no application-managed durable
+model cache or offline guarantee. Do not rely on GitHub Pages serving this large
+model, or on indefinite free upstream bandwidth. A host/network/CORS failure is
+reported with retry and a link to local setup; there is no fallback inference
+service. All runtime execution remains on the visitor's device.
