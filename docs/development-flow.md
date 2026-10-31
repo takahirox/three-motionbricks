@@ -45,11 +45,12 @@ repository's own Task workflow owns implementation and review.
 
 Inspect the current tree and repository instructions before editing. Choose checks
 for the changed files and the repository's actual tooling, following the
-[test and CI performance principles](testing-ci-principles.md). The current tree
-contains documentation and templates; no runtime build, test commands or CI
-workflows are configured. Do not invent commands or copy another repository's
-setup as if it existed here. Future UI, runtime, test, or CI/build changes must
-perform their own applicable checks and preserve required regression coverage.
+[test and CI performance principles](testing-ci-principles.md). The tree includes
+a TypeScript/Vite browser demo. Use `npm test` for motion math,
+queue and asset regressions, and `npm run build` for type and production bundling
+checks. Browser/model checks are documented in the README and `docs/validation.md`.
+No CI workflow is configured. Match checks to the change and preserve required
+regression coverage.
 
 For documentation and templates, validate Issue-template metadata, Markdown
 structure, relative links and heading anchors, consistency, and whitespace using

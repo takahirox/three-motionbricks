@@ -6,12 +6,13 @@ integration coverage when changing where or how checks run.
 
 ## Current repository
 
-three-motionbricks is being bootstrapped. No application code, test commands,
-build configuration, or CI workflows are present. Current documentation checks
-cover Markdown structure, links and anchors, consistency, whitespace
-(`git diff --check`), and review of the complete diff, including new files.
-The principles below guide these checks and future test/CI additions; they do not
-introduce commands, workflows, or a new merge gate.
+The TypeScript/Vite demo has fast motion math, input, queue and bundled-asset
+checks (`npm test`), a type/production build (`npm run build`), and explicit browser
+smoke checks (`npm run test:browser`, with `--model` for the official weights).
+Browser artifacts and downloaded weights are ignored. Model tests exercise the
+actual GPU boundary and are not duplicated by unit tests. No CI workflow is
+configured. See [validation evidence](validation.md) for measured results.
+Documentation checks still cover links, consistency and `git diff --check`.
 
 ## Principles
 
@@ -47,7 +48,8 @@ introduce commands, workflows, or a new merge gate.
    browser/renderer/compiler setup, large fixtures, long emulation loops, and growth
    from multiplying combinations. Retain meaningful assertions and required coverage.
 6. **Maintain an execution-time budget.** The normal-CI baseline and target are
-   currently unmeasured and unset because no CI exists. Establish a repository-specific
+   currently unmeasured and unset because no CI exists. Local initial runtime
+   check measurements are recorded in `validation.md`. Establish a repository-specific
    baseline and target from actual runs during future test/CI performance work,
    monitor growth, and investigate work exceeding the target. Track elapsed feedback
    time, total runner/computation time, and queue time separately. Revisit validation

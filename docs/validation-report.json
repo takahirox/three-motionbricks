@@ -1,0 +1,108 @@
+{
+  "time": "2026-10-31T10:27:19.209Z",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "secureContext": true,
+  "webgpu": true,
+  "model": "mmm_v6_soma_fp32.onnx",
+  "provider": "webgpu",
+  "strictGpu": false,
+  "cpuFallback": "ORT default WASM for unsupported or shape operations",
+  "samples": [
+    185,
+    43,
+    52,
+    53,
+    46,
+    52,
+    52,
+    44,
+    77,
+    52,
+    44,
+    52
+  ],
+  "renderer": "WebGPUBackend",
+  "loadMs": 22586,
+  "gpu": {
+    "vendor": "apple",
+    "architecture": "metal-3",
+    "device": "",
+    "description": "",
+    "maxBufferSize": 4294967292,
+    "maxStorageBufferBindingSize": 4294967292
+  },
+  "runtime": {
+    "common": "1.31.1",
+    "web": "1.31.1"
+  },
+  "lastTokens": 16,
+  "intent": {
+    "x": 0,
+    "z": 0,
+    "speed": 0
+  },
+  "minimumHeadAboveRootMeters": 0.5917868416681074,
+  "generations": 12,
+  "requestRoot": [
+    3.7906765687357864,
+    1.0078699588775635,
+    -10.98926080585333
+  ],
+  "generatedRoot": [
+    3.789235110410258,
+    1.0076382160186768,
+    -10.987047513807834
+  ],
+  "maximumDisplayedStepMeters": 0.09000000000000163,
+  "stoppedTravelMeters": 0.01414213562373065,
+  "movementChecks": [
+    {
+      "state": "walk",
+      "before": [
+        0,
+        0
+      ],
+      "after": [
+        0.01,
+        -3.09
+      ],
+      "minimumHeadAboveRootMeters": 0.5928119112301791
+    },
+    {
+      "state": "run",
+      "before": [
+        0.01,
+        -3.19
+      ],
+      "after": [
+        0.02,
+        -9.79
+      ],
+      "minimumHeadAboveRootMeters": 0.5469882057999762
+    },
+    {
+      "state": "turn",
+      "before": [
+        0.02,
+        -10
+      ],
+      "after": [
+        3.13,
+        -10.99
+      ],
+      "minimumHeadAboveRootMeters": 0.5919936589327099
+    },
+    {
+      "state": "stop",
+      "before": [
+        3.24,
+        -10.99
+      ],
+      "after": [
+        3.79,
+        -10.98
+      ],
+      "minimumHeadAboveRootMeters": 0.5917868416681074
+    }
+  ]
+}
