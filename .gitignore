@@ -1,0 +1,6 @@
+node_modules/
+dist/
+public/assets/*.onnx
+public/assets/*.part
+.artifacts/
+__pycache__/

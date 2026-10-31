@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101c25" />
+    <link rel="icon" href="data:," />
+    <title>SOMA · MotionBricks</title>
+  </head>
+  <body>
+    <main id="stage" aria-label="SOMA character preview"></main>
+    <header><h1>SOMA <span>MotionBricks</span></h1><p>Local inference · WebGPU + WASM</p></header>
+    <section id="panel" aria-label="Motion controls">
+      <p id="status" role="status" aria-live="polite">Loading SOMA character…</p>
+      <button id="start" disabled>Start local inference</button>
+      <p class="controls"><kbd>W A S D</kbd> or arrows to move · <kbd>Shift</kbd> to run<br>Release to stop · Drag to orbit · Scroll to zoom</p>
+      <dl><dt>Movement</dt><dd id="movement">Idle</dd><dt>Inference</dt><dd id="latency">—</dd><dt>Queue</dt><dd id="queue">—</dd><dt>Position X, Z</dt><dd id="position">0, 0 m</dd><dt>Generations</dt><dd id="generations">0</dd></dl>
+      <details><summary>Diagnostics</summary><pre id="diagnostics">Not started</pre><button id="download">Save report</button><p><a href="https://github.com/takahirox/three-motionbricks#setup">Setup and requirements</a></p></details>
+    </section>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
