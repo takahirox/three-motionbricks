@@ -69,6 +69,9 @@ export function parseAnimasa(bytes: Buffer): PMXModel {
       elements:m.elements.map(e => ({index:base.elements[e.index].index, position:e.position}))})),
     // PMD body positions are bone-relative; the PMX-aware writer needs absolute positions.
     rigidBodies:pmd.rigidBodies.map(b => ({...b,
+      // Historical PMD masks include collision groups; the PMX writer inverts
+      // exclusion bits. Normalize here so the GLB retains the PMD inclusion mask.
+      groupTarget:(~b.groupTarget) & 0xffff,
       // Bullet's setDamping clamps to [0,1]. Six source angular values exceed 1.
       rotationDamping:Math.min(1,b.rotationDamping),
       position:b.position.map((v,k) => v + (b.boneIndex < 0 ? 0 : bones[b.boneIndex].position[k]))})),
@@ -114,6 +117,7 @@ export async function convertAnimasa(source: string, output: string) {
   document.getRoot().setExtras({...document.getRoot().getExtras(),
     pmdPhysics:{coordinateSystem:'left',bodies:original.rigidBodies,joints:original.constraints},
     adjustments:['Six angular damping values clamped to 1, matching Bullet setDamping; originals in pmdPhysics.',
+      'PMD collision inclusion masks normalized to PMX exclusion bits before writer inversion.',
       'PMD body offsets made absolute for PMX-aware writer; embedded reference stock toon ramps; base-indexed morphs remapped.']});
   for (const node of document.getRoot().listNodes()) {
     const identity = node.getExtras().pmxBone as {index:number} | undefined;
