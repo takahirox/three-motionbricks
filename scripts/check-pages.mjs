@@ -2,12 +2,18 @@
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 const root = new URL('../dist/', import.meta.url);
 const files = await readdir(root, {recursive: true, withFileTypes: true});
 let count = 0, bytes = 0;
 for (const file of files) {
   assert.ok(!file.isSymbolicLink(), `Pages cannot contain symlinks: ${file.name}`);
   if (!file.isFile()) continue;
+  if (/\.(glb|gltf)$/i.test(file.name)) {
+    const path = join(file.parentPath,file.name);
+    assert.ok(['assets/soma.glb','assets/uka/model.glb'].some(name=>fileURLToPath(new URL(name,root)) === path),
+      `Unreviewed character asset in Pages (Animasa is local-only): ${file.name}`);
+  }
   assert.ok(!/\.(onnx|part|pmd|pmx|vmd)$/i.test(file.name), `Source model, motion or weights in Pages: ${file.name}`);
   const content = await readFile(join(file.parentPath, file.name));
   assert.ok(!content.subarray(0, 100).toString().startsWith('version https://git-lfs.github.com/spec/'), `LFS pointer: ${file.name}`);

@@ -6,7 +6,13 @@ import { chromium } from 'playwright';
 import model from '../model-source.json' with {type: 'json'};
 import sharp from 'sharp';
 const realModel = process.argv.includes('--model');
-const mmdMode = process.argv.includes('--mmd');
+const animasaPath = process.env.ANIMASA_GLB;
+const mmdMode = process.argv.includes('--mmd') || Boolean(animasaPath);
+const mmdLabel = animasaPath ? 'MMD (Animasa Miku)' : 'MMD (CG-CA Uka)';
+async function selectMMD(page) {
+  await page.selectOption('#character',animasaPath ? 'animasa' : 'mmd');
+  if (animasaPath) await page.locator('#animasa-file').setInputFiles(animasaPath);
+}
 const strictGpu = process.argv.includes('--strict-gpu');
 const origin = process.env.DEMO_URL || 'http://127.0.0.1:5173/';
 const browser = await chromium.launch({executablePath: process.env.CHROME_BIN || undefined,
@@ -59,9 +65,16 @@ try {
   page.off('response', checkResponse);
   assert.deepEqual(initialHttpErrors, []);
   const reportNow = () => page.locator('#diagnostics').textContent().then(JSON.parse);
+  await page.selectOption('#character','animasa');
+  await page.waitForFunction(()=>document.querySelector('#character-status').textContent.includes('locally converted'));
+  assert.equal((await reportNow()).character,'SOMA','SOMA stays active until a local GLB is supplied');
+  await page.locator('#animasa-file').setInputFiles({name:'wrong.glb',mimeType:'model/gltf-binary',buffer:Buffer.from('wrong model')});
+  await page.waitForFunction(()=>document.querySelector('#character-status').textContent.includes('could not load'));
+  assert.equal((await reportNow()).character,'SOMA');
+  assert.equal(await page.locator('#animasa-file').isVisible(),true,'Invalid local file can be replaced without reloading');
   // Exercise the actual converted skin, shaders, Bullet runtime and switching
   // even in the fast browser suite, without downloading inference weights.
-  await page.selectOption('#character','mmd');
+  await selectMMD(page);
   await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'),undefined,{timeout:30000});
   await page.waitForFunction(() => JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsSteps > 180);
   const mmdReady = await reportNow();
@@ -81,11 +94,11 @@ try {
   await page.locator('#mmd-physics').check();
   // Rapid cancellation must not let a late MMD load replace SOMA.
   await page.selectOption('#character','soma');
-  await page.selectOption('#character','mmd');
+  await selectMMD(page);
   await page.selectOption('#character','soma');
   await page.waitForTimeout(1500);
   assert.equal((await reportNow()).character,'SOMA');
-  await page.selectOption('#character','mmd');
+  await selectMMD(page);
   await page.waitForFunction(() => JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsSteps > 30);
   assert.equal((await reportNow()).mmd.nativeAllocations,mmdReady.mmd.nativeAllocations,'Switching must not leak native worlds');
   if(!mmdMode) await page.selectOption('#character','soma');
@@ -164,7 +177,7 @@ try {
       if (step.label === 'walk' || step.label === 'run') assert.ok(after[1] < before[1] - 0.1, `${step.label}: expected travel toward -Z`);
       if (step.label === 'turn') assert.ok(after[0] > before[0] + 0.1, 'turn: expected travel toward +X');
       if(mmdMode) {
-        assert.equal(report.character,'MMD (CG-CA Uka)');
+        assert.equal(report.character,mmdLabel);
         assert.equal(report.mmd.physicsEnabled,true);
         assert.ok(report.mmd.physicsSteps>0);
         assert.ok(report.mmd.maximumSecondaryAngle>0.02);
@@ -187,7 +200,7 @@ try {
       await page.selectOption('#character','soma');
       await page.waitForFunction(n=>Number(document.querySelector('#generations').textContent)>n,generations,{timeout:60000});
       assert.equal((await getReport()).character,'SOMA','Switching preserves the same running player/worker');
-      await page.selectOption('#character','mmd');
+      await selectMMD(page);
       await page.waitForFunction(()=>JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsSteps>30);
       assert.equal((await getReport()).mmd.nativeAllocations,mmdReady.mmd.nativeAllocations);
     }

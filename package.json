@@ -12,7 +12,8 @@
     "assets:model": "node scripts/download-model.mjs",
     "assets:mmd": "tsx scripts/prepare-mmd.ts",
     "check:mmd-ik": "tsx scripts/compare-mmd-ik.ts",
-    "test:browser": "node scripts/browser-smoke.mjs"
+    "test:browser": "node scripts/browser-smoke.mjs",
+    "assets:animasa": "tsx scripts/prepare-animasa.ts"
   },
   "dependencies": {
     "ammojs-typed": "1.0.6",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@types/three": "0.187.0",
+    "mmd-parser": "1.1.4",
     "playwright": "1.64.1",
     "sharp": "0.35.5",
     "tsx": "4.23.15",

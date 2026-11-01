@@ -3,10 +3,12 @@
 A browser demo of a native, skinned SOMA humanoid controlled with the keyboard.
 MotionBricks generates each motion segment locally with ONNX Runtime Web's
 WebGPU provider. Three.js renders the character, ground and follow/orbit camera.
-The **Character** selector also offers **MMD (CG-CA Uka)**, with toon/outline
-rendering and MMD rigid-body physics, driven by the same generated SOMA motion.
-Uka is the licensed alternative permitted by Issue #9; Animasa Miku is not bundled
-because permission to redistribute its converted model was not established.
+The **Character** selector offers **MMD (Animasa Miku)** through a verified,
+user-supplied local GLB, and separately **MMD (CG-CA Uka)**. Both use toon/outline
+rendering and MMD rigid-body physics driven by the same generated SOMA motion.
+[Animasa offline conversion and local preview](docs/animasa.md) are available;
+public redistribution of its converted asset remains blocked on specific model
+rights evidence. Uka is an optional model and does not fulfill Issue #11.
 See [MMD provenance, conversion, retargeting and validation](docs/mmd.md).
 
 **Public demo:** [takahirox.github.io/three-motionbricks](https://takahirox.github.io/three-motionbricks/)
@@ -98,8 +100,9 @@ npm run preview
 ```
 
 Production builds use `/three-motionbricks/` as the base path and fetch the model
-remotely, even if a local model is installed. Only reviewed SOMA assets and their
-notices/licenses are published; weights and partial downloads are excluded.
+remotely, even if a local model is installed. Only reviewed SOMA/Uka assets and their
+notices/licenses are published. Locally converted Animasa assets, weights and
+partial downloads are excluded.
 `npm run preview` serves the build at `http://127.0.0.1:4173/three-motionbricks/`.
 Run `npm run check:pages` to check the artifact for missing resources, incorrect
 HTML base paths, weights and unresolved Git LFS pointers.

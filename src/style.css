@@ -18,6 +18,9 @@ select {font: inherit; max-width: 73%; color: inherit; background: #172c36; bord
 #character-status:empty {display: none;}
 #physics-control {font-size: 12px; margin-bottom: 14px;}
 #physics-control:not([hidden]) {display: block;}
+#animasa-control {font-size: 12px;}
+#animasa-control:not([hidden]) {display: block; margin-bottom: 14px;}
+#animasa-file {display: block; width: 100%; margin: 6px 0; font: inherit;}
 :focus-visible {outline: 3px solid #fff; outline-offset: 4px;}
 .controls, .model-info {font-size: 12px; color: #b5c6ce;}
 kbd {font: inherit; color: #e7f0f3;}

@@ -3,14 +3,17 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { Quaternion, Vector3 } from 'three';
 import { solvePose } from 'mmd-gltf/packages/mmd-solver';
-import { ukaFixture, somaFixture } from '../tests/mmd-fixture';
-import { SomaRetargeter } from '../src/retarget';
-import { ukaPhysicsModel } from '../src/mmd-physics';
+import { ukaFixture, somaFixture, mmdFixture } from '../tests/mmd-fixture';
+import { SomaRetargeter, ANIMASA_MAPPING, UKA_MAPPING } from '../src/retarget';
+import { mmdPhysicsModel } from '../src/mmd-physics';
 import { positions } from '../src/motion';
 
-const trace = JSON.parse(await readFile(process.argv[2] ?? '.artifacts/mmd-movement.json','utf8'));
-const soma = somaFixture(), {root} = await ukaFixture();
-const retarget = new SomaRetargeter(root,soma.bind,soma.points), model = ukaPhysicsModel(root,true);
+const args = process.argv.slice(2), animasa = args.includes('--animasa');
+const trace = JSON.parse(await readFile(args.find(a=>a !== '--animasa') ?? '.artifacts/mmd-movement.json','utf8'));
+const local = animasa ? await readFile('.cache/animasa-local/model.glb') : undefined;
+const soma = somaFixture(), {root} = local
+  ? await mmdFixture(JSON.parse(local.subarray(20,20+local.readUInt32LE(12)).toString())) : await ukaFixture();
+const retarget = new SomaRetargeter(root,soma.bind,soma.points,animasa ? ANIMASA_MAPPING : UKA_MAPPING), model = mmdPhysicsModel(root,true,animasa);
 const names = ['左足首','左つま先','右足首','右つま先'];
 const results = [];
 for (const step of trace) {
@@ -46,6 +49,6 @@ for (const step of trace) {
     fkMinimumFootJointHeight:Math.min(...offHeights),ikMinimumFootJointHeight:Math.min(...onHeights),
     fkMaximumFootFrameTravel:Math.max(...offTravel),ikMaximumFootFrameTravel:Math.max(...onTravel)});
 }
-const report = {source:'Real official SOMA ONNX output, browser smoke capture; no VMD',
+const report = {character:animasa ? 'Animasa Miku' : 'CG-CA Uka', source:'Real official SOMA ONNX output, browser smoke capture; no VMD',
   strategy:'FK vs ankle/toe IK targets from the source foot positions relative to the hip, scaled to MMD hip height',results};
 await writeFile('.artifacts/mmd-ik.json',JSON.stringify(report,null,2)+'\n'); console.log(JSON.stringify(report,null,2));
