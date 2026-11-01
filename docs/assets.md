@@ -1,5 +1,10 @@
 # Asset provenance and conversion
 
+The **CG-CA Uka** MMD character, its CC BY 4.0 attribution and original guidelines,
+the Animasa Miku permission blocker, pinned PMX conversion and Ammo runtime are
+documented in [mmd.md](mmd.md). Only converted glTF, notices and required runtime
+are published; no PMD/PMX or VMD is shipped.
+
 ## Native SOMA body
 
 The bundled `public/assets/soma.glb` is derived **only** from the native
@@ -100,7 +105,8 @@ production-preview real-model browser smoke also exercises an actual cross-origi
 GET from a worker.
 
 The first inference start transfers approximately 758 MB of weights, in addition
-to the site's roughly 31 MB uncompressed total. Streaming reports progress and
+to the site's roughly 43 MB uncompressed total (including optional Uka/Ammo).
+Streaming reports progress and
 checks the exact expected payload length before ORT loads the graph. The local
 downloader additionally verifies SHA-256. Normal HTTP browser caching follows the
 host's headers; large responses may not be retained, cache can be evicted, and

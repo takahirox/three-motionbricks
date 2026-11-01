@@ -3,6 +3,11 @@
 A browser demo of a native, skinned SOMA humanoid controlled with the keyboard.
 MotionBricks generates each motion segment locally with ONNX Runtime Web's
 WebGPU provider. Three.js renders the character, ground and follow/orbit camera.
+The **Character** selector also offers **MMD (CG-CA Uka)**, with toon/outline
+rendering and MMD rigid-body physics, driven by the same generated SOMA motion.
+Uka is the licensed alternative permitted by Issue #9; Animasa Miku is not bundled
+because permission to redistribute its converted model was not established.
+See [MMD provenance, conversion, retargeting and validation](docs/mmd.md).
 
 **Public demo:** [takahirox.github.io/three-motionbricks](https://takahirox.github.io/three-motionbricks/)
 (available after the first successful Pages deployment). No installation or backend
@@ -80,7 +85,8 @@ extrapolating or teleporting; slow devices can therefore pause between segments.
 Known MVP limits: targets use a small set of original authored stride poses
 rather than the official Scene Preview clip blend spaces; fingers/twist joints retain reference
 transforms; no foot IK, physics, pose correctives or mobile optimization. Sliding,
-stance drift and imperfect stops/turns remain possible. See
+stance drift and imperfect stops/turns remain possible. These native SOMA limits
+do not describe Uka's separate sleeve IK and secondary physics. See
 [implementation validation and compatibility](docs/validation.md).
 
 ## Build and checks
@@ -104,6 +110,8 @@ Start the development or preview server before running browser smoke checks:
 npx playwright install chromium
 npm run test:browser
 npm run test:browser -- --model
+npm run test:browser -- --model --mmd
+npm run check:mmd-ik
 ```
 
 The first browser check covers rendering, keyboard/blur, narrow layout and the
@@ -118,6 +126,11 @@ status. It logs progress every 30 seconds and saves a `loading.json` timeline
 alongside reports/screenshots in ignored `.artifacts/`.
 Browser tests require actual browser/GPU support and
 are separate from the fast math/queue/asset tests.
+MMD checks also verify visible physics response, resource cleanup, rapid model
+switching and missing GLB/Ammo recovery. `--model --mmd` captures generated poses
+for the offline IK comparison only in ignored `.artifacts/`. Recreate the committed
+Uka GLB and local Ammo runtime with `npm run assets:mmd`; ordinary builds do not
+download source assets.
 
 ## GitHub Pages deployment
 
@@ -138,8 +151,9 @@ only deployment gets `pages: write` and `id-token: write`. One deployment runs a
 a time, allowing the active deployment to finish and retaining the latest waiting
 revision. See [GitHub's custom workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
-The static site is about 31 MB before compression, including the 1.34 MB native
-SOMA GLB and 28.75 MB ORT WASM. The **757,864,273-byte model (758 MB / 723 MiB)**
+The static site is about 43 MB before compression, including the 1.34 MB native
+SOMA GLB, 9.61 MB Uka GLB, 1.88 MB Ammo runtime and 28.75 MB ORT WASM.
+Uka and Ammo load on MMD selection. The **757,864,273-byte model (758 MB / 723 MiB)**
 is downloaded separately from NVIDIA's pinned GitHub media/LFS payload URL only
 when inference starts. It is never uploaded to Pages. This endpoint was checked
 for payload availability and permissive CORS; hosting evidence, licenses and

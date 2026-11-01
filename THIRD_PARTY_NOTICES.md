@@ -1,5 +1,23 @@
 # Third-party notices
 
+- `public/assets/uka/model.glb`: CG-CA Uka (c) 2023-2024 by Nagoya Institute of
+  Technology, Moonshot R&D Goal 1 Avatar Symbiotic Society. CC BY 4.0. Converted
+  from `mmdagent-ex/uka@659f0d1a740fec68bb2817dc9c694a35e7a15f12` PMX to skinned
+  glTF, with textures resized to at most 1024 pixels; morphs and MMD extension
+  metadata retained as described in [the conversion record](docs/mmd.md).
+  Full original [English](public/assets/uka/README.md) and
+  [Japanese](public/assets/uka/README.ja.md) notices/guidelines accompany the asset.
+  No endorsement is implied. These assets are not licensed as repository code.
+- MMD conversion, material/outline plugins, solver and physics runtime:
+  [takahirox/mmd-gltf](https://github.com/takahirox/mmd-gltf/tree/3dfa726aa38992a1f7d5ea17b377c685e839e8b8),
+  pinned to the integration revision above; upstream source is
+  unmodified. Its archive has no root code-license declaration; no additional
+  license or general relicensing grant is asserted here.
+- `public/runtime/ammo.js`: unmodified Ammo.js resource from
+  `ammojs-typed@1.0.6`, Copyright (c) 2011 ammo.js contributors, under the retained
+  [backend license](public/runtime/ammo-LICENSE). The npm wrapper's package license
+  does not replace that resource's notice. See [runtime pin/hash](docs/mmd.md).
+
 - `public/assets/soma.glb`: native SOMA-X template mesh and rig, Copyright NVIDIA
   CORPORATION & AFFILIATES. Converted from `nvidia/SOMA-X` asset revision
   `32f0ab4`, Apache-2.0. See [asset provenance](docs/assets.md) for modifications

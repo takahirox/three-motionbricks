@@ -3,7 +3,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { JOINTS, type Pose, type Rig } from './motion';
 
 export class SomaAvatar {
-  private constructor(readonly object: Group, readonly bones: Bone[], readonly rig: Rig, readonly stance: Pose) {}
+  private constructor(readonly object: Group, readonly bones: Bone[], readonly rig: Rig, readonly stance: Pose,
+    readonly bind: Pose, readonly bindPoints: Vector3[]) {}
   static async load(url: string): Promise<SomaAvatar> {
     const {scene} = await new GLTFLoader().loadAsync(url);
     const byName = new Map<string, Bone>();
@@ -19,6 +20,8 @@ export class SomaAvatar {
       return bone;
     });
     scene.updateMatrixWorld(true);
+    const bind = {root: bones[0].getWorldPosition(new Vector3()), rotations: bones.map(b => b.getWorldQuaternion(new Quaternion()))};
+    const bindPoints = bones.map(b => b.getWorldPosition(new Vector3()));
     // Author a relaxed seed stance from the native T-pose, without using sample clips.
     for (const [name, angle] of [['LeftArm', -1.35], ['RightArm', 1.35]] as const) {
       const arm = byName.get(name)!;
@@ -36,7 +39,7 @@ export class SomaAvatar {
     });
     const offsets = points.map((p, i) => parents[i] < 0 ? new Vector3() : p.clone().sub(points[parents[i]])
       .applyQuaternion(rotations[parents[i]].clone().invert()));
-    return new SomaAvatar(scene, bones, {parents, offsets}, {root: points[0], rotations});
+    return new SomaAvatar(scene, bones, {parents, offsets}, {root: points[0], rotations}, bind, bindPoints);
   }
   apply(pose: Pose): void {
     for (let i = 0; i < this.bones.length; i++) {
