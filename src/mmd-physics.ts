@@ -8,7 +8,7 @@ import { solvePose } from 'mmd-gltf/packages/mmd-solver';
 /** The source extension stays untouched. Fixed-axis twist evaluation is not in
  * the upstream executor; these four undriven twist bones keep local bind TRS.
  * Sleeve IK follows the retargeted arms; leg/toe IK is selected after comparison. */
-export function ukaPhysicsModel(root: Object3D, footIK = false) {
+export function mmdPhysicsModel(root: Object3D, footIK = false, animasa = false) {
   const model = getPhysicsModel(root);
   if (!model) throw new Error('MMD asset has no MMD_physics extension');
   for (const b of model.solver.bones) {
@@ -18,8 +18,32 @@ export function ukaPhysicsModel(root: Object3D, footIK = false) {
       delete b.fixedAxis; b.flags &= ~0x400;
     }
   }
+  const dynamic = new Set(model.profile.bodies.filter(b=>b.mode !== 0).map(b=>b.bone));
+  if (animasa) for (const b of model.solver.bones) {
+    // Physics owns the necktie and both hair chains. Even a disabled IK record
+    // is rejected by the upstream physics capability validator. Remove it only
+    // in this cloned runtime solver; retain all seven chains in the GLB.
+    if (b.ik?.links.some(l=>dynamic.has(l.index))) {delete b.ik; b.flags &= ~0x20;}
+  }
+  if (animasa) {
+    // PMD has no deformation layers. Its eye controller follows the eyes in
+    // source index order; order runtime evaluation by hierarchy/grant dependency.
+    const layers = new Map<number,number>();
+    const layer = (index: number): number => {
+      if (index < 0) return -1;
+      if (layers.has(index)) return layers.get(index)!;
+      const b = model.solver.bones[index];
+      const result = 1 + Math.max(layer(b.parentIndex),b.append ? layer(b.append.source) : -1,
+        ...(b.ik ? [layer(b.ik.effector),...b.ik.links.map(l=>layer(l.index))] : []));
+      layers.set(index,result); return result;
+    };
+    for (const b of model.solver.bones) b.layer = layer(b.index);
+  }
   const controls = new Map(model.solver.bones.filter(b => b.ik)
-    .map(b => [b.index, b.name.includes('袖') || footIK]));
+    .map(b => [b.index, animasa
+      ? (b.name.includes('足ＩＫ') || b.name.includes('つま先ＩＫ') ? footIK
+        : !b.ik!.links.some(l=>dynamic.has(l.index)))
+      : b.name.includes('袖') || footIK]));
   const diagnostics = physicsDiagnostics(model.profile, model.solver);
   if (diagnostics.length) throw new Error(`MMD physics unavailable: ${diagnostics.map(d => d.message).join('; ')}`);
   return {...model, controls};
@@ -35,8 +59,8 @@ export class LiveMMDPhysics {
   private model;
   steps = 0;
   maximumSecondaryAngle = 0;
-  constructor(root: Object3D, private api: AmmoAPI, footIK = false) {
-    this.model = ukaPhysicsModel(root, footIK);
+  constructor(root: Object3D, private api: AmmoAPI, footIK = false, animasa = false) {
+    this.model = mmdPhysicsModel(root, footIK, animasa);
   }
   private read(): RestBone[] {
     return this.model.solver.bones.map(b => {

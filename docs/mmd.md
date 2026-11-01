@@ -1,8 +1,11 @@
-# MMD character integration (Issue #9)
+# MMD character integration (Issues #9 and #11)
 
-The Character selector defaults to SOMA and also offers **MMD (CG-CA Uka)**.
-Both consume the same continuously generated MotionBricks SOMA poses. The MMD
-physics checkbox compares secondary deformation without another model or VMD.
+The Character selector defaults to SOMA and offers **MMD (Animasa Miku)** via
+user-supplied local GLB, and separately **MMD (CG-CA Uka)**. Both consume the same
+continuously generated MotionBricks SOMA poses. See [the Animasa implementation,
+exact source manifest, rights investigation and local conversion](animasa.md).
+Uka is an optional model and does not complete the Animasa request in Issue #11.
+The remaining sections describe the existing Uka pipeline unless specified.
 
 ## Animasa Miku provenance and redistribution blocker
 
@@ -34,19 +37,15 @@ converted model/texture on GitHub Pages. No Miku asset, derivative or runtime
 download is included. This is a missing permission record, not a claim that all
 such use is prohibited.
 
-To add Miku later, obtain the original creator/distributor's complete terms or
-explicit permission covering conversion, derivatives, redistribution, attribution
-and this public hosting context, alongside Crypton's conditions. Alternatively
-users can acquire and convert a legally obtained copy privately. PMD would still
-need a validated PMD-to-PMX or direct PMD-to-glTF adapter preserving bone identity,
-weights, morphs and physics frames. The implemented pipeline selects a **PMX**
-source and does not claim PMD support. Renaming files or using a static mesh
-exporter is insufficient. There is no runtime PMD/PMX loader or file picker.
+Issue #11 adds a deterministic offline PMD-aware adapter and local GLB file
+selection without bundling or downloading Miku at runtime. The specific rights
+blocker remains; see [Animasa source and conversion](animasa.md). The following
+PMX conversion instructions apply to Uka.
 
 ## Selected licensed alternative
 
-The Issue permits an equivalent licensed MMD character. **CG-CA Uka** is a
-separately named alternative. The author's [English](https://github.com/mmdagent-ex/uka/blob/659f0d1a740fec68bb2817dc9c694a35e7a15f12/README.md)
+**CG-CA Uka** remains a separately named optional model from PR #10.
+The author's [English](https://github.com/mmdagent-ex/uka/blob/659f0d1a740fec68bb2817dc9c694a35e7a15f12/README.md)
 and [Japanese](https://github.com/mmdagent-ex/uka/blob/659f0d1a740fec68bb2817dc9c694a35e7a15f12/README.ja.md)
 notices license repository files under **CC BY 4.0**, permit model modification,
 and request the visible credit. Both full notices, including usage guidelines

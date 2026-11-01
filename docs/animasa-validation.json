@@ -1,0 +1,194 @@
+{
+  "date": "2026-11-01",
+  "issue": 11,
+  "status": "Local-only interim implementation; public redistribution blocked; keep Issue open",
+  "asset": {
+    "sourcePMDSHA256": "45a5a2fb897266a1b371b30cf53ed9435d375ddea9fce7f095bba2739b9bdae5",
+    "localGLBSHA256": "c1f6e34ca7db7e56a297583a4859bc6ad6db018ba7dbebe58d235c95dfc884c3",
+    "localGLBBytes": 1219992,
+    "bones": 140,
+    "morphs": 30,
+    "bodies": 45,
+    "joints": 27
+  },
+  "checks": [
+    {
+      "command": "ANIMASA_SOURCE=<source-root> npm test",
+      "result": "13 passed, 0 failed, including exact source weights/morph indices/body frames, notice preservation, deterministic GLB and Bullet cleanup"
+    },
+    {
+      "command": "npm run build",
+      "result": "Passed; existing large bundle advisory"
+    },
+    {
+      "command": "npm run check:pages",
+      "result": "Passed; 17 files, 42.8 MB, only reviewed SOMA/Uka GLBs; no Miku asset, source model, motion or inference weights"
+    },
+    {
+      "command": "CHROME_BIN=<installed Chrome> npm run test:browser",
+      "result": "Passed SOMA/Uka regression smoke"
+    },
+    {
+      "command": "ANIMASA_GLB=.cache/animasa-local/model.glb CHROME_BIN=<installed Chrome> npm run test:browser",
+      "result": "Passed local Animasa rendering, visible physics, switching and errors"
+    },
+    {
+      "command": "ANIMASA_GLB=.cache/animasa-local/model.glb CHROME_BIN=<installed Chrome> DEMO_URL=http://127.0.0.1:4173/three-motionbricks/ npm run test:browser",
+      "result": "Passed production-prefix local-GLB smoke, invalid-file replacement and packaging paths"
+    },
+    {
+      "command": "ANIMASA_GLB=.cache/animasa-local/model.glb CHROME_BIN=<installed Chrome> npm run test:browser -- --model",
+      "result": "Passed real official ONNX walk/run/turn/stop and switching during active inference"
+    },
+    {
+      "command": "npm run check:mmd-ik -- --animasa .artifacts/mmd-movement.json",
+      "result": "Passed comparison on this actual Animasa rig and live generated frames"
+    },
+    {
+      "command": "Pages guard probe with a temporary dummy unreviewed GLB",
+      "result": "Rejected as expected; dummy removed; final artifact check passed"
+    }
+  ],
+  "browser": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "gpu": {
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": "",
+      "maxBufferSize": 4294967292,
+      "maxStorageBufferBindingSize": 4294967292
+    },
+    "renderer": "WebGPUBackend",
+    "provider": "webgpu",
+    "cpuFallback": "ORT default WASM for unsupported or shape operations",
+    "runtime": {
+      "common": "1.31.1",
+      "web": "1.31.1"
+    }
+  },
+  "preview": {
+    "changedPhysicsPixels": 17394,
+    "nativeAllocationsWithWorld": 376,
+    "physicsSteps": 211,
+    "maximumSecondaryAngleRadians": 0.7099301081435003,
+    "physicsOffAllocations": 0
+  },
+  "locomotion": [
+    {
+      "state": "walk",
+      "generatedFrames": 26,
+      "character": "MMD (Animasa Miku)",
+      "physicsSteps": 700,
+      "rootBefore": [
+        0,
+        0
+      ],
+      "rootAfter": [
+        0.01,
+        -3.13
+      ],
+      "minimumHeadAboveRootMeters": 0.5927701675828987
+    },
+    {
+      "state": "run",
+      "generatedFrames": 26,
+      "character": "MMD (Animasa Miku)",
+      "physicsSteps": 1000,
+      "rootBefore": [
+        0.01,
+        -3.27
+      ],
+      "rootAfter": [
+        0.03,
+        -9.85
+      ],
+      "minimumHeadAboveRootMeters": 0.5464596804068589
+    },
+    {
+      "state": "turn",
+      "generatedFrames": 26,
+      "character": "MMD (Animasa Miku)",
+      "physicsSteps": 1300,
+      "rootBefore": [
+        0.03,
+        -10.05
+      ],
+      "rootAfter": [
+        3.13,
+        -11.04
+      ],
+      "minimumHeadAboveRootMeters": 0.5920310407927054
+    },
+    {
+      "state": "stop",
+      "generatedFrames": 58,
+      "character": "MMD (Animasa Miku)",
+      "physicsSteps": 1660,
+      "rootBefore": [
+        3.27,
+        -11.04
+      ],
+      "rootAfter": [
+        3.82,
+        -11.04
+      ],
+      "minimumHeadAboveRootMeters": 0.5919218393123151
+    }
+  ],
+  "ik": {
+    "character": "Animasa Miku",
+    "source": "Real official SOMA ONNX output, browser smoke capture; no VMD",
+    "strategy": "FK vs ankle/toe IK targets from the source foot positions relative to the hip, scaled to MMD hip height",
+    "results": [
+      {
+        "state": "walk",
+        "frames": 26,
+        "meanIKCorrectionMeters": 0.054111689468220196,
+        "maximumIKCorrectionMeters": 0.08113859011465854,
+        "fkMinimumFootJointHeight": -0.017809911727977967,
+        "ikMinimumFootJointHeight": -0.02977199472044173,
+        "fkMaximumFootFrameTravel": 0.18896087599975486,
+        "ikMaximumFootFrameTravel": 0.20817124427830147
+      },
+      {
+        "state": "run",
+        "frames": 26,
+        "meanIKCorrectionMeters": 0.07583300697626941,
+        "maximumIKCorrectionMeters": 0.10457655455296654,
+        "fkMinimumFootJointHeight": -0.019773935265949755,
+        "ikMinimumFootJointHeight": -0.03125124858286374,
+        "fkMaximumFootFrameTravel": 0.3104053811094137,
+        "ikMaximumFootFrameTravel": 0.33595015250302673
+      },
+      {
+        "state": "turn",
+        "frames": 26,
+        "meanIKCorrectionMeters": 0.05373502443298805,
+        "maximumIKCorrectionMeters": 0.07970320197500805,
+        "fkMinimumFootJointHeight": -0.017537674318408608,
+        "ikMinimumFootJointHeight": -0.029819755625549976,
+        "fkMaximumFootFrameTravel": 0.18790307353710595,
+        "ikMaximumFootFrameTravel": 0.20696159034752573
+      },
+      {
+        "state": "stop",
+        "frames": 58,
+        "meanIKCorrectionMeters": 0.05662127163201254,
+        "maximumIKCorrectionMeters": 0.06430516165211748,
+        "fkMinimumFootJointHeight": 0.015322249804521376,
+        "ikMinimumFootJointHeight": -0.020350087190984828,
+        "fkMaximumFootFrameTravel": 0.004057691729924198,
+        "ikMaximumFootFrameTravel": 0.004728817066812903
+      }
+    ]
+  },
+  "limitations": [
+    "Public GitHub/Pages redistribution requires the specific original model/texture terms or explicit permission; none was established. No publication or published-origin Miku check was performed.",
+    "Chromium for Testing 156.0.8078.4 lost its WebGPU device and rendered a blank scene during the pre-existing Uka check; installed Chrome 156.0.0.0 passed on Apple Metal. Other browser/device combinations were not tested.",
+    "Leg/toe IK disabled based on measured correction/travel/height; foot sliding and slight ground penetration remain.",
+    "Four fixed-axis twists stay at reference; eye/twist grants retained. Three secondary IK chains are removed only from cloned runtime solver because Bullet owns those same bones.",
+    "Expressions retained in local GLB, held at rest during locomotion. Original MMD physics/deformation fidelity is not claimed.",
+    "Source models, local GLBs, screenshots, generated motion traces and inference weights remain ignored and are not committed."
+  ]
+}

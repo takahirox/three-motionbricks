@@ -52,27 +52,43 @@ async function main() {
   const avatar = await SomaAvatar.load(`${import.meta.env.BASE_URL}assets/soma.glb`); scene.add(avatar.object);
   const character = element<HTMLSelectElement>('character'), characterStatus = element('character-status');
   const physicsControl = element<HTMLInputElement>('mmd-physics');
+  const animasaFile = element<HTMLInputElement>('animasa-file');
+  let localAnimasa: File | undefined;
   const characters = new CharacterSelection<MMDCharacter>(mmd => {
     avatar.object.visible = !mmd;
     element('physics-control').hidden = !mmd;
     if (mmd) {mmd.setPhysics(physicsControl.checked); scene.add(mmd.object);}
     else delete report.mmd;
-    report.character = mmd ? 'MMD (CG-CA Uka)' : 'SOMA'; updateReport();
+    report.character = mmd ? `MMD (${mmd.label})` : 'SOMA'; updateReport();
   });
   physicsControl.onchange = () => {
     characters.current?.setPhysics(physicsControl.checked);
-    characterStatus.textContent = physicsControl.checked ? 'Uka · MMD physics on' : 'Uka · MMD physics off';
+    characterStatus.textContent = `${characters.current?.label ?? ''} · MMD physics ${physicsControl.checked ? 'on' : 'off'}`;
   };
   character.disabled = false;
   character.onchange = async () => {
-    characterStatus.textContent = character.value === 'mmd' ? 'Loading Uka…' : '';
-    try {
-      const selected = await characters.select(character.value === 'mmd'
-        ? async () => (await import('./mmd')).MMDCharacter.load(import.meta.env.BASE_URL, avatar, renderer) : undefined);
-      if (selected) characterStatus.textContent = character.value === 'mmd' ? `Uka · MMD physics ${physicsControl.checked ? 'on' : 'off'}` : '';
-    } catch (error) {
-      character.value = 'soma'; characterStatus.textContent = `Uka could not load: ${error instanceof Error ? error.message : String(error)}. Select again to retry.`;
+    const selection = character.value, file = localAnimasa;
+    const label = selection === 'animasa' ? 'Animasa Miku' : 'CG-CA Uka';
+    element('animasa-control').hidden = selection !== 'animasa';
+    if (selection === 'animasa' && !file) {
+      await characters.select();
+      characterStatus.textContent = 'Choose your locally converted Animasa GLB. Public redistribution permission is unresolved.';
+      return;
     }
+    characterStatus.textContent = selection === 'soma' ? '' : `Loading ${label}…`;
+    try {
+      const selected = await characters.select(selection !== 'soma'
+        ? async () => (await import('./mmd')).MMDCharacter.load(import.meta.env.BASE_URL, avatar, renderer,selection === 'animasa' ? file : undefined) : undefined);
+      if (selected) characterStatus.textContent = selection !== 'soma' ? `${label} · MMD physics ${physicsControl.checked ? 'on' : 'off'}` : '';
+    } catch (error) {
+      character.value = selection === 'animasa' ? 'animasa' : 'soma';
+      element('animasa-control').hidden = selection !== 'animasa';
+      characterStatus.textContent = `${label} could not load: ${error instanceof Error ? error.message : String(error)}. Select again to retry.`;
+    }
+  };
+  animasaFile.onchange = () => {
+    localAnimasa = animasaFile.files?.[0];
+    if (character.value === 'animasa') character.dispatchEvent(new Event('change'));
   };
   const player = new MotionPlayer(avatar.stance), keyboard = new Keyboard();
   const previousRoot = player.pose.root.clone();
@@ -139,7 +155,8 @@ async function main() {
       try {mmd.apply(pose, delta);}
       catch (error) {
         void characters.select(); character.value = 'soma';
-        characterStatus.textContent = `Uka physics stopped: ${error instanceof Error ? error.message : String(error)}`;
+        element('animasa-control').hidden = true;
+        characterStatus.textContent = `${mmd.label} physics stopped: ${error instanceof Error ? error.message : String(error)}`;
       }
     }
     const movement = pose.root.clone().sub(previousRoot); camera.position.add(movement); controls.target.add(movement); previousRoot.copy(pose.root);

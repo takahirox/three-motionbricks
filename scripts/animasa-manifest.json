@@ -1,0 +1,39 @@
+{
+  "repository": "mrdoob/three.js",
+  "ref": "r87",
+  "revision": "5ce11d18c400791da0c9fbb4b6b9fcde2f754443",
+  "modelBlob": "5c88504144bd180083a7c5dce0b67d0fdb2f1a61",
+  "files": [
+    {
+      "path": "Readme.txt",
+      "bytes": 1156,
+      "sha256": "7b34ff053cfbf42322977fe2b0e3f90492c83dac2a1a001f6f4b2561197a4225"
+    },
+    {
+      "path": "miku/eyeM2.bmp",
+      "bytes": 49206,
+      "sha256": "a318f2d5bd22e3ac3a5b8cab4021fd68e25042e7730e8c04720cee68e3548565"
+    },
+    {
+      "path": "miku/miku_v2.pmd",
+      "bytes": 712126,
+      "sha256": "45a5a2fb897266a1b371b30cf53ed9435d375ddea9fce7f095bba2739b9bdae5"
+    },
+    {
+      "path": "miku/readme.txt",
+      "bytes": 203,
+      "sha256": "702a3f62567fc9c8becbdb47a73058683086ba75e236612a3e8e8d5486cd0a9e"
+    },
+    {
+      "path": "miku/readme_miku_v2.txt",
+      "bytes": 19465,
+      "sha256": "6732866be1a712d7af142fcbf59f7e3bab8691ea472f86bb674020b13d51355a"
+    },
+    {
+      "path": "MMDLoader.js",
+      "repositoryPath": "examples/js/loaders/MMDLoader.js",
+      "bytes": 60511,
+      "sha256": "b42b788a112ce6db4a9aba9632c1e0dd0494eb757bfc619ba44062cfddbf9ea8"
+    }
+  ]
+}

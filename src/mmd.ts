@@ -4,7 +4,8 @@ import { MMDToonPlugin, createToonLighting } from 'mmd-gltf/packages/three-mmd-t
 import { MMDOutlinePlugin, MMDOutlineEffect } from 'mmd-gltf/packages/three-mmd-outline';
 import type { WebGPURenderer } from 'three/webgpu';
 import { MMDPhysicsPlugin, loadAmmoBrowser } from 'mmd-gltf/packages/three-mmd-physics';
-import { SomaRetargeter } from './retarget';
+import { SomaRetargeter, ANIMASA_MAPPING, UKA_MAPPING } from './retarget';
+import { verifyAnimasaGLB, ANIMASA_GLB_BYTES } from './animasa';
 import { LiveMMDPhysics } from './mmd-physics';
 import type { SomaAvatar } from './avatar';
 import type { Pose } from './motion';
@@ -18,8 +19,8 @@ export class MMDCharacter {
   physicsEnabled = true;
   private constructor(readonly object: Group, private retarget: SomaRetargeter,
     readonly physics: LiveMMDPhysics, private toon: MMDToonPlugin, private outline: MMDOutlinePlugin,
-    readonly effect: MMDOutlineEffect) {}
-  static async load(base: string, soma: SomaAvatar, renderer: WebGPURenderer) {
+    readonly effect: MMDOutlineEffect, readonly label: string) {}
+  static async load(base: string, soma: SomaAvatar, renderer: WebGPURenderer, localAnimasa?: File) {
     let toon!: MMDToonPlugin, outline!: MMDOutlinePlugin;
     const loader = new GLTFLoader()
       .register(p => toon = new MMDToonPlugin(p, {lighting:createToonLighting()}))
@@ -27,7 +28,12 @@ export class MMDCharacter {
       .register(p => new MMDPhysicsPlugin(p));
     let scene: Group | undefined;
     try {
-      scene = (await loader.loadAsync(`${base}assets/uka/model.glb`)).scene;
+      if (localAnimasa) {
+        if (localAnimasa.size !== ANIMASA_GLB_BYTES) throw new Error('Incorrect Animasa GLB size. Use the documented offline converter.');
+        const bytes = await localAnimasa.arrayBuffer();
+        await verifyAnimasaGLB(bytes);
+        scene = (await loader.parseAsync(bytes,'')).scene;
+      } else scene = (await loader.loadAsync(`${base}assets/uka/model.glb`)).scene;
       // All source morph targets stay in the downloadable GLB. Locomotion does
       // not use expressions; don't allocate 203 full-surface GPU morph layers.
       scene.traverse(o => {
@@ -36,9 +42,10 @@ export class MMDCharacter {
           o.geometry.morphAttributes = {}; o.morphTargetInfluences = []; o.morphTargetDictionary = {};
         }
       });
-      const retarget = new SomaRetargeter(scene, soma.bind, soma.bindPoints);
-      const physics = new LiveMMDPhysics(scene, (await ammo(base)).api);
-      return new MMDCharacter(scene, retarget, physics, toon, outline, new MMDOutlineEffect(renderer));
+      const retarget = new SomaRetargeter(scene, soma.bind, soma.bindPoints,localAnimasa ? ANIMASA_MAPPING : UKA_MAPPING);
+      const physics = new LiveMMDPhysics(scene, (await ammo(base)).api,false,Boolean(localAnimasa));
+      return new MMDCharacter(scene, retarget, physics, toon, outline, new MMDOutlineEffect(renderer),
+        localAnimasa ? 'Animasa Miku' : 'CG-CA Uka');
     } catch (error) {
       if (scene) disposeScene(scene);
       outline?.dispose(); await toon?.dispose(); throw error;

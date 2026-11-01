@@ -25,6 +25,14 @@ export const UKA_MAPPING: readonly BoneBinding[] = [
   }),
 ];
 
+// Animasa has one upper torso bone, not Uka's three. Keep its original identity
+// and transfer Chest world rotation rather than requiring nonexistent spine bones.
+export const ANIMASA_MAPPING: readonly BoneBinding[] = [
+  ...UKA_MAPPING.filter(b => !['上半身','上半身M','上半身2'].includes(b.target)),
+  // Independent torso branches share センター; 下半身 remains the hip/root anchor.
+  {source:'Chest',target:'上半身'},
+];
+
 /** World-space rotation transfer with explicit bind-axis correction. No source
  * translations except the root are copied across unlike parent hierarchies. */
 export class SomaRetargeter {

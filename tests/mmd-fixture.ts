@@ -41,7 +41,10 @@ export function somaFixture() {
   return {bind,points,stance,rig:{parents,offsets}};
 }
 export async function ukaFixture() {
-  const json = glbJSON('../public/assets/uka/model.glb'), {root,nodes} = skeleton(json);
+  return mmdFixture(glbJSON('../public/assets/uka/model.glb'));
+}
+export async function mmdFixture(json: any) {
+  const {root,nodes} = skeleton(json);
   const parser = {json,getDependency: async (_kind: string,index: number) => nodes[index]};
   const plugin = new MMDPhysicsPlugin(parser as any); plugin.beforeRoot();
   await plugin.afterRoot({scene:root} as any);

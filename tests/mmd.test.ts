@@ -8,7 +8,7 @@ import { PhysicsWorld } from 'mmd-gltf/packages/three-mmd-physics';
 import { BACKEND_SHA256 } from 'mmd-gltf/packages/three-mmd-physics/ammo';
 import { CharacterSelection } from '../src/characters.ts';
 import { SomaRetargeter, UKA_MAPPING } from '../src/retarget.ts';
-import { LiveMMDPhysics, ukaPhysicsModel } from '../src/mmd-physics.ts';
+import { LiveMMDPhysics, mmdPhysicsModel } from '../src/mmd-physics.ts';
 import { clonePose, JOINTS } from '../src/motion.ts';
 import { glbJSON, somaFixture, ukaFixture } from './mmd-fixture.ts';
 
@@ -59,7 +59,7 @@ test('retargeting handles different world bind axes, intermediary parents, root 
 test('Uka mapping is complete, direct bones are not physics writers, and incremental physics releases native handles', async () => {
   const {root,json} = await ukaFixture(), soma = somaFixture();
   const retarget = new SomaRetargeter(root,soma.bind,soma.points);
-  const model = ukaPhysicsModel(root), driven = new Set(UKA_MAPPING.map(b => b.target));
+  const model = mmdPhysicsModel(root), driven = new Set(UKA_MAPPING.map(b => b.target));
   assert.equal(UKA_MAPPING.length,22);
   assert.ok(model.profile.bodies.filter(b => b.mode !== 0 && b.bone >= 0)
     .every(b => !driven.has(model.solver.bones.find(s => s.index === b.bone)!.name)));
