@@ -1,0 +1,138 @@
+{
+  "repository": "mmdagent-ex/uka",
+  "commit": "659f0d1a740fec68bb2817dc9c694a35e7a15f12",
+  "files": [
+    {
+      "path": "MS_Uka.pmx",
+      "size": 4217254,
+      "sha256": "6fbfff5cfb921e89df93d68a55dfa1549875d743a9d5e155272cb9737520d297"
+    },
+    {
+      "path": "README.md",
+      "size": 5005,
+      "sha256": "a351933cf917c517c98881ca87145af5ed0f6e346aab48228ae7381327082b1a"
+    },
+    {
+      "path": "README.ja.md",
+      "size": 6071,
+      "sha256": "89b0f87f29d88026d940d1c85c99b31e700cdcdf12d95be07cb14cf9ac89dfbd"
+    },
+    {
+      "path": "tex/eye.png",
+      "size": 10813548,
+      "sha256": "aa60d1d463bf685602b99a71d1bbf139e8afd3730ceccf3a38cfb44ab69854fd"
+    },
+    {
+      "path": "tex/face.png",
+      "size": 8195361,
+      "sha256": "82730e20b9fb6da87306e80651dc4c3530b92309d89341daf2375d43d44740c1"
+    },
+    {
+      "path": "tex/FP.png",
+      "size": 1667566,
+      "sha256": "0e0d7de13145040b11fbd2e44afa9277253c2d3b401b0b4857b7116ccc677e85"
+    },
+    {
+      "path": "tex/body.png",
+      "size": 10103148,
+      "sha256": "2dff91308d417a05d7bc73fa2000e5554ca007acdc05de0c5fe36358cb5f84d5"
+    },
+    {
+      "path": "tex/top.png",
+      "size": 10407131,
+      "sha256": "9a612204e3b7fed376e662b94945980c939a95819d932376bd53c486b4ffce98"
+    },
+    {
+      "path": "tex/acce.png",
+      "size": 9310157,
+      "sha256": "82b1e497bb33a99007ff3f75481a67bd6dbed2fe1eea89e67b7fd156229d0020"
+    },
+    {
+      "path": "tex/btm.png",
+      "size": 9855065,
+      "sha256": "db1f2e7ae4ff6142c8fdc8918b74e1524c9dcd98ff59b2d8318c7aca84be46ec"
+    },
+    {
+      "path": "tex/hair_s01.png",
+      "size": 12276095,
+      "sha256": "bb9b7f41c96d1ea39da9f200961071d3169e08a833ad1d1344132aac1935fd72"
+    },
+    {
+      "path": "tex/iraira.png",
+      "size": 11819,
+      "sha256": "6a5c3153169d903eaae6a566ee0104ceb0ffcc414f69ce9135ce0312e6f69e8e"
+    }
+  ],
+  "attribution": "CG-CA Uka (c) 2023-2024 by Nagoya Institute of Technology, Moonshot R&D Goal 1 Avatar Symbiotic Society",
+  "changes": "PMX to skinned glTF; BDEF, retained morphs, toon, outline, solver and rigid-body/joint metadata. Textures resized to at most 1024 pixels. MotionBricks FK retargeting and bounded secondary physics in the app; unsupported source features documented in docs/mmd.md.",
+  "converter": "takahirox/mmd-gltf@3dfa726aa38992a1f7d5ea17b377c685e839e8b8",
+  "sha256": "7e783e058fab6081689b588e2fa3b41bf7633f77493f2c7bbd7c641adba838bd",
+  "bytes": 9611684,
+  "bones": 302,
+  "bodies": 164,
+  "joints": 151,
+  "vertices": 49955,
+  "morphs": 216,
+  "warnings": [
+    "Rigid-body-v1: sphere/box/capsule, modes 0/1/2, complemented raw PMX exclusion bits, spring-6DOF; ordered pre/post solver v2. Synthetic project policy; original-MMD fidelity unmeasured.",
+    "Shadow flags are retained in material extras, but are not rendered. Additional UV ZW and unused additional UV channels are omitted.",
+    "Morphs: retained 203 vertex/group POSITION targets; omitted unsupported source families [{\"index\":126,\"name\":\"青ざめ\",\"type\":8},{\"index\":127,\"name\":\"どんより\",\"type\":8},{\"index\":128,\"name\":\"赤み\",\"type\":8},{\"index\":148,\"name\":\"いらいら\",\"type\":8},{\"index\":214,\"name\":\"耳収納M\",\"type\":8},{\"index\":215,\"name\":\"耳収納\",\"type\":0,\"group\":[{\"index\":213,\"rate\":1},{\"index\":214,\"rate\":1}],\"unsupported\":[{\"index\":214,\"type\":8,\"reason\":\"unsupported child family\"}]}]. Authored normals retained; no recomputation or morph normal targets.",
+    "Execution limitations: [{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[52]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[54]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[86]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[88]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[52]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[54]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[86]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[88]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"retained-morph-families\",\"path\":\"PMX morphs\",\"message\":\"unsupported morph families retained in mmdSource without execution\"}]"
+  ],
+  "diagnostics": [
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[52]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[54]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[86]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[88]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[52]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[54]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[86]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[88]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "retained-morph-families",
+      "path": "PMX morphs",
+      "message": "unsupported morph families retained in mmdSource without execution"
+    }
+  ]
+}

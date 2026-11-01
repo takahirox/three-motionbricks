@@ -4,7 +4,9 @@ import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import model from '../model-source.json' with {type: 'json'};
+import sharp from 'sharp';
 const realModel = process.argv.includes('--model');
+const mmdMode = process.argv.includes('--mmd');
 const strictGpu = process.argv.includes('--strict-gpu');
 const origin = process.env.DEMO_URL || 'http://127.0.0.1:5173/';
 const browser = await chromium.launch({executablePath: process.env.CHROME_BIN || undefined,
@@ -48,11 +50,46 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   const checkResponse = response => {if (response.status() >= 400) initialHttpErrors.push(`${response.status()} ${response.url()}`);};
   page.on('response', checkResponse);
-  await page.goto(`${origin}${strictGpu ? '?strictGpu=1' : ''}`);
+  const url = new URL(origin);
+  if (strictGpu) url.searchParams.set('strictGpu','1');
+  if (realModel && mmdMode) url.searchParams.set('captureMotion','1');
+  await page.goto(url.href);
   await page.waitForFunction(() => document.querySelector('#status').textContent.includes('SOMA ready'), undefined, {timeout: 30000});
   assert.equal(await page.locator('canvas').count(), 1);
   page.off('response', checkResponse);
   assert.deepEqual(initialHttpErrors, []);
+  const reportNow = () => page.locator('#diagnostics').textContent().then(JSON.parse);
+  // Exercise the actual converted skin, shaders, Bullet runtime and switching
+  // even in the fast browser suite, without downloading inference weights.
+  await page.selectOption('#character','mmd');
+  await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'),undefined,{timeout:30000});
+  await page.waitForFunction(() => JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsSteps > 180);
+  const mmdReady = await reportNow();
+  assert.ok(mmdReady.mmd.maximumSecondaryAngle > 0.02);
+  const capture = async name => {
+    const bytes = await page.screenshot({clip:{x:450,y:180,width:450,height:520},path:new URL(name,output).pathname});
+    return sharp(bytes).removeAlpha().raw().toBuffer();
+  };
+  const physicsOn = await capture('mmd-physics-on.png');
+  await page.locator('#mmd-physics').uncheck();
+  await page.waitForFunction(() => JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsEnabled === false);
+  assert.equal((await reportNow()).mmd.nativeAllocations,0,'Physics off releases the Bullet world');
+  const physicsOff = await capture('mmd-physics-off.png');
+  let changed = 0;
+  for(let i=0;i<physicsOn.length;i+=3) if(Math.max(...[0,1,2].map(j=>Math.abs(physicsOn[i+j]-physicsOff[i+j])))>12) changed++;
+  assert.ok(changed>40,`Physics must visibly deform the character (${changed} changed pixels)`);
+  await page.locator('#mmd-physics').check();
+  // Rapid cancellation must not let a late MMD load replace SOMA.
+  await page.selectOption('#character','soma');
+  await page.selectOption('#character','mmd');
+  await page.selectOption('#character','soma');
+  await page.waitForTimeout(1500);
+  assert.equal((await reportNow()).character,'SOMA');
+  await page.selectOption('#character','mmd');
+  await page.waitForFunction(() => JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsSteps > 30);
+  assert.equal((await reportNow()).mmd.nativeAllocations,mmdReady.mmd.nativeAllocations,'Switching must not leak native worlds');
+  if(!mmdMode) await page.selectOption('#character','soma');
+  await writeFile(new URL('mmd-preview.json',output),JSON.stringify({report:mmdReady,changedPhysicsPixels:changed},null,2));
   if (new URL(origin).pathname === '/three-motionbricks/') {
     const initialReport = JSON.parse(await page.locator('#diagnostics').textContent());
     assert.equal(initialReport.model, model.url, 'Production must load the pinned remote weights');
@@ -126,7 +163,13 @@ try {
       if (step.keys.length) assert.ok(Math.hypot(after[0]-before[0],after[1]-before[1]) > 0.1, `${step.label}: root did not move`);
       if (step.label === 'walk' || step.label === 'run') assert.ok(after[1] < before[1] - 0.1, `${step.label}: expected travel toward -Z`);
       if (step.label === 'turn') assert.ok(after[0] > before[0] + 0.1, 'turn: expected travel toward +X');
-      await page.screenshot({path: new URL(`${step.label}.png`, output).pathname});
+      if(mmdMode) {
+        assert.equal(report.character,'MMD (CG-CA Uka)');
+        assert.equal(report.mmd.physicsEnabled,true);
+        assert.ok(report.mmd.physicsSteps>0);
+        assert.ok(report.mmd.maximumSecondaryAngle>0.02);
+      }
+      await page.screenshot({path: new URL(`${mmdMode?'mmd-':''}${step.label}.png`, output).pathname});
       traces.push({state: step.label, before, after, report});
     }
     const samples = await page.evaluate(() => window.__motionTrace);
@@ -138,12 +181,37 @@ try {
     const stoppedTravel = Math.hypot(last.values[0]-lastSecond.values[0], last.values[1]-lastSecond.values[1]);
     assert.ok(stoppedTravel < 0.25, `Stop continued moving ${stoppedTravel} m in the last second`);
     report.maximumDisplayedStepMeters = maximumStep; report.stoppedTravelMeters = stoppedTravel;
-    await writeFile(new URL('movement.json', output), JSON.stringify(traces, null, 2));
+    await writeFile(new URL(`${mmdMode?'mmd-':''}movement.json`, output), JSON.stringify(traces, null, 2));
+    if(mmdMode) {
+      const generations=Number(await page.locator('#generations').textContent());
+      await page.selectOption('#character','soma');
+      await page.waitForFunction(n=>Number(document.querySelector('#generations').textContent)>n,generations,{timeout:60000});
+      assert.equal((await getReport()).character,'SOMA','Switching preserves the same running player/worker');
+      await page.selectOption('#character','mmd');
+      await page.waitForFunction(()=>JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsSteps>30);
+      assert.equal((await getReport()).mmd.nativeAllocations,mmdReady.mmd.nativeAllocations);
+    }
   }
   await writeFile(new URL('report.json', output), JSON.stringify(report, null, 2));
   await page.screenshot({path: new URL('desktop.png', output).pathname});
   assert.deepEqual(errors, []);
   if (!realModel) {
+    const missingMMD = await browser.newPage();
+    await missingMMD.route('**/assets/uka/model.glb',r=>r.fulfill({status:404,body:'Missing Uka'}));
+    await missingMMD.goto(origin);
+    await missingMMD.waitForFunction(()=>!document.querySelector('#character').disabled);
+    await missingMMD.selectOption('#character','mmd');
+    await missingMMD.waitForFunction(()=>document.querySelector('#character-status').textContent.includes('could not load'));
+    assert.equal(await missingMMD.locator('#character').inputValue(),'soma');
+    assert.equal(await missingMMD.locator('#start').isEnabled(),true,'Character failure must not disable inference');
+    await missingMMD.unroute('**/assets/uka/model.glb');
+    await missingMMD.route('**/runtime/ammo.js',r=>r.fulfill({status:404,body:'Missing Ammo'}));
+    await missingMMD.selectOption('#character','mmd');
+    await missingMMD.waitForFunction(()=>document.querySelector('#character-status').textContent.includes('Ammo resource loading failed'));
+    await missingMMD.unroute('**/runtime/ammo.js');
+    await missingMMD.selectOption('#character','mmd');
+    await missingMMD.waitForFunction(()=>document.querySelector('#character-status').textContent.includes('physics on'));
+    await missingMMD.close();
     const missingBodyPage = await browser.newPage();
     await missingBodyPage.route('**/assets/soma.glb', route => route.fulfill({status: 404, body: 'Missing character'}));
     await missingBodyPage.goto(origin);
@@ -161,7 +229,11 @@ try {
     assert.equal(noGpuReport.renderer, 'WebGLBackend');
     assert.equal(noGpuReport.webgpu, false);
     assert.equal(await noGpuPage.locator('#generations').textContent(), '0');
+    await noGpuPage.selectOption('#character','mmd');
+    await noGpuPage.waitForFunction(()=>JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsSteps>30);
+    assert.equal(JSON.parse(await noGpuPage.locator('#diagnostics').textContent()).renderer,'WebGLBackend');
     await noGpuPage.close();
   }
-  console.log(JSON.stringify({result:'pass',realModel,strictGpu,report},null,2));
+  delete report.motionSample;
+  console.log(JSON.stringify({result:'pass',realModel,mmdMode,strictGpu,report},null,2));
 } finally {await browser.close();}

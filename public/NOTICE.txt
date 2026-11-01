@@ -14,3 +14,13 @@ distributed in this site.
 Full source, dependency notices, model terms, and asset provenance:
 https://github.com/takahirox/three-motionbricks/blob/main/THIRD_PARTY_NOTICES.md
 https://github.com/takahirox/three-motionbricks/blob/main/docs/assets.md
+
+CG-CA Uka (c) 2023-2024 by Nagoya Institute of Technology, Moonshot R&D Goal 1 Avatar Symbiotic Society
+CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Source: https://github.com/mmdagent-ex/uka/tree/659f0d1a740fec68bb2817dc9c694a35e7a15f12
+Changes: PMX to skinned glTF with MMD extensions; textures resized to at most 1024 pixels.
+Full original notices and guidelines: assets/uka/README.md and assets/uka/README.ja.md.
+No endorsement implied. Animasa Miku is not distributed; see docs/mmd.md in source.
+
+Ammo.js: Copyright (c) 2011 ammo.js contributors; see runtime/ammo-LICENSE.
+MMD glTF converter/plugins: takahirox/mmd-gltf revision 3dfa726aa38992a1f7d5ea17b377c685e839e8b8.

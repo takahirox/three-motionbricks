@@ -13,6 +13,12 @@ export default defineConfig(({command, isPreview}) => ({
       for (const [source, fileName] of [
         ['public/assets/soma.glb', 'assets/soma.glb'],
         ['public/assets/soma_n1.json', 'assets/soma_n1.json'],
+        ['public/assets/uka/model.glb', 'assets/uka/model.glb'],
+        ['public/assets/uka/conversion.json', 'assets/uka/conversion.json'],
+        ['public/assets/uka/README.md', 'assets/uka/README.md'],
+        ['public/assets/uka/README.ja.md', 'assets/uka/README.ja.md'],
+        ['public/runtime/ammo.js', 'runtime/ammo.js'],
+        ['public/runtime/ammo-LICENSE', 'runtime/ammo-LICENSE'],
         ['public/NOTICE.txt', 'NOTICE.txt'],
         ['licenses/SOMA-X-Apache-2.0.txt', 'licenses/SOMA-X-Apache-2.0.txt'],
         ['licenses/MotionBricks-LICENSE.txt', 'licenses/MotionBricks-LICENSE.txt'],
