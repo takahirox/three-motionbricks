@@ -1,0 +1,111 @@
+{
+  "source": {
+    "repository": "mrdoob/three.js",
+    "ref": "r87",
+    "revision": "5ce11d18c400791da0c9fbb4b6b9fcde2f754443",
+    "modelBlob": "5c88504144bd180083a7c5dce0b67d0fdb2f1a61",
+    "files": [
+      {
+        "path": "Readme.txt",
+        "bytes": 1156,
+        "sha256": "7b34ff053cfbf42322977fe2b0e3f90492c83dac2a1a001f6f4b2561197a4225"
+      },
+      {
+        "path": "miku/eyeM2.bmp",
+        "bytes": 49206,
+        "sha256": "a318f2d5bd22e3ac3a5b8cab4021fd68e25042e7730e8c04720cee68e3548565"
+      },
+      {
+        "path": "miku/miku_v2.pmd",
+        "bytes": 712126,
+        "sha256": "45a5a2fb897266a1b371b30cf53ed9435d375ddea9fce7f095bba2739b9bdae5"
+      },
+      {
+        "path": "miku/readme.txt",
+        "bytes": 203,
+        "sha256": "702a3f62567fc9c8becbdb47a73058683086ba75e236612a3e8e8d5486cd0a9e"
+      },
+      {
+        "path": "miku/readme_miku_v2.txt",
+        "bytes": 19465,
+        "sha256": "6732866be1a712d7af142fcbf59f7e3bab8691ea472f86bb674020b13d51355a"
+      },
+      {
+        "path": "MMDLoader.js",
+        "repositoryPath": "examples/js/loaders/MMDLoader.js",
+        "bytes": 60511,
+        "sha256": "b42b788a112ce6db4a9aba9632c1e0dd0494eb757bfc619ba44062cfddbf9ea8"
+      }
+    ]
+  },
+  "sha256": "cc3bd0a0c5620a248dda1bbb8b7e2c97aab7c8d863ef9a6add817bd56311cc07",
+  "bytes": 1220308,
+  "bones": 140,
+  "morphs": 30,
+  "bodies": 45,
+  "joints": 27,
+  "converter": "mmd-gltf@3dfa726aa38992a1f7d5ea17b377c685e839e8b8 + scripts/animasa-converter.ts",
+  "publication": "Issue #13 maintainer decision (2026-11-01); see README.md and original notices.",
+  "warnings": [
+    "Rigid-body-v1: sphere/box/capsule, modes 0/1/2, complemented raw PMX exclusion bits, spring-6DOF; ordered pre/post solver v2. Synthetic project policy; original-MMD fidelity unmeasured.",
+    "Shadow flags are retained in material extras, but are not rendered. Additional UV ZW and unused additional UV channels are omitted.",
+    "Morphs: retained 30 vertex/group POSITION targets; omitted unsupported source families []. Authored normals retained; no recomputation or morph normal targets.",
+    "Execution limitations: [{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[19]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[21]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[51]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[53]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[19]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[21]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[51]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"fixed-axis\",\"path\":\"MMD_skeleton_solver.bones[53]\",\"message\":\"fixed-axis execution is unavailable; metadata retained\"},{\"category\":\"unsupported-capability\",\"code\":\"physics-dependency\",\"path\":\"MMD_physics\",\"message\":\"MMD_physics bones[86]: IK cannot rewrite a body writer or its post-physics ancestor\"}]"
+  ],
+  "diagnostics": [
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[19]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[21]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[51]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[53]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[19]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[21]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[51]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "fixed-axis",
+      "path": "MMD_skeleton_solver.bones[53]",
+      "message": "fixed-axis execution is unavailable; metadata retained"
+    },
+    {
+      "category": "unsupported-capability",
+      "code": "physics-dependency",
+      "path": "MMD_physics",
+      "message": "MMD_physics bones[86]: IK cannot rewrite a body writer or its post-physics ancestor"
+    }
+  ]
+}

@@ -20,7 +20,7 @@ export class MMDCharacter {
   private constructor(readonly object: Group, private retarget: SomaRetargeter,
     readonly physics: LiveMMDPhysics, private toon: MMDToonPlugin, private outline: MMDOutlinePlugin,
     readonly effect: MMDOutlineEffect, readonly label: string) {}
-  static async load(base: string, soma: SomaAvatar, renderer: WebGPURenderer, localAnimasa?: File) {
+  static async load(base: string, soma: SomaAvatar, renderer: WebGPURenderer, animasa = false, localAnimasa?: File) {
     let toon!: MMDToonPlugin, outline!: MMDOutlinePlugin;
     const loader = new GLTFLoader()
       .register(p => toon = new MMDToonPlugin(p, {lighting:createToonLighting()}))
@@ -28,9 +28,13 @@ export class MMDCharacter {
       .register(p => new MMDPhysicsPlugin(p));
     let scene: Group | undefined;
     try {
-      if (localAnimasa) {
-        if (localAnimasa.size !== ANIMASA_GLB_BYTES) throw new Error('Incorrect Animasa GLB size. Use the documented offline converter.');
-        const bytes = await localAnimasa.arrayBuffer();
+      if (animasa) {
+        if (localAnimasa && localAnimasa.size !== ANIMASA_GLB_BYTES) throw new Error('Incorrect Animasa GLB size. Use the documented offline converter.');
+        const bytes = localAnimasa ? await localAnimasa.arrayBuffer() : await (async () => {
+          const response = await fetch(`${base}assets/animasa/model.glb`);
+          if (!response.ok) throw new Error(`Animasa download failed (HTTP ${response.status}).`);
+          return response.arrayBuffer();
+        })();
         await verifyAnimasaGLB(bytes);
         scene = (await loader.parseAsync(bytes,'')).scene;
       } else scene = (await loader.loadAsync(`${base}assets/uka/model.glb`)).scene;
@@ -42,10 +46,10 @@ export class MMDCharacter {
           o.geometry.morphAttributes = {}; o.morphTargetInfluences = []; o.morphTargetDictionary = {};
         }
       });
-      const retarget = new SomaRetargeter(scene, soma.bind, soma.bindPoints,localAnimasa ? ANIMASA_MAPPING : UKA_MAPPING);
-      const physics = new LiveMMDPhysics(scene, (await ammo(base)).api,false,Boolean(localAnimasa));
+      const retarget = new SomaRetargeter(scene, soma.bind, soma.bindPoints,animasa ? ANIMASA_MAPPING : UKA_MAPPING);
+      const physics = new LiveMMDPhysics(scene, (await ammo(base)).api,false,animasa);
       return new MMDCharacter(scene, retarget, physics, toon, outline, new MMDOutlineEffect(renderer),
-        localAnimasa ? 'Animasa Miku' : 'CG-CA Uka');
+        animasa ? 'Animasa Miku' : 'CG-CA Uka');
     } catch (error) {
       if (scene) disposeScene(scene);
       outline?.dispose(); await toon?.dispose(); throw error;

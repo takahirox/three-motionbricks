@@ -10,7 +10,7 @@ import { positions } from '../src/motion';
 
 const args = process.argv.slice(2), animasa = args.includes('--animasa');
 const trace = JSON.parse(await readFile(args.find(a=>a !== '--animasa') ?? '.artifacts/mmd-movement.json','utf8'));
-const local = animasa ? await readFile('.cache/animasa-local/model.glb') : undefined;
+const local = animasa ? await readFile('public/assets/animasa/model.glb') : undefined;
 const soma = somaFixture(), {root} = local
   ? await mmdFixture(JSON.parse(local.subarray(20,20+local.readUInt32LE(12)).toString())) : await ukaFixture();
 const retarget = new SomaRetargeter(root,soma.bind,soma.points,animasa ? ANIMASA_MAPPING : UKA_MAPPING), model = mmdPhysicsModel(root,true,animasa);

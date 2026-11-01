@@ -22,13 +22,16 @@ Changes: PMX to skinned glTF with MMD extensions; textures resized to at most 10
 Full original notices and guidelines: assets/uka/README.md and assets/uka/README.ja.md.
 No endorsement implied.
 
-Animasa Hatsune Miku (user-supplied local preview only; no model/texture distributed):
+Animasa Hatsune Miku (exact stock PMD converted to GLB with embedded eye/toon images):
 Modeling and original data conversion: Animasa (あにまさ).
 Character: © Crypton Future Media, INC.
 Character use is subject to the Piapro Character License and character guidelines:
 https://piapro.jp/license/pcl
 https://piapro.jp/license/character_guideline
-These do not replace model/resource permission. Current distribution assessment:
+Preserve original model/resource conditions and notices in assets/animasa/notices/.
+Source pins, conversion changes and conditions: assets/animasa/README.md.
+Public distribution follows the Issue #13 maintainer decision (2026-11-01),
+not a newly obtained third-party grant. No endorsement implied. Decision:
 https://github.com/takahirox/three-motionbricks/blob/main/docs/animasa-publication.md
 
 Ammo.js: Copyright (c) 2011 ammo.js contributors; see runtime/ammo-LICENSE.

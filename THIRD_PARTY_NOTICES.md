@@ -1,13 +1,15 @@
 # Third-party notices
 
-- Animasa Hatsune Miku is available only through a user-supplied local GLB; no
-  model or texture is distributed here. Modeling and original data conversion:
-  Animasa (あにまさ); character © Crypton Future Media, INC. See the
-  [dated rights assessment and proposed delivery notices](docs/animasa-publication.md),
+- `public/assets/animasa/model.glb`: Animasa Hatsune Miku, modeling and original
+  data conversion by Animasa (あにまさ); character © Crypton Future Media, INC.
+  Converted from the exact pinned stock PMD, with required eye/toon images embedded.
+  Public delivery follows the repository owner's [Issue #13 maintainer decision](docs/animasa-publication.md),
+  not a newly obtained third-party grant. [Asset source/changes/conditions](public/assets/animasa/README.md)
+  and all three unchanged original notices accompany the GLB. The
   [Piapro Character License](https://piapro.jp/license/pcl) and
-  [Crypton character-use guidelines](https://piapro.jp/license/character_guideline).
-  These character conditions do not replace model/resource permission. The
-  prepared credit text is not an asset redistribution grant.
+  [Crypton character-use guidelines](https://piapro.jp/license/character_guideline)
+  apply in addition to original model/resource conditions. No endorsement implied;
+  repository code licensing does not relicense this asset.
 - `public/assets/uka/model.glb`: CG-CA Uka (c) 2023-2024 by Nagoya Institute of
   Technology, Moonshot R&D Goal 1 Avatar Symbiotic Society. CC BY 4.0. Converted
   from `mmdagent-ex/uka@659f0d1a740fec68bb2817dc9c694a35e7a15f12` PMX to skinned

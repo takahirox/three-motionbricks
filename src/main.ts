@@ -70,15 +70,10 @@ async function main() {
     const selection = character.value, file = localAnimasa;
     const label = selection === 'animasa' ? 'Animasa Miku' : 'CG-CA Uka';
     element('animasa-control').hidden = selection !== 'animasa';
-    if (selection === 'animasa' && !file) {
-      await characters.select();
-      characterStatus.textContent = 'Choose your locally converted Animasa GLB. Public redistribution permission is unresolved.';
-      return;
-    }
     characterStatus.textContent = selection === 'soma' ? '' : `Loading ${label}…`;
     try {
       const selected = await characters.select(selection !== 'soma'
-        ? async () => (await import('./mmd')).MMDCharacter.load(import.meta.env.BASE_URL, avatar, renderer,selection === 'animasa' ? file : undefined) : undefined);
+        ? async () => (await import('./mmd')).MMDCharacter.load(import.meta.env.BASE_URL, avatar, renderer,selection === 'animasa',selection === 'animasa' ? file : undefined) : undefined);
       if (selected) characterStatus.textContent = selection !== 'soma' ? `${label} · MMD physics ${physicsControl.checked ? 'on' : 'off'}` : '';
     } catch (error) {
       character.value = selection === 'animasa' ? 'animasa' : 'soma';

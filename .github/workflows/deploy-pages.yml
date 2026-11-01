@@ -4,18 +4,20 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
 
 # Finish active deployments; keep only the latest waiting revision.
 concurrency:
-  group: pages
+  group: pages-${{ github.event_name == 'pull_request' && github.event.pull_request.number || 'deployment' }}
   cancel-in-progress: false
 
 jobs:
   build:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -30,10 +32,12 @@ jobs:
       - run: npm run build
       - run: npm run check:pages
       - uses: actions/upload-pages-artifact@v5
+        if: github.ref == 'refs/heads/main'
         with:
           path: dist
 
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     permissions:

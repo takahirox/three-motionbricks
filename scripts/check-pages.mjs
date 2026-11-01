@@ -1,5 +1,7 @@
 // Check the actual upload directory, independently of the Vite asset allowlist.
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import animasaFiles from './animasa-public-files.json' with {type: 'json'};
 import { readFile, readdir } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -9,7 +11,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 export const requiredFiles = ['index.html', 'assets/soma.glb', 'assets/soma_n1.json',
   'assets/uka/model.glb', 'assets/uka/README.md', 'assets/uka/README.ja.md',
   'assets/uka/conversion.json', 'runtime/ammo.js', 'runtime/ammo-LICENSE', 'NOTICE.txt',
-  'licenses/SOMA-X-Apache-2.0.txt', 'licenses/MotionBricks-LICENSE.txt'];
+  'licenses/SOMA-X-Apache-2.0.txt', 'licenses/MotionBricks-LICENSE.txt',
+  ...animasaFiles.map(file => `assets/animasa/${file.path}`)];
 
 export async function checkPages(root = new URL('../dist/', import.meta.url)) {
   const files = await readdir(root, {recursive: true, withFileTypes: true});
@@ -19,8 +22,8 @@ export async function checkPages(root = new URL('../dist/', import.meta.url)) {
     if (!file.isFile()) continue;
     const path = join(file.parentPath, file.name);
     const name = relative(fileURLToPath(root), path).split('\\').join('/');
-    const reviewedCharacter = ['assets/soma.glb','assets/uka/model.glb'].includes(name);
-    const characterError = `Unreviewed character asset in Pages (Animasa is local-only): ${file.name}`;
+    const reviewedCharacter = ['assets/soma.glb','assets/uka/model.glb','assets/animasa/model.glb'].includes(name);
+    const characterError = `Unreviewed character asset in Pages: ${file.name}`;
     if (/\.(glb|gltf)$/i.test(file.name)) assert.ok(reviewedCharacter, characterError);
     assert.ok(!/\.(onnx|part|pmd|pmx|vmd)$/i.test(file.name), `Source model, motion or weights in Pages: ${file.name}`);
     assert.ok(requiredFiles.includes(name) || /^assets\/[^/]+-[\w-]{8,}\.(js|css|wasm)$/.test(name),
@@ -29,6 +32,11 @@ export async function checkPages(root = new URL('../dist/', import.meta.url)) {
     const content = await readFile(path);
     assert.ok(content.subarray(0, 4).toString() !== 'glTF' || reviewedCharacter, characterError);
     assert.ok(!content.subarray(0, 100).toString().startsWith('version https://git-lfs.github.com/spec/'), `LFS pointer: ${file.name}`);
+    const pinned = animasaFiles.find(file => name === `assets/animasa/${file.path}`);
+    if (pinned) {
+      assert.equal(content.length, pinned.bytes, `Incorrect Animasa size: ${name}`);
+      assert.equal(createHash('sha256').update(content).digest('hex'), pinned.sha256, `Incorrect Animasa hash: ${name}`);
+    }
     count++; bytes += content.length;
   }
   const html = await readFile(new URL('index.html', root), 'utf8');

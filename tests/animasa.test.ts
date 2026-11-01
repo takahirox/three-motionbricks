@@ -20,8 +20,8 @@ test('Animasa rejects unverified sources and GLBs before parsing',async () => {
   assert.ok(!ANIMASA_MAPPING.some(b=>['上半身M','上半身2'].includes(b.target)));
 });
 
-// Opt-in: exact third-party source stays outside Git, npm test and Pages.
-test('exact local Animasa conversion, retargeting and Bullet integration', {skip:!process.env.ANIMASA_SOURCE}, async () => {
+// Opt-in source reconversion; the reviewed output is committed for public delivery.
+test('exact Animasa conversion, retargeting and Bullet integration', {skip:!process.env.ANIMASA_SOURCE}, async () => {
   const source = resolve(process.env.ANIMASA_SOURCE!);
   const record = await convertAnimasa(source,resolve('.cache/animasa-test-a'));
   const repeat = await convertAnimasa(source,resolve('.cache/animasa-test-b'));
