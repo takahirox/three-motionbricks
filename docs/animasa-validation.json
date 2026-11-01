@@ -252,7 +252,7 @@
       "nativeAllocations": 376,
       "maximumSecondaryAngle": 1.0694833232387937
     },
-    "prReference": "PR #12 body changed to Refs #11; draft status and incomplete scope preserved.",
+    "prReference": "PR #12 review fix: replaced the closing Issue reference with Refs #11 and removed the completion-target explanation. GitHub readback verified the exact updated body, draft status and unchanged head 67454ff72a353b1cd77fe8349d2880186abe2943. Rights and public-delivery blockers remain unresolved; subsequent publication must preserve the non-closing reference.",
     "limitations": [
       "Redistribution rights remain unresolved. No public Miku publication or published-origin check performed."
     ],
