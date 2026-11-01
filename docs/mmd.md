@@ -31,11 +31,13 @@ Inspected on 2026-11-01:
   and [Piapro Character License](https://piapro.jp/license/pcl) do not replace
   an independent model author's terms.
 
-**Blocker for bundling Animasa Miku:** the inspected material does not establish
-the model author's permission for conversion and public redistribution of the
-converted model/texture on GitHub Pages. No Miku asset, derivative or runtime
-download is included. This is a missing permission record, not a claim that all
-such use is prohibited.
+**Current bundling decision (#13):** the creator's directly attributable
+interview and stock-model reports support free reuse, but leave an inference
+about distribution of the model and accompanying resources. The Issue's explicit
+rights prerequisite remains unmet. See the [dated evidence assessment, narrow
+remaining scope and delivery plan](animasa-publication.md). No model-specific
+GLB/Pages or texture prohibition was found; no Miku asset or runtime download
+is included.
 
 Issue #11 adds a deterministic offline PMD-aware adapter and local GLB file
 selection without bundling or downloading Miku at runtime. The specific rights

@@ -65,6 +65,16 @@ try {
   page.off('response', checkResponse);
   assert.deepEqual(initialHttpErrors, []);
   const reportNow = () => page.locator('#diagnostics').textContent().then(JSON.parse);
+  // Selecting Animasa must neither fetch a model/texture nor upload the local
+  // file. Also runs against DEMO_URL on a production prefix or public origin.
+  const animasaRequests = [];
+  let checkingAnimasa = true;
+  const checkAnimasaRequest = request => {
+    if (!checkingAnimasa || !/^https?:/.test(request.url())) return;
+    if (request.method() !== 'GET' || /\.(glb|gltf|bin|pmd|pmx|bmp|png)(?:$|\?)/i.test(request.url()))
+      animasaRequests.push(`${request.method()} ${request.url()}`);
+  };
+  page.on('request', checkAnimasaRequest);
   await page.selectOption('#character','animasa');
   await page.waitForFunction(()=>document.querySelector('#character-status').textContent.includes('locally converted'));
   assert.equal((await reportNow()).character,'SOMA','SOMA stays active until a local GLB is supplied');
@@ -72,12 +82,16 @@ try {
   await page.waitForFunction(()=>document.querySelector('#character-status').textContent.includes('could not load'));
   assert.equal((await reportNow()).character,'SOMA');
   assert.equal(await page.locator('#animasa-file').isVisible(),true,'Invalid local file can be replaced without reloading');
+  assert.deepEqual(animasaRequests, [], 'Local-only Animasa selection must not transfer character assets');
+  checkingAnimasa = Boolean(animasaPath);
   // Exercise the actual converted skin, shaders, Bullet runtime and switching
   // even in the fast browser suite, without downloading inference weights.
   await selectMMD(page);
   await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'),undefined,{timeout:30000});
   await page.waitForFunction(() => JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsSteps > 180);
   const mmdReady = await reportNow();
+  if (animasaPath) assert.deepEqual(animasaRequests, [], 'The verified local GLB must stay on the device');
+  page.off('request', checkAnimasaRequest);
   assert.ok(mmdReady.mmd.maximumSecondaryAngle > 0.02);
   const capture = async name => {
     const bytes = await page.screenshot({clip:{x:450,y:180,width:450,height:520},path:new URL(name,output).pathname});

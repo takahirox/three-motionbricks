@@ -20,7 +20,16 @@ CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
 Source: https://github.com/mmdagent-ex/uka/tree/659f0d1a740fec68bb2817dc9c694a35e7a15f12
 Changes: PMX to skinned glTF with MMD extensions; textures resized to at most 1024 pixels.
 Full original notices and guidelines: assets/uka/README.md and assets/uka/README.ja.md.
-No endorsement implied. Animasa Miku is not distributed; see docs/mmd.md in source.
+No endorsement implied.
+
+Animasa Hatsune Miku (user-supplied local preview only; no model/texture distributed):
+Modeling and original data conversion: Animasa (あにまさ).
+Character: © Crypton Future Media, INC.
+Character use is subject to the Piapro Character License and character guidelines:
+https://piapro.jp/license/pcl
+https://piapro.jp/license/character_guideline
+These do not replace model/resource permission. Current distribution assessment:
+https://github.com/takahirox/three-motionbricks/blob/main/docs/animasa-publication.md
 
 Ammo.js: Copyright (c) 2011 ammo.js contributors; see runtime/ammo-LICENSE.
 MMD glTF converter/plugins: takahirox/mmd-gltf revision 3dfa726aa38992a1f7d5ea17b377c685e839e8b8.
