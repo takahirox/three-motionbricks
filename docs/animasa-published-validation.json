@@ -1,0 +1,363 @@
+{
+  "verified_at": "2026-11-01",
+  "origin": "https://takahirox.github.io/three-motionbricks/",
+  "pr": 14,
+  "reviewed_head": "b30ad46a1e1010ebb5a587261b14c035fbf32580",
+  "merge_commit": "3c8e750ddfb22a7b0af4bedf025b683d0caac545",
+  "deployment_run": 41310839688,
+  "deployment_id": 7473582423,
+  "smoke": "passed with default wait increased from 30 to 180 seconds; all assertions retained",
+  "onnx_delivery": "Official whole-file SHA-256-verified cache; test-only redirect with isolated localhost permission",
+  "onnx_identity": {
+    "url": "https://media.githubusercontent.com/media/NVlabs/motionbricks/54fc563aeaaf819a753d72cc9fdc6713989cdd43/motionbricks/assets/onnx/soma/mmm_v6_soma_fp32.onnx",
+    "bytes": 757864273,
+    "sha256": "856419dc72aeb14e591eebf4dd0ea05734a2506ddb00bcd39dd6dac2ad60f4fb"
+  },
+  "published_animasa_files_verified": [
+    {
+      "path": "model.glb",
+      "bytes": 1220308,
+      "sha256": "cc3bd0a0c5620a248dda1bbb8b7e2c97aab7c8d863ef9a6add817bd56311cc07"
+    },
+    {
+      "path": "conversion.json",
+      "bytes": 5693,
+      "sha256": "369d901b19ca41649319d61fe853ee5878c00d2e5bc27c1105ccf80c11e51349"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3077,
+      "sha256": "9bbc20df5cdfcdf62ac81e7373eb6f40d79b9f16698814d4fdf79c3a21388d62"
+    },
+    {
+      "path": "notices/Readme.txt",
+      "bytes": 1156,
+      "sha256": "7b34ff053cfbf42322977fe2b0e3f90492c83dac2a1a001f6f4b2561197a4225"
+    },
+    {
+      "path": "notices/miku/readme.txt",
+      "bytes": 203,
+      "sha256": "702a3f62567fc9c8becbdb47a73058683086ba75e236612a3e8e8d5486cd0a9e"
+    },
+    {
+      "path": "notices/miku/readme_miku_v2.txt",
+      "bytes": 19465,
+      "sha256": "6732866be1a712d7af142fcbf59f7e3bab8691ea472f86bb674020b13d51355a"
+    }
+  ],
+  "physics_preview": {
+    "report": {
+      "time": "2026-11-01T13:23:38.239Z",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "secureContext": true,
+      "webgpu": true,
+      "model": "https://media.githubusercontent.com/media/NVlabs/motionbricks/54fc563aeaaf819a753d72cc9fdc6713989cdd43/motionbricks/assets/onnx/soma/mmm_v6_soma_fp32.onnx",
+      "provider": "webgpu",
+      "strictGpu": false,
+      "cpuFallback": "ORT default WASM for unsupported or shape operations",
+      "samples": [],
+      "renderer": "WebGPUBackend",
+      "character": "MMD (Animasa Miku)",
+      "mmd": {
+        "physicsEnabled": true,
+        "physicsSteps": 239,
+        "nativeAllocations": 376,
+        "maximumSecondaryAngle": 0.8533857235711656
+      }
+    },
+    "changedPhysicsPixels": 16065
+  },
+  "inference": {
+    "animasa": {
+      "result": "pass",
+      "report": {
+        "time": "2026-11-01T13:30:23.381Z",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "secureContext": true,
+        "webgpu": true,
+        "model": "https://media.githubusercontent.com/media/NVlabs/motionbricks/54fc563aeaaf819a753d72cc9fdc6713989cdd43/motionbricks/assets/onnx/soma/mmm_v6_soma_fp32.onnx",
+        "provider": "webgpu",
+        "strictGpu": false,
+        "cpuFallback": "ORT default WASM for unsupported or shape operations",
+        "samples": [
+          2304,
+          73,
+          59,
+          59,
+          54,
+          45,
+          63,
+          54,
+          48,
+          54,
+          54,
+          50,
+          57
+        ],
+        "renderer": "WebGPUBackend",
+        "character": "MMD (Animasa Miku)",
+        "mmd": {
+          "physicsEnabled": true,
+          "physicsSteps": 5737,
+          "nativeAllocations": 376,
+          "maximumSecondaryAngle": 2.6486118909948053
+        },
+        "loadMs": 33646,
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": "",
+          "maxBufferSize": 4294967292,
+          "maxStorageBufferBindingSize": 4294967292
+        },
+        "runtime": {
+          "common": "1.31.1",
+          "web": "1.31.1"
+        },
+        "lastTokens": 16,
+        "intent": {
+          "x": 0,
+          "z": 0,
+          "speed": 0
+        },
+        "minimumHeadAboveRootMeters": 0.5918237755450431,
+        "generations": 13,
+        "requestRoot": [
+          3.8163872968352806,
+          1.007691502571106,
+          -11.077648323702299
+        ],
+        "generatedRoot": [
+          3.814970991682054,
+          1.0075888633728027,
+          -11.076099911647065
+        ],
+        "maximumDisplayedStepMeters": 0.08062257748298557,
+        "stoppedTravelMeters": 0.010000000000000231
+      },
+      "states": [
+        {
+          "state": "walk",
+          "before": [
+            0,
+            0
+          ],
+          "after": [
+            0.01,
+            -3.09
+          ],
+          "generations": 5,
+          "physics": {
+            "physicsEnabled": true,
+            "physicsSteps": 4837,
+            "nativeAllocations": 376,
+            "maximumSecondaryAngle": 1.8523164514020376
+          }
+        },
+        {
+          "state": "run",
+          "before": [
+            0.01,
+            -3.23
+          ],
+          "after": [
+            0.02,
+            -9.82
+          ],
+          "generations": 8,
+          "physics": {
+            "physicsEnabled": true,
+            "physicsSteps": 5077,
+            "nativeAllocations": 376,
+            "maximumSecondaryAngle": 2.345452137995827
+          }
+        },
+        {
+          "state": "turn",
+          "before": [
+            0.02,
+            -10.1
+          ],
+          "after": [
+            3.13,
+            -11.08
+          ],
+          "generations": 11,
+          "physics": {
+            "physicsEnabled": true,
+            "physicsSteps": 5377,
+            "nativeAllocations": 376,
+            "maximumSecondaryAngle": 2.3883904186543354
+          }
+        },
+        {
+          "state": "stop",
+          "before": [
+            3.27,
+            -11.08
+          ],
+          "after": [
+            3.82,
+            -11.07
+          ],
+          "generations": 13,
+          "physics": {
+            "physicsEnabled": true,
+            "physicsSteps": 5737,
+            "nativeAllocations": 376,
+            "maximumSecondaryAngle": 2.6486118909948053
+          }
+        }
+      ]
+    },
+    "uka": {
+      "result": "pass",
+      "report": {
+        "time": "2026-11-01T13:32:08.137Z",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "secureContext": true,
+        "webgpu": true,
+        "model": "https://media.githubusercontent.com/media/NVlabs/motionbricks/54fc563aeaaf819a753d72cc9fdc6713989cdd43/motionbricks/assets/onnx/soma/mmm_v6_soma_fp32.onnx",
+        "provider": "webgpu",
+        "strictGpu": false,
+        "cpuFallback": "ORT default WASM for unsupported or shape operations",
+        "samples": [
+          200,
+          52,
+          57,
+          54,
+          54,
+          54,
+          53,
+          41,
+          55,
+          52,
+          54,
+          71,
+          53,
+          61,
+          52,
+          54,
+          54,
+          55
+        ],
+        "renderer": "WebGPUBackend",
+        "character": "MMD (CG-CA Uka)",
+        "mmd": {
+          "physicsEnabled": true,
+          "physicsSteps": 6477,
+          "nativeAllocations": 1472,
+          "maximumSecondaryAngle": 2.667790672565614
+        },
+        "loadMs": 42054,
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": "",
+          "maxBufferSize": 4294967292,
+          "maxStorageBufferBindingSize": 4294967292
+        },
+        "runtime": {
+          "common": "1.31.1",
+          "web": "1.31.1"
+        },
+        "lastTokens": 16,
+        "intent": {
+          "x": 0,
+          "z": 0,
+          "speed": 0
+        },
+        "minimumHeadAboveRootMeters": 0.5920291589321809,
+        "generations": 15,
+        "requestRoot": [
+          5.201815841488935,
+          1.0084911584854126,
+          -16.623472424485286
+        ],
+        "generatedRoot": [
+          5.200098449895014,
+          1.0076197385787964,
+          -16.62215626360334
+        ],
+        "maximumDisplayedStepMeters": 0.28017851452243736,
+        "stoppedTravelMeters": 0
+      },
+      "states": [
+        {
+          "state": "walk",
+          "before": [
+            0,
+            0
+          ],
+          "after": [
+            0.02,
+            -5.34
+          ],
+          "generations": 6,
+          "physics": {
+            "physicsEnabled": true,
+            "physicsSteps": 5463,
+            "nativeAllocations": 1472,
+            "maximumSecondaryAngle": 2.3479662966204944
+          }
+        },
+        {
+          "state": "run",
+          "before": [
+            0.04,
+            -6.84
+          ],
+          "after": [
+            0.04,
+            -13.57
+          ],
+          "generations": 10,
+          "physics": {
+            "physicsEnabled": true,
+            "physicsSteps": 5727,
+            "nativeAllocations": 1472,
+            "maximumSecondaryAngle": 2.5468245940817353
+          }
+        },
+        {
+          "state": "turn",
+          "before": [
+            0.05,
+            -16.63
+          ],
+          "after": [
+            3.47,
+            -16.63
+          ],
+          "generations": 13,
+          "physics": {
+            "physicsEnabled": true,
+            "physicsSteps": 6099,
+            "nativeAllocations": 1472,
+            "maximumSecondaryAngle": 2.667790672565614
+          }
+        },
+        {
+          "state": "stop",
+          "before": [
+            4.95,
+            -16.61
+          ],
+          "after": [
+            5.2,
+            -16.62
+          ],
+          "generations": 15,
+          "physics": {
+            "physicsEnabled": true,
+            "physicsSteps": 6477,
+            "nativeAllocations": 1472,
+            "maximumSecondaryAngle": 2.667790672565614
+          }
+        }
+      ]
+    }
+  }
+}
