@@ -125,7 +125,11 @@ PMD IK uses the reference loader's angle ×4 policy, capped at π (a CCD step
 cannot exceed π), with an X-axis knee hinge. Original PMD records remain in
 extras. Coordinates reflect Z/winding once in `mmd-parser@1.1.4`, then scale by 0.08
 metres per unit. PMD bone-relative body positions become absolute for the
-PMX-aware writer; joint frames and filters use its normal conversion. Six
+PMX-aware writer; joint frames use its normal conversion. PMD collision masks
+are inclusion bits in the historical loader, so the adapter complements them
+to PMX exclusion bits before the writer inverts them. The GLB therefore retains
+the source inclusion masks (head: 65535, right hair: 65527), avoiding unintended
+hair self-collision. Six
 angular damping values above 1 clamp to 1, matching Bullet's `setDamping`;
 original values remain in `pmdPhysics`. `eyeM2.bmp` is decoded losslessly from
 BGR to PNG without guessed transparency. Three.js's three actual stock toon
@@ -180,6 +184,7 @@ npm run check:pages
 
 Use `CHROME_BIN` for an installed supported browser. The exact-asset integration
 check verifies deterministic bytes, preserved skin/identity/morphs/constraints,
+all 45 collision groups and inclusion masks against untouched source records,
 finite retargeted poses, independent hair/skirt physics, fixed-step counts,
 physics-off behavior and native cleanup. Browser checks verify shaders/appearance,
 visible physics, local selection, rapid switching and retry. Real-model checks

@@ -7,7 +7,7 @@ import { loadAmmoNode } from 'mmd-gltf/packages/three-mmd-physics/node';
 import { PhysicsWorld } from 'mmd-gltf/packages/three-mmd-physics';
 import { parseAnimasa, convertAnimasa, sha256 } from '../scripts/animasa-converter';
 import manifest from '../scripts/animasa-manifest.json';
-import { verifyAnimasaGLB, ANIMASA_GLB_SHA256 } from '../src/animasa';
+import { verifyAnimasaGLB, ANIMASA_GLB_SHA256, ANIMASA_GLB_BYTES } from '../src/animasa';
 import { ANIMASA_MAPPING, SomaRetargeter } from '../src/retarget';
 import { LiveMMDPhysics, mmdPhysicsModel } from '../src/mmd-physics';
 import { mmdFixture, somaFixture } from './mmd-fixture';
@@ -15,7 +15,7 @@ import { mmdFixture, somaFixture } from './mmd-fixture';
 test('Animasa rejects unverified sources and GLBs before parsing',async () => {
   assert.throws(()=>parseAnimasa(Buffer.from('not Animasa')),/SHA-256 mismatch/);
   await assert.rejects(verifyAnimasaGLB(new ArrayBuffer(100)),/Incorrect Animasa/);
-  await assert.rejects(verifyAnimasaGLB(new ArrayBuffer(1219992)),/not the verified Animasa/);
+  await assert.rejects(verifyAnimasaGLB(new ArrayBuffer(ANIMASA_GLB_BYTES)),/not the verified Animasa/);
   assert.equal(ANIMASA_MAPPING.length,20);
   assert.ok(!ANIMASA_MAPPING.some(b=>['上半身M','上半身2'].includes(b.target)));
 });
@@ -77,6 +77,15 @@ test('exact local Animasa conversion, retargeting and Bullet integration', {skip
   for(const e of model.morphs[0].elements) for(let k=0;k<3;k++)
     assert.ok(Math.abs(deltas[e.index*3+k]-e.position![k]*0.08)<1e-7,'PMD base-table morph indices must become actual vertex indices');
   const physicsBodies = json.extensions.MMD_physics.bodies;
+  const originalBodies = json.extras.pmdPhysics.bodies;
+  // Check the emitted inclusion masks against untouched PMD records, rather
+  // than the PMX adapter (which must use the opposite bit convention).
+  assert.equal(originalBodies.find((b:any)=>b.name==='頭').groupTarget,65535);
+  assert.equal(originalBodies.find((b:any)=>b.name==='右髪1').groupTarget,65527);
+  originalBodies.forEach((body:any,i:number) => {
+    assert.equal(physicsBodies[i].group,body.groupIndex,body.name);
+    assert.equal(physicsBodies[i].mask,body.groupTarget,`${body.name}: preserve historical PMD collision inclusion mask`);
+  });
   model.rigidBodies.forEach((value:any,i:number) => {
     const base = value.boneIndex < 0 ? [0,0,0] : model.bones[value.boneIndex].position;
     for(let k=0;k<3;k++) assert.ok(Math.abs(physicsBodies[i].translation[k]-(value.position[k]-base[k])*0.08)<1e-7,'PMD body offsets must not be treated as PMX absolute positions');
