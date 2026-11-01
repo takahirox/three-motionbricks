@@ -1,11 +1,16 @@
-# Animasa Hatsune Miku — Issue #11
+# Animasa Hatsune Miku — local implementation (#11)
 
 **Status: local-only interim implementation; public asset redistribution remains
-blocked. Issue #11 must remain open.** The Character selector offers **MMD
+blocked and is tracked separately in Issue #13.** The Character selector offers **MMD
 (Animasa Miku)**, **SOMA**, and separately **MMD (CG-CA Uka)**. Choosing Animasa
 asks for a locally converted GLB. No Miku model is shipped, fetched at runtime,
 uploaded by the file picker, or copied into the Pages artifact. Uka does not
 satisfy the Animasa requirement.
+
+See the [Issue #13 rights reassessment and public-delivery plan](animasa-publication.md)
+for the creator's interview, supporting stock-model evidence, explicit decision
+and remaining distribution scope. The local implementation is complete; public
+delivery is a separate prerequisite and deliverable.
 
 ## Verified source and rights investigation
 
@@ -58,14 +63,14 @@ Reviewed rights evidence:
   permission given to another project; no transferable grant to this repository
   for this exact converted GLB was established.
 
-**Precise remaining blocker:** complete original Animasa/distributor terms or an
-explicit permission record covering conversion of this PMD and its eye texture,
-derivative GLB redistribution, and public GitHub/GitHub Pages hosting, with
-required attribution and restrictions. The repository owner is asked to provide
-that record or the applicable complete asset terms. Existing example use and
-permission for `mmd-gltf` code do not fill this gap. This is a missing permission
-record, not a finding that all private conversion or public use is prohibited.
-No rights holder was contacted and no publication was performed.
+**Current distribution assessment:** the later first-person interview and stock
+model evidence support a favorable interpretation, but the Issue's required
+attributable grant to modify and redistribute the stock model/resources is still
+unconfirmed. No texture-specific or GLB/Pages-specific prohibition was found.
+The [dated reassessment](animasa-publication.md) supersedes the earlier request
+for a generic permission record and identifies the narrow scope and sufficient
+evidence without requiring a separate license per texture or format. No rights
+holder was contacted and no publication was performed.
 
 ## Offline local conversion
 

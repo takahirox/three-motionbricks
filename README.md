@@ -10,6 +10,9 @@ rendering and MMD rigid-body physics driven by the same generated SOMA motion.
 public redistribution of its converted asset remains blocked on specific model
 rights evidence. Uka is an optional model and does not fulfill Issue #11.
 See [MMD provenance, conversion, retargeting and validation](docs/mmd.md).
+The [Issue #13 rights reassessment and hosting plan](docs/animasa-publication.md)
+evaluates Animasa's interview and the stock-model evidence; public delivery
+remains pending its specific distribution prerequisite.
 
 **Public demo:** [takahirox.github.io/three-motionbricks](https://takahirox.github.io/three-motionbricks/)
 (available after the first successful Pages deployment). No installation or backend
@@ -106,6 +109,8 @@ partial downloads are excluded.
 `npm run preview` serves the build at `http://127.0.0.1:4173/three-motionbricks/`.
 Run `npm run check:pages` to check the artifact for missing resources, incorrect
 HTML base paths, weights and unresolved Git LFS pointers.
+The upload-directory check also rejects unreviewed textures, conversion records
+and renamed GLBs independently of Vite's build allowlist.
 
 Start the development or preview server before running browser smoke checks:
 
