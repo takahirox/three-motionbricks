@@ -1,46 +1,23 @@
 # MMD character integration (Issues #9 and #11)
 
 The Character selector defaults to SOMA and offers **MMD (Animasa Miku)** via
-user-supplied local GLB, and separately **MMD (CG-CA Uka)**. Both consume the same
+automatic same-origin GLB loading (with optional local override), and separately
+**MMD (CG-CA Uka)**. Both consume the same
 continuously generated MotionBricks SOMA poses. See [the Animasa implementation,
-exact source manifest, rights investigation and local conversion](animasa.md).
+exact source manifest, maintainer decision and offline conversion](animasa.md).
 Uka is an optional model and does not complete the Animasa request in Issue #11.
 The remaining sections describe the existing Uka pipeline unless specified.
 
-## Animasa Miku provenance and redistribution blocker
+## Animasa Miku provenance and publication
 
-Inspected on 2026-11-01:
-
-- The [historical application](https://github.com/takahirox/MMDLoader-app/blob/master/app_interactive.html)
-  references Three.js r87's `examples/models/mmd/miku/miku_v2.pmd`.
-- That [PMD](https://github.com/mrdoob/three.js/blob/r87/examples/models/mmd/miku/miku_v2.pmd)
-  is 712,126 bytes (Git blob `5c88504144bd180083a7c5dce0b67d0fdb2f1a61`).
-  Its Shift_JIS header describes a physics-enabled Hatsune Miku PolyMo model
-  ver.2.3, credits **あにまさ氏** for modeling and data conversion, and credits
-  Crypton Future Media for copyright. This verifies Animasa identity.
-- The [asset-specific readme](https://github.com/mrdoob/three.js/blob/r87/examples/models/mmd/miku/readme.txt)
-  identifies a model bundled with MMD. Its [MMD 5.24 readme](https://github.com/mrdoob/three.js/blob/r87/examples/models/mmd/miku/readme_miku_v2.txt)
-  permits publishing images/video and PMM/VPD/VMD files; it does not establish
-  permission to redistribute the model as a converted GLB. That readme is UTF-8.
-- Three.js's [MMD notice](https://github.com/mrdoob/three.js/blob/r87/examples/models/mmd/Readme.txt)
-  excludes these assets from MIT and requires the original archive's individual
-  terms. Inclusion in an example repository is not permission to republish.
-- Crypton's [character guidelines](https://piapro.jp/license/character_guideline)
-  address free noncommercial 3D model distribution and require recipients to
-  follow those guidelines. The [English creator guidance](https://piapro.net/intl/en_for_creators.html)
-  and [Piapro Character License](https://piapro.jp/license/pcl) do not replace
-  an independent model author's terms.
-
-**Blocker for bundling Animasa Miku:** the inspected material does not establish
-the model author's permission for conversion and public redistribution of the
-converted model/texture on GitHub Pages. No Miku asset, derivative or runtime
-download is included. This is a missing permission record, not a claim that all
-such use is prohibited.
-
-Issue #11 adds a deterministic offline PMD-aware adapter and local GLB file
-selection without bundling or downloading Miku at runtime. The specific rights
-blocker remains; see [Animasa source and conversion](animasa.md). The following
-PMX conversion instructions apply to Uka.
+Issue #13 records the repository owner's 2026-11-01 decision resolving the former
+redistribution prerequisite for the exact pinned Animasa stock model/resources
+and this demo. Automatic delivery uses the #11 offline PMD conversion and its
+retargeting/physics profile; Uka is independent. This is a maintainer decision,
+not a new third-party grant. See [the decision and delivery contract](animasa-publication.md),
+[exact source pins and conversion](animasa.md), and [unchanged original notices,
+credits and applicable conditions](../public/assets/animasa/README.md).
+The following PMX conversion instructions apply to Uka.
 
 ## Selected licensed alternative
 

@@ -1,20 +1,44 @@
 // Start npm run dev first. Optional real-model test: npm run test:browser -- --model
 // CHROME_BIN selects a system Chrome; otherwise run npx playwright install chromium.
 import assert from 'node:assert/strict';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, stat } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import model from '../model-source.json' with {type: 'json'};
 import sharp from 'sharp';
+import { createHash } from 'node:crypto';
+import { createReadStream } from 'node:fs';
+import { createServer } from 'node:http';
+import animasaFiles from './animasa-public-files.json' with {type:'json'};
 const realModel = process.argv.includes('--model');
 const animasaPath = process.env.ANIMASA_GLB;
-const mmdMode = process.argv.includes('--mmd') || Boolean(animasaPath);
-const mmdLabel = animasaPath ? 'MMD (Animasa Miku)' : 'MMD (CG-CA Uka)';
+const animasaMode = process.argv.includes('--animasa') || Boolean(animasaPath);
+const mmdMode = process.argv.includes('--mmd') || animasaMode;
+const mmdLabel = animasaMode ? 'MMD (Animasa Miku)' : 'MMD (CG-CA Uka)';
 async function selectMMD(page) {
-  await page.selectOption('#character',animasaPath ? 'animasa' : 'mmd');
+  await page.selectOption('#character',animasaMode ? 'animasa' : 'mmd');
   if (animasaPath) await page.locator('#animasa-file').setInputFiles(animasaPath);
 }
 const strictGpu = process.argv.includes('--strict-gpu');
 const origin = process.env.DEMO_URL || 'http://127.0.0.1:5173/';
+// Optional verified cache avoids repeating the 758 MB transfer across GPU
+// regression runs. Only the ONNX request is redirected; production asset delivery
+// and application model URL stay unchanged. Never serve an unverified substitute.
+let modelCacheServer, modelCacheURL;
+if (realModel && process.env.MODEL_CACHE) {
+  const path = process.env.MODEL_CACHE;
+  assert.equal((await stat(path)).size, model.bytes);
+  const hash = createHash('sha256');
+  for await (const chunk of createReadStream(path)) hash.update(chunk);
+  assert.equal(hash.digest('hex'), model.sha256);
+  modelCacheServer = createServer((request, response) => {
+    if (request.method !== 'GET' || request.url !== '/model.onnx') {response.writeHead(404).end(); return;}
+    response.writeHead(200, {'Content-Type':'application/octet-stream',
+      'Content-Length':model.bytes, 'Access-Control-Allow-Origin':'*'});
+    createReadStream(path).pipe(response);
+  });
+  await new Promise(resolve => modelCacheServer.listen(0, '127.0.0.1', resolve));
+  modelCacheURL = `http://127.0.0.1:${modelCacheServer.address().port}/model.onnx`;
+}
 const browser = await chromium.launch({executablePath: process.env.CHROME_BIN || undefined,
   headless: true, args: ['--enable-unsafe-webgpu']});
 const output = new URL('../.artifacts/', import.meta.url);
@@ -65,15 +89,46 @@ try {
   page.off('response', checkResponse);
   assert.deepEqual(initialHttpErrors, []);
   const reportNow = () => page.locator('#diagnostics').textContent().then(JSON.parse);
+  // Automatic selection exercises the published exact asset with embedded images.
+  // Check all accompanying files at the same origin, including original notices.
+  for (const file of animasaFiles) {
+    const response = await page.request.get(new URL(`assets/animasa/${file.path}`, origin).href);
+    assert.equal(response.status(), 200, file.path);
+    const bytes = await response.body();
+    assert.equal(bytes.length, file.bytes, file.path);
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), file.sha256, file.path);
+  }
+  const automatic = page.waitForResponse(response => response.url().endsWith('/assets/animasa/model.glb'));
+  await page.selectOption('#character', 'animasa');
+  assert.equal((await automatic).status(), 200);
+  await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'), undefined, {timeout:30000});
+  assert.equal((await reportNow()).character, 'MMD (Animasa Miku)');
+  await page.selectOption('#character','soma');
+  const overrideTransfers = [];
+  const checkOverride = request => {
+    if (request.method() !== 'GET' || /\.(glb|gltf|bin|pmd|pmx|bmp|png)(?:$|\?)/i.test(request.url()))
+      overrideTransfers.push(`${request.method()} ${request.url()}`);
+  };
   await page.selectOption('#character','animasa');
-  await page.waitForFunction(()=>document.querySelector('#character-status').textContent.includes('locally converted'));
-  assert.equal((await reportNow()).character,'SOMA','SOMA stays active until a local GLB is supplied');
+  await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'));
+  page.on('request', checkOverride);
+  // Invalid override falls back to SOMA while leaving the picker available.
   await page.locator('#animasa-file').setInputFiles({name:'wrong.glb',mimeType:'model/gltf-binary',buffer:Buffer.from('wrong model')});
   await page.waitForFunction(()=>document.querySelector('#character-status').textContent.includes('could not load'));
   assert.equal((await reportNow()).character,'SOMA');
-  assert.equal(await page.locator('#animasa-file').isVisible(),true,'Invalid local file can be replaced without reloading');
-  // Exercise the actual converted skin, shaders, Bullet runtime and switching
-  // even in the fast browser suite, without downloading inference weights.
+  assert.equal(await page.locator('#animasa-file').isVisible(),true);
+  const localBytes = await readFile(animasaPath || new URL('../public/assets/animasa/model.glb', import.meta.url));
+  await page.locator('#animasa-file').setInputFiles({name:'model.glb',mimeType:'model/gltf-binary',buffer:localBytes});
+  await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'));
+  assert.deepEqual(overrideTransfers, [], 'Local override stays on the device');
+  page.off('request', checkOverride);
+  // Clearing the optional override restores automatic loading.
+  await page.locator('#animasa-file').setInputFiles([]);
+  await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'));
+  // Check both public MMD characters even without downloading inference weights.
+  await page.selectOption('#character', 'mmd');
+  await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'));
+  assert.equal((await reportNow()).character, 'MMD (CG-CA Uka)');
   await selectMMD(page);
   await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'),undefined,{timeout:30000});
   await page.waitForFunction(() => JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsSteps > 180);
@@ -122,6 +177,7 @@ try {
   await page.screenshot({path: new URL('mobile.png', output).pathname});
   await page.setViewportSize({width: 1280, height: 850});
   if (!realModel) await page.route(/mmm_v6_soma_fp32\.onnx$/, route => route.fulfill({status:404,body:'Missing model'}));
+  if (modelCacheURL) await page.route(model.url, route => route.fulfill({status:302, headers:{location:modelCacheURL,'Access-Control-Allow-Origin':'*'}}));
   await page.locator('#start').click();
   if (realModel) await waitForModel(page);
   else await page.waitForFunction(() => document.querySelector('#status').textContent.startsWith('Blocked:') || Number(document.querySelector('#generations').textContent) > 0,
@@ -209,6 +265,26 @@ try {
   await page.screenshot({path: new URL('desktop.png', output).pathname});
   assert.deepEqual(errors, []);
   if (!realModel) {
+    const brokenAnimasa = await browser.newPage();
+    await brokenAnimasa.goto(origin);
+    await brokenAnimasa.waitForFunction(() => !document.querySelector('#character').disabled);
+    for (const fault of ['missing', 'corrupted']) {
+      await brokenAnimasa.route('**/assets/animasa/model.glb', route => route.fulfill(fault === 'missing'
+        ? {status:404, body:'Missing Animasa'} : {body:Buffer.alloc(localBytes.length)}));
+      await brokenAnimasa.selectOption('#character', 'animasa');
+      await brokenAnimasa.waitForFunction(() => document.querySelector('#character-status').textContent.includes('could not load'));
+      assert.match(await brokenAnimasa.locator('#character-status').textContent(), fault === 'missing' ? /HTTP 404/ : /not the verified Animasa/);
+      assert.equal(JSON.parse(await brokenAnimasa.locator('#diagnostics').textContent()).character, 'SOMA');
+      assert.equal(await brokenAnimasa.locator('#start').isEnabled(), true);
+      await brokenAnimasa.unroute('**/assets/animasa/model.glb');
+    }
+    await brokenAnimasa.route('**/runtime/ammo.js', route => route.fulfill({status:404, body:'Missing Ammo'}));
+    await brokenAnimasa.selectOption('#character', 'animasa');
+    await brokenAnimasa.waitForFunction(() => document.querySelector('#character-status').textContent.includes('Ammo resource loading failed'));
+    await brokenAnimasa.unroute('**/runtime/ammo.js');
+    await brokenAnimasa.selectOption('#character', 'animasa');
+    await brokenAnimasa.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'));
+    await brokenAnimasa.close();
     const missingMMD = await browser.newPage();
     await missingMMD.route('**/assets/uka/model.glb',r=>r.fulfill({status:404,body:'Missing Uka'}));
     await missingMMD.goto(origin);
@@ -248,5 +324,5 @@ try {
     await noGpuPage.close();
   }
   delete report.motionSample;
-  console.log(JSON.stringify({result:'pass',realModel,mmdMode,strictGpu,report},null,2));
-} finally {await browser.close();}
+  console.log(JSON.stringify({result:'pass',realModel,mmdMode,strictGpu,onnxDelivery:modelCacheURL ? 'SHA-256-verified local cache; test-only redirect' : 'application model URL',report},null,2));
+} finally {await browser.close(); if (modelCacheServer) await new Promise(resolve => modelCacheServer.close(resolve));}

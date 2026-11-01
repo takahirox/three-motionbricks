@@ -1,7 +1,8 @@
 # Asset provenance and conversion
 
 The **CG-CA Uka** MMD character, its CC BY 4.0 attribution and original guidelines,
-the Animasa Miku permission blocker, pinned PMX conversion and Ammo runtime are
+the Animasa Miku maintainer publication decision, pinned PMX conversion and Ammo
+runtime are
 documented in [mmd.md](mmd.md). Only converted glTF, notices and required runtime
 are published; no PMD/PMX or VMD is shipped.
 
@@ -76,7 +77,8 @@ less polished motion.
 ## Public hosting and caching
 
 GitHub Pages hosts the app, worker, matching ORT WASM, native SOMA GLB, manifest,
-and asset notices/licenses. `vite.config.ts` uses an explicit reviewed asset
+reviewed Uka/Animasa GLBs with embedded textures, and asset notices/licenses.
+`vite.config.ts` uses an explicit reviewed asset
 allowlist rather than copying `public/` into production. Builds fail for unresolved
 LFS pointers in those assets; `npm run check:pages` also scans the complete artifact
 before upload. Do not add weights or other unreviewed/restricted assets to the

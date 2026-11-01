@@ -1,11 +1,15 @@
-# Animasa Hatsune Miku — Issue #11
+# Animasa Hatsune Miku — conversion and automatic loading (#11, #13)
 
-**Status: local-only interim implementation; public asset redistribution remains
-blocked. Issue #11 must remain open.** The Character selector offers **MMD
-(Animasa Miku)**, **SOMA**, and separately **MMD (CG-CA Uka)**. Choosing Animasa
-asks for a locally converted GLB. No Miku model is shipped, fetched at runtime,
-uploaded by the file picker, or copied into the Pages artifact. Uka does not
-satisfy the Animasa requirement.
+The Character selector automatically loads the exact pinned **MMD (Animasa Miku)**
+GLB from the demo's own origin. Its eye and three toon textures are embedded.
+SOMA remains the default; CG-CA Uka remains a separately named option. An optional
+local override accepts the same verified conversion without uploading it.
+
+The [Issue #13 maintainer decision](animasa-publication.md) resolves the former
+redistribution prerequisite for this exact model/resources and public demo.
+This is a maintainer decision, not a newly obtained third-party grant. Original
+notices, credits and applicable character/model conditions are preserved in the
+[published asset record](../public/assets/animasa/README.md).
 
 ## Verified source and rights investigation
 
@@ -58,14 +62,11 @@ Reviewed rights evidence:
   permission given to another project; no transferable grant to this repository
   for this exact converted GLB was established.
 
-**Precise remaining blocker:** complete original Animasa/distributor terms or an
-explicit permission record covering conversion of this PMD and its eye texture,
-derivative GLB redistribution, and public GitHub/GitHub Pages hosting, with
-required attribution and restrictions. The repository owner is asked to provide
-that record or the applicable complete asset terms. Existing example use and
-permission for `mmd-gltf` code do not fill this gap. This is a missing permission
-record, not a finding that all private conversion or public use is prohibited.
-No rights holder was contacted and no publication was performed.
+**Current distribution decision:** on 2026-11-01 the repository owner authorized
+conversion and public distribution of the exact pinned stock model/resources
+for this demo. The updated Issue #13 supersedes the former rights-blocked
+assessment. The evidence above is historical context, not a new permission grant.
+No additional generic rights confirmation is required for this task.
 
 ## Offline local conversion
 
@@ -95,20 +96,34 @@ npm run assets:animasa -- /path/to/source-root
 npm run dev
 ```
 
-Select **MMD (Animasa Miku)** and choose `.cache/animasa-local/model.glb`.
+Select **MMD (Animasa Miku)** to load automatically. To override the public copy,
+choose `.cache/animasa-local/model.glb` in the optional local picker.
 The browser checks the exact deterministic GLB hash before GLTFLoader parses it.
 Files remain on the device. Switch back to SOMA or Uka normally; a supplied File
 is retained in memory for switching during the session. To replace an invalid
-file, use the still-visible file picker. Reloading requires choosing it again.
+file, use the still-visible file picker. Clear the picker to restore automatic
+loading. Reloading clears the override.
 Physics, inference, keyboard controls, error recovery and disposal use the same
 runtime as the other characters. There is no runtime PMD/PMX support or VMD.
 
-An optional output argument must point below ignored `.cache/`. The converter
-also writes `conversion.json` with source pins, output hash and diagnostics, and
-copies all three original text notices unchanged into `notices/`.
-Do not commit or publish these artifacts. Vite's production allowlist excludes
-them, and Pages checks permit only the reviewed SOMA and Uka GLBs. Local file
-selection also works from a production preview without serving the Miku GLB.
+An optional scratch output argument must point below ignored `.cache/`. To
+reproduce the reviewed public GLB, record and notices, run:
+
+```sh
+npm run assets:animasa -- /path/to/source-root --publish
+```
+
+This writes only to `public/assets/animasa/`; the converter checks all six source
+files and preserves the three original notices unchanged. Eye/toon PNG scratch
+files are removed after embedding. The asset README is maintained separately.
+`conversion.json` records source pins, output hash and diagnostics. Ordinary
+builds use the committed assets and need no network or source PMD. When deliberately
+changing conversion bytes, review and update `src/animasa.ts` and every affected
+entry in `scripts/animasa-public-files.json`; never weaken the identity check.
+
+Vite and the independent Pages upload guard allow only the six reviewed Animasa
+files. The guard checks every file's exact size/hash; unrelated GLBs, renamed
+GLBs, source PMD/PMX/VMD, loose textures, weights and scratch files are rejected.
 
 ## Conversion and runtime contract
 
@@ -139,7 +154,7 @@ No raw source PMD or prerecorded animation is embedded.
 
 GLTFLoader registers toon, outline and physics plugins. BDEF needs no SDEF/QDEF
 plugin; expressions stay at rest for locomotion and their GPU attributes are
-omitted as for Uka, while all targets remain in the local GLB. The solver plugin
+omitted as for Uka, while all targets remain in the downloadable GLB. The solver plugin
 is included by the physics plugin. One incremental Bullet world owns stepping.
 
 Animasa uses `ANIMASA_MAPPING` in `src/retarget.ts`: Hips→下半身,
@@ -169,13 +184,14 @@ No claim of complete original-MMD fidelity is made.
 
 ## Validation
 
-Fast default checks reject wrong source and output identities. Exact-asset checks
-are opt-in so third-party assets never become test fixtures in Git:
+Fast default checks reject wrong source and output identities and check the
+reviewed committed output. Source reconversion is opt-in; source PMD/resources
+remain outside Git:
 
 ```sh
 ANIMASA_SOURCE=/path/to/source-root npx tsx --test tests/animasa.test.ts
-ANIMASA_GLB=.cache/animasa-local/model.glb npm run test:browser
-ANIMASA_GLB=.cache/animasa-local/model.glb npm run test:browser -- --model
+npm run test:browser -- --animasa
+npm run test:browser -- --model --animasa
 npm run check:mmd-ik -- --animasa .artifacts/mmd-movement.json
 npm test
 npm run build
@@ -189,8 +205,11 @@ finite retargeted poses, independent hair/skirt physics, fixed-step counts,
 physics-off behavior and native cleanup. Browser checks verify shaders/appearance,
 visible physics, local selection, rapid switching and retry. Real-model checks
 exercise walk/run/turn/stop and switching while inference continues. Generated
-traces, screenshots, source assets and GLBs remain ignored.
+traces, screenshots and source assets remain ignored; the reviewed public GLB
+is committed.
 
-Public redistribution and a published-origin Miku check remain blocked on the
-specific rights evidence above. A local preview does not establish publication
-success. See `animasa-validation.json` for checks actually run and their limits.
+Required post-merge verification remains pending: successful deployment and the
+same automatic loading, asset/notice hashes, inference, physics, switching and
+recovery checks on the published origin. Keep Issue #13 open until they succeed.
+Historical #11 checks in `animasa-validation.json` are not current #13 evidence;
+see [current validation](animasa-publication-validation.md).

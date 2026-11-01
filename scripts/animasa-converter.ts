@@ -1,6 +1,6 @@
 // Offline, exact-source PMD adapter. This module is never imported by the app.
 import { createHash } from 'node:crypto';
-import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import { readFile, mkdir, writeFile, rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { Parser } from 'mmd-parser';
 import sharp from 'sharp';
@@ -94,7 +94,7 @@ export async function eyePNG(bytes: Buffer) {
 }
 
 export async function convertAnimasa(source: string, output: string) {
-  // No network access, public/ writes or publication flag. Read every original notice too.
+  // Offline conversion: verify every input, including the original notices.
   for (const file of manifest.files) verifySource(file.path,await readFile(resolve(source,file.path)));
   const model = parseAnimasa(await readFile(resolve(source,'miku/miku_v2.pmd')));
   const textures = resolve(output,'textures'); await mkdir(textures,{recursive:true});
@@ -111,7 +111,7 @@ export async function convertAnimasa(source: string, output: string) {
   const {mmdSource:_source, ...extras} = document.getRoot().getExtras();
   document.getRoot().setExtras({...extras, sourcePMDSha256:manifest.files.find(f=>f.path.endsWith('.pmd'))!.sha256,
     attribution:'Hatsune Miku — modeling and conversion: Animasa (あにまさ); character © Crypton Future Media, INC.',
-    sourceFormat:'pmd', publication:'NOT CLEARED — user-supplied local preview only'});
+    sourceFormat:'pmd', publication:'Public demo distribution under the Issue #13 maintainer decision (2026-11-01); original notices and character conditions apply.'});
   const sourceBytes = await readFile(resolve(source,'miku/miku_v2.pmd'));
   const original = new Parser().parsePmd(sourceBytes.buffer.slice(sourceBytes.byteOffset,sourceBytes.byteOffset+sourceBytes.byteLength),false);
   document.getRoot().setExtras({...document.getRoot().getExtras(),
@@ -126,6 +126,7 @@ export async function convertAnimasa(source: string, output: string) {
   for (const mesh of document.getRoot().listMeshes()) for (const p of mesh.listPrimitives())
     for (const target of p.listTargets()) target.getAttribute('POSITION')?.setSparse(true);
   await io.write(resolve(output,'model.glb'),document);
+  await rm(textures, {recursive:true}); // Images are embedded; never publish scratch textures.
   for (const file of manifest.files.filter(f=>f.path.endsWith('.txt'))) {
     const target = resolve(output,'notices',file.path);
     await mkdir(resolve(target,'..'),{recursive:true});
@@ -135,7 +136,7 @@ export async function convertAnimasa(source: string, output: string) {
   const record = {source:manifest, sha256:sha256(artifact), bytes:artifact.length,
     bones:model.bones.length, morphs:model.morphs.length, bodies:model.rigidBodies.length,joints:model.constraints.length,
     converter:'mmd-gltf@3dfa726aa38992a1f7d5ea17b377c685e839e8b8 + scripts/animasa-converter.ts',
-    publication:'NOT CLEARED — keep out of Git and Pages', warnings,diagnostics};
+    publication:'Issue #13 maintainer decision (2026-11-01); see README.md and original notices.', warnings,diagnostics};
   await writeFile(resolve(output,'conversion.json'),JSON.stringify(record,null,2)+'\n');
   return record;
 }

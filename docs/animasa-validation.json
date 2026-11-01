@@ -1,4 +1,5 @@
 {
+  "historicalRecord": "Historical pre-#13 validation; rights-blocked/local-only status in this record is superseded by the 2026-11-01 Issue #13 maintainer decision. See animasa-publication-validation.md for current checks.",
   "date": "2026-11-01",
   "issue": 11,
   "status": "Local-only interim implementation; public redistribution blocked; keep Issue open",

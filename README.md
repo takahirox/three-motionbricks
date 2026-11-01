@@ -3,13 +3,14 @@
 A browser demo of a native, skinned SOMA humanoid controlled with the keyboard.
 MotionBricks generates each motion segment locally with ONNX Runtime Web's
 WebGPU provider. Three.js renders the character, ground and follow/orbit camera.
-The **Character** selector offers **MMD (Animasa Miku)** through a verified,
-user-supplied local GLB, and separately **MMD (CG-CA Uka)**. Both use toon/outline
-rendering and MMD rigid-body physics driven by the same generated SOMA motion.
-[Animasa offline conversion and local preview](docs/animasa.md) are available;
-public redistribution of its converted asset remains blocked on specific model
-rights evidence. Uka is an optional model and does not fulfill Issue #11.
-See [MMD provenance, conversion, retargeting and validation](docs/mmd.md).
+The **Character** selector automatically loads **MMD (Animasa Miku)** or
+**MMD (CG-CA Uka)**, with toon/outline rendering and MMD rigid-body physics driven
+by the same generated SOMA motion. Animasa is the exact pinned stock model;
+its eye and toon textures are embedded in the GLB. No local upload is needed.
+An optional verified local override remains available. See [Animasa source,
+conversion and runtime](docs/animasa.md), the [maintainer's Issue #13 decision](docs/animasa-publication.md)
+and [original notices and conditions](public/assets/animasa/README.md).
+See [MMD retargeting and validation](docs/mmd.md) for the separate Uka integration.
 
 **Public demo:** [takahirox.github.io/three-motionbricks](https://takahirox.github.io/three-motionbricks/)
 (available after the first successful Pages deployment). No installation or backend
@@ -100,12 +101,14 @@ npm run preview
 ```
 
 Production builds use `/three-motionbricks/` as the base path and fetch the model
-remotely, even if a local model is installed. Only reviewed SOMA/Uka assets and their
-notices/licenses are published. Locally converted Animasa assets, weights and
-partial downloads are excluded.
+remotely, even if a local model is installed. Only the reviewed SOMA, Uka and
+exact Animasa GLBs and their notices/licenses are published. Source models, loose textures, arbitrary local
+assets, weights and partial downloads are excluded.
 `npm run preview` serves the build at `http://127.0.0.1:4173/three-motionbricks/`.
 Run `npm run check:pages` to check the artifact for missing resources, incorrect
 HTML base paths, weights and unresolved Git LFS pointers.
+The upload-directory check also rejects unreviewed textures, conversion records
+and renamed GLBs independently of Vite's build allowlist.
 
 Start the development or preview server before running browser smoke checks:
 
@@ -114,6 +117,9 @@ npx playwright install chromium
 npm run test:browser
 npm run test:browser -- --model
 npm run test:browser -- --model --mmd
+npm run test:browser -- --animasa
+npm run test:browser -- --model --animasa
+npm run check:mmd-ik -- --animasa
 npm run check:mmd-ik
 ```
 
@@ -127,10 +133,16 @@ the actual remote download and CORS). The real-model check allows slow downloads
 while progress continues, with a 15½-minute watchdog for an unchanged loading
 status. It logs progress every 30 seconds and saves a `loading.json` timeline
 alongside reports/screenshots in ignored `.artifacts/`.
+For repeated GPU checks, `MODEL_CACHE=/path/to/mmm_v6_soma_fp32.onnx` streams
+a size/SHA-256-verified local copy through a test-only redirect. This avoids
+repeated downloads and does not change the production app. Omit `MODEL_CACHE`
+when validating actual upstream delivery or the published origin.
 Browser tests require actual browser/GPU support and
 are separate from the fast math/queue/asset tests.
 MMD checks also verify visible physics response, resource cleanup, rapid model
-switching and missing GLB/Ammo recovery. `--model --mmd` captures generated poses
+switching and missing/corrupted GLB and missing Ammo recovery. `--animasa` tests
+automatic Animasa selection, original-notice/asset hashes and the optional local
+override. `--model --mmd` captures generated poses
 for the offline IK comparison only in ignored `.artifacts/`. Recreate the committed
 Uka GLB and local Ammo runtime with `npm run assets:mmd`; ordinary builds do not
 download source assets.
@@ -143,7 +155,8 @@ If the `github-pages` environment has branch restrictions, allow `main`.
 No model upload, Git LFS setup, backend, custom headers or repository secret is
 needed.
 
-[deploy-pages.yml](.github/workflows/deploy-pages.yml) runs on every push to `main`.
+[deploy-pages.yml](.github/workflows/deploy-pages.yml) runs build/tests/artifact checks for PRs targeting `main`, and
+deploys on every push to `main`.
 To redeploy manually, use **Actions → Deploy demo to GitHub Pages → Run workflow**
 with branch `main`; other branches are skipped. The build job uses Node 24,
 `npm ci` with npm download caching, `npm test`, `npm run build` and
@@ -154,9 +167,9 @@ only deployment gets `pages: write` and `id-token: write`. One deployment runs a
 a time, allowing the active deployment to finish and retaining the latest waiting
 revision. See [GitHub's custom workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
-The static site is about 43 MB before compression, including the 1.34 MB native
-SOMA GLB, 9.61 MB Uka GLB, 1.88 MB Ammo runtime and 28.75 MB ORT WASM.
-Uka and Ammo load on MMD selection. The **757,864,273-byte model (758 MB / 723 MiB)**
+The static site is about 44 MB before compression, including the 1.34 MB native
+SOMA GLB, 9.61 MB Uka GLB, 1.22 MB Animasa GLB, 1.88 MB Ammo runtime and 28.75 MB ORT WASM.
+The selected MMD GLB and Ammo load on character selection. The **757,864,273-byte model (758 MB / 723 MiB)**
 is downloaded separately from NVIDIA's pinned GitHub media/LFS payload URL only
 when inference starts. It is never uploaded to Pages. This endpoint was checked
 for payload availability and permissive CORS; hosting evidence, licenses and
@@ -176,6 +189,12 @@ WebGPU device to verify the remote model download and keyboard walk/run/turn/sto
 Also confirm a browser without WebGPU shows the explicit support message, and
 blocking the model request shows a useful error with retry. A local preview check
 does not establish that GitHub Pages has been configured or deployed successfully.
+
+Required post-merge verification for Issue #13 remains pending: verify successful
+Pages deployment and automatic exact Animasa loading, file hashes/notices/network
+responses, real MotionBricks walk/run/turn/stop, physics, switching/error recovery
+and SOMA/Uka regressions at the public URL. Keep Issue #13 open until those checks
+succeed. A local production-prefix check does not establish published-origin success.
 
 ## Contributing
 
