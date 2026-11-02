@@ -161,7 +161,7 @@ async function main() {
     if (characters.current) characters.current.effect.render(scene, camera);
     else renderer.render(scene, camera);
     if (mmd && characters.current === mmd && now % 500 < delta * 1000) {
-      report.mmd = {physicsEnabled:mmd.physicsEnabled, physicsSteps:mmd.physics.steps, nativeAllocations:mmd.physics.allocations,
+      report.mmd = {shading:mmd.shading, physicsEnabled:mmd.physicsEnabled, physicsSteps:mmd.physics.steps, nativeAllocations:mmd.physics.allocations,
         maximumSecondaryAngle:mmd.physics.maximumSecondaryAngle}; updateReport();
     }
     element('movement').textContent = intent.speed === 0 ? 'Stop / idle' : intent.speed > 3 ? 'Run' : 'Walk';

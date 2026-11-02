@@ -7,6 +7,7 @@ import { MMDPhysicsPlugin, loadAmmoBrowser } from 'mmd-gltf/packages/three-mmd-p
 import { SomaRetargeter, ANIMASA_MAPPING, UKA_MAPPING } from './retarget';
 import { verifyAnimasaGLB, ANIMASA_GLB_BYTES } from './animasa';
 import { LiveMMDPhysics } from './mmd-physics';
+import { AnimasaToonPlugin, inspectToonMaterials } from './animasa-toon';
 import type { SomaAvatar } from './avatar';
 import type { Pose } from './motion';
 
@@ -19,11 +20,12 @@ export class MMDCharacter {
   physicsEnabled = true;
   private constructor(readonly object: Group, private retarget: SomaRetargeter,
     readonly physics: LiveMMDPhysics, private toon: MMDToonPlugin, private outline: MMDOutlinePlugin,
-    readonly effect: MMDOutlineEffect, readonly label: string) {}
+    readonly effect: MMDOutlineEffect, readonly label: string, readonly shading: ReturnType<typeof inspectToonMaterials>) {}
   static async load(base: string, soma: SomaAvatar, renderer: WebGPURenderer, animasa = false, localAnimasa?: File) {
     let toon!: MMDToonPlugin, outline!: MMDOutlinePlugin;
     const loader = new GLTFLoader()
-      .register(p => toon = new MMDToonPlugin(p, {lighting:createToonLighting()}))
+      .register(p => toon = animasa ? new AnimasaToonPlugin(p, createToonLighting())
+        : new MMDToonPlugin(p, {lighting:createToonLighting()}))
       .register(p => outline = new MMDOutlinePlugin(p))
       .register(p => new MMDPhysicsPlugin(p));
     let scene: Group | undefined;
@@ -38,6 +40,7 @@ export class MMDCharacter {
         await verifyAnimasaGLB(bytes);
         scene = (await loader.parseAsync(bytes,'')).scene;
       } else scene = (await loader.loadAsync(`${base}assets/uka/model.glb`)).scene;
+      const shading = inspectToonMaterials(scene, animasa);
       // All source morph targets stay in the downloadable GLB. Locomotion does
       // not use expressions; don't allocate 203 full-surface GPU morph layers.
       scene.traverse(o => {
@@ -49,7 +52,7 @@ export class MMDCharacter {
       const retarget = new SomaRetargeter(scene, soma.bind, soma.bindPoints,animasa ? ANIMASA_MAPPING : UKA_MAPPING);
       const physics = new LiveMMDPhysics(scene, (await ammo(base)).api,false,animasa);
       return new MMDCharacter(scene, retarget, physics, toon, outline, new MMDOutlineEffect(renderer),
-        animasa ? 'Animasa Miku' : 'CG-CA Uka');
+        animasa ? 'Animasa Miku' : 'CG-CA Uka', shading);
     } catch (error) {
       if (scene) disposeScene(scene);
       outline?.dispose(); await toon?.dispose(); throw error;

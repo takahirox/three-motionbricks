@@ -1,0 +1,469 @@
+{
+  "referenceRevision": "7b604fb1d76b26a2c46bced0cbeab2b8b5781c40",
+  "sourceRevision": "5ce11d18c400791da0c9fbb4b6b9fcde2f754443",
+  "sourceModelSHA256": "45a5a2fb897266a1b371b30cf53ed9435d375ddea9fce7f095bba2739b9bdae5",
+  "backends": [
+    {
+      "backend": "webgpu",
+      "probes": {
+        "linearSamples": 45,
+        "outputSamples": 1,
+        "backend": "webgpu"
+      },
+      "model": {
+        "inspect": {
+          "model": "MMD_materials_toon",
+          "compatibility": "animasa-three-mmd-loader",
+          "meshes": 17,
+          "materials": 17,
+          "sourceSpecular": [
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0.25,
+                0.25,
+                0.25
+              ],
+              "shininess": 10
+            },
+            {
+              "specular": [
+                0.15000000596046448,
+                0.15000000596046448,
+                0.15000000596046448
+              ],
+              "shininess": 6
+            },
+            {
+              "specular": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645
+              ],
+              "shininess": 15
+            },
+            {
+              "specular": [
+                0.15000000596046448,
+                0.15000000596046448,
+                0.15000000596046448
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0.3799999952316284,
+                0.3799999952316284,
+                0.3799999952316284
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0.18000000715255737,
+                0.18000000715255737,
+                0.18000000715255737
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            }
+          ]
+        },
+        "referenceMaterials": 17,
+        "sourceSpecularPreserved": true,
+        "lightDirection": [
+          0,
+          0,
+          1
+        ],
+        "camera": [
+          0,
+          0.96,
+          2.8
+        ],
+        "scale": 0.08,
+        "backend": "webgpu"
+      },
+      "comparisons": [
+        {
+          "view": "front",
+          "before": {
+            "pixels": 105183,
+            "meanAbsoluteLinearRGB": 0.08227469560756709,
+            "rootMeanSquareLinearRGB": 0.14019376514283308,
+            "maximumLinearRGB": 0.7257184162735939,
+            "pixelsOver001": 83289,
+            "pixelsAtOrAboveDisplayWhite": 3724,
+            "meanLinearLuminance": 0.30789336871779327
+          },
+          "after": {
+            "pixels": 105183,
+            "meanAbsoluteLinearRGB": 1.869169957545848e-7,
+            "rootMeanSquareLinearRGB": 0.00000382126677499338,
+            "maximumLinearRGB": 0.0005530081689357758,
+            "pixelsOver001": 0,
+            "pixelsAtOrAboveDisplayWhite": 0,
+            "meanLinearLuminance": 0.2512218031359183
+          },
+          "reference": {
+            "pixels": 105183,
+            "meanAbsoluteLinearRGB": 0,
+            "rootMeanSquareLinearRGB": 0,
+            "maximumLinearRGB": 0,
+            "pixelsOver001": 0,
+            "pixelsAtOrAboveDisplayWhite": 0,
+            "meanLinearLuminance": 0.2512218366410871
+          }
+        },
+        {
+          "view": "oblique",
+          "before": {
+            "pixels": 87604,
+            "meanAbsoluteLinearRGB": 0.09813108012988815,
+            "rootMeanSquareLinearRGB": 0.17634014466845338,
+            "maximumLinearRGB": 0.7257199212908745,
+            "pixelsOver001": 68061,
+            "pixelsAtOrAboveDisplayWhite": 3470,
+            "meanLinearLuminance": 0.31813420442342044
+          },
+          "after": {
+            "pixels": 87604,
+            "meanAbsoluteLinearRGB": 2.981336037999099e-7,
+            "rootMeanSquareLinearRGB": 0.00004016961293505989,
+            "maximumLinearRGB": 0.01478252187371254,
+            "pixelsOver001": 1,
+            "pixelsAtOrAboveDisplayWhite": 0,
+            "meanLinearLuminance": 0.24008422075878336
+          },
+          "reference": {
+            "pixels": 87604,
+            "meanAbsoluteLinearRGB": 0,
+            "rootMeanSquareLinearRGB": 0,
+            "maximumLinearRGB": 0,
+            "pixelsOver001": 0,
+            "pixelsAtOrAboveDisplayWhite": 0,
+            "meanLinearLuminance": 0.24008441023316326
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "backend": "webgl",
+      "probes": {
+        "linearSamples": 45,
+        "outputSamples": 1,
+        "backend": "webgl"
+      },
+      "model": {
+        "inspect": {
+          "model": "MMD_materials_toon",
+          "compatibility": "animasa-three-mmd-loader",
+          "meshes": 17,
+          "materials": 17,
+          "sourceSpecular": [
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0.25,
+                0.25,
+                0.25
+              ],
+              "shininess": 10
+            },
+            {
+              "specular": [
+                0.15000000596046448,
+                0.15000000596046448,
+                0.15000000596046448
+              ],
+              "shininess": 6
+            },
+            {
+              "specular": [
+                0.4000000059604645,
+                0.4000000059604645,
+                0.4000000059604645
+              ],
+              "shininess": 15
+            },
+            {
+              "specular": [
+                0.15000000596046448,
+                0.15000000596046448,
+                0.15000000596046448
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0.3799999952316284,
+                0.3799999952316284,
+                0.3799999952316284
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0.18000000715255737,
+                0.18000000715255737,
+                0.18000000715255737
+              ],
+              "shininess": 5
+            },
+            {
+              "specular": [
+                0,
+                0,
+                0
+              ],
+              "shininess": 5
+            }
+          ]
+        },
+        "referenceMaterials": 17,
+        "sourceSpecularPreserved": true,
+        "lightDirection": [
+          0,
+          0,
+          1
+        ],
+        "camera": [
+          0,
+          0.96,
+          2.8
+        ],
+        "scale": 0.08,
+        "backend": "webgl"
+      },
+      "comparisons": [
+        {
+          "view": "front",
+          "before": {
+            "pixels": 105183,
+            "meanAbsoluteLinearRGB": 0.08227798728530891,
+            "rootMeanSquareLinearRGB": 0.1402073685503491,
+            "maximumLinearRGB": 0.9999958782959766,
+            "pixelsOver001": 83290,
+            "pixelsAtOrAboveDisplayWhite": 3724,
+            "meanLinearLuminance": 0.3078933949119337
+          },
+          "after": {
+            "pixels": 105183,
+            "meanAbsoluteLinearRGB": 0.0000034866082401131734,
+            "rootMeanSquareLinearRGB": 0.0013487520707766178,
+            "maximumLinearRGB": 0.7192107945252246,
+            "pixelsOver001": 1,
+            "pixelsAtOrAboveDisplayWhite": 0,
+            "meanLinearLuminance": 0.2512217776358716
+          },
+          "reference": {
+            "pixels": 105183,
+            "meanAbsoluteLinearRGB": 0,
+            "rootMeanSquareLinearRGB": 0,
+            "maximumLinearRGB": 0,
+            "pixelsOver001": 0,
+            "pixelsAtOrAboveDisplayWhite": 0,
+            "meanLinearLuminance": 0.251218782793283
+          }
+        },
+        {
+          "view": "oblique",
+          "before": {
+            "pixels": 87604,
+            "meanAbsoluteLinearRGB": 0.09813035950701797,
+            "rootMeanSquareLinearRGB": 0.17633998174106377,
+            "maximumLinearRGB": 0.7257199212908745,
+            "pixelsOver001": 68056,
+            "pixelsAtOrAboveDisplayWhite": 3470,
+            "meanLinearLuminance": 0.31813494615210985
+          },
+          "after": {
+            "pixels": 87604,
+            "meanAbsoluteLinearRGB": 3.8100276752332593e-7,
+            "rootMeanSquareLinearRGB": 0.000018788232770435736,
+            "maximumLinearRGB": 0.005627907812595367,
+            "pixelsOver001": 0,
+            "pixelsAtOrAboveDisplayWhite": 0,
+            "meanLinearLuminance": 0.2400846933796037
+          },
+          "reference": {
+            "pixels": 87604,
+            "meanAbsoluteLinearRGB": 0,
+            "rootMeanSquareLinearRGB": 0,
+            "maximumLinearRGB": 0,
+            "pixelsOver001": 0,
+            "pixelsAtOrAboveDisplayWhite": 0,
+            "meanLinearLuminance": 0.240084819157459
+          }
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

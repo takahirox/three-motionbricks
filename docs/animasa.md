@@ -5,6 +5,11 @@ GLB from the demo's own origin. Its eye and three toon textures are embedded.
 SOMA remains the default; CG-CA Uka remains a separately named option. An optional
 local override accepts the same verified conversion without uploading it.
 
+Animasa opts into a renderer compatibility adapter for `three-mmd-loader`'s
+Toon-ramp and linear color/ambient composition. See the
+[shading equation, source-factor preservation and controlled before/after captures](animasa-shading.md).
+Uka and the pinned `mmd-gltf` default shading contract remain unchanged.
+
 The [Issue #13 maintainer decision](animasa-publication.md) resolves the former
 redistribution prerequisite for this exact model/resources and public demo.
 This is a maintainer decision, not a newly obtained third-party grant. Original
