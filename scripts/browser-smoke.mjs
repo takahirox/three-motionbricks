@@ -103,6 +103,16 @@ try {
   assert.equal((await automatic).status(), 200);
   await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'), undefined, {timeout:30000});
   assert.equal((await reportNow()).character, 'MMD (Animasa Miku)');
+  await page.waitForFunction(() => JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.shading?.compatibility === 'animasa-three-mmd-loader');
+  const shading = (await reportNow()).mmd.shading;
+  assert.equal(shading.model, 'MMD_materials_toon');
+  const sourceGLB = await readFile(new URL('../public/assets/animasa/model.glb', import.meta.url));
+  const sourceMaterials = JSON.parse(sourceGLB.subarray(20,20+sourceGLB.readUInt32LE(12))).materials;
+  assert.equal(shading.materials,sourceMaterials.length);
+  assert.deepEqual(shading.sourceSpecular,sourceMaterials.map(m=>({
+    specular:m.extensions.MMD_materials_toon.specularFactor,shininess:m.extensions.MMD_materials_toon.shininessFactor,
+  })));
+  await page.screenshot({path:new URL('animasa-ready.png',output).pathname});
   await page.selectOption('#character','soma');
   const overrideTransfers = [];
   const checkOverride = request => {
@@ -129,6 +139,7 @@ try {
   await page.selectOption('#character', 'mmd');
   await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'));
   assert.equal((await reportNow()).character, 'MMD (CG-CA Uka)');
+  await page.waitForFunction(() => JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.shading?.compatibility === 'default');
   await selectMMD(page);
   await page.waitForFunction(() => document.querySelector('#character-status').textContent.includes('physics on'),undefined,{timeout:30000});
   await page.waitForFunction(() => JSON.parse(document.querySelector('#diagnostics').textContent).mmd?.physicsSteps > 180);

@@ -7,6 +7,8 @@ The **Character** selector automatically loads **MMD (Animasa Miku)** or
 **MMD (CG-CA Uka)**, with toon/outline rendering and MMD rigid-body physics driven
 by the same generated SOMA motion. Animasa is the exact pinned stock model;
 its eye and toon textures are embedded in the GLB. No local upload is needed.
+Animasa uses an isolated [Toon shading compatibility adapter](docs/animasa-shading.md)
+with reference captures and numeric validation; Uka keeps the default renderer.
 An optional verified local override remains available. See [Animasa source,
 conversion and runtime](docs/animasa.md), the [maintainer's Issue #13 decision](docs/animasa-publication.md)
 and [original notices and conditions](public/assets/animasa/README.md).

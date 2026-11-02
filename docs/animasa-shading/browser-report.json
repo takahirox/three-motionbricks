@@ -1,0 +1,173 @@
+{
+  "productionURL": "http://127.0.0.1:4186/three-motionbricks/",
+  "runs": [
+    {
+      "character": "Animasa",
+      "result": "pass",
+      "realModel": false,
+      "renderer": "WebGPUBackend",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "shading": {
+        "model": "MMD_materials_toon",
+        "compatibility": "animasa-three-mmd-loader",
+        "meshes": 17,
+        "materials": 17,
+        "sourceSpecular": [
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0.25,
+              0.25,
+              0.25
+            ],
+            "shininess": 10
+          },
+          {
+            "specular": [
+              0.15000000596046448,
+              0.15000000596046448,
+              0.15000000596046448
+            ],
+            "shininess": 6
+          },
+          {
+            "specular": [
+              0.4000000059604645,
+              0.4000000059604645,
+              0.4000000059604645
+            ],
+            "shininess": 15
+          },
+          {
+            "specular": [
+              0.15000000596046448,
+              0.15000000596046448,
+              0.15000000596046448
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0.3799999952316284,
+              0.3799999952316284,
+              0.3799999952316284
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0.18000000715255737,
+              0.18000000715255737,
+              0.18000000715255737
+            ],
+            "shininess": 5
+          },
+          {
+            "specular": [
+              0,
+              0,
+              0
+            ],
+            "shininess": 5
+          }
+        ]
+      },
+      "physicsEnabled": true,
+      "nativeAllocations": 376
+    },
+    {
+      "character": "Uka",
+      "result": "pass",
+      "realModel": false,
+      "renderer": "WebGPUBackend",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+      "shading": {
+        "model": "MMD_materials_toon",
+        "compatibility": "default",
+        "meshes": 13,
+        "materials": 13
+      },
+      "physicsEnabled": true,
+      "nativeAllocations": 1472
+    }
+  ]
+}
