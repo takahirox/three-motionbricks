@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { Quaternion, Vector3 } from 'three';
 import { blendPose, clonePose, encode, positions } from '../src/motion.ts';
 import { PoseIK } from '../src/pose-ik.ts';
-import { BalanceRecovery, disturbedPose, FootContacts, recoveryTargets, supportMargin, supportPolygon, torsoTilt } from '../src/balance.ts';
+import { BalanceRecovery, centerOfMass, disturbedPose, FootContacts, recoveryTargets, settlingTargets, supportMargin, supportPolygon, torsoTilt } from '../src/balance.ts';
 import { somaFixture } from './mmd-fixture.ts';
 const {stance,rig}=somaFixture(), ik=new PoseIK(rig,stance), initial=positions(stance,rig);
 const feet = [{joint:'LeftFoot' as const,target:initial[24]},{joint:'RightFoot' as const,target:initial[28]}];
@@ -68,6 +68,50 @@ test('release captures observed disturbance history; stale inference cannot outl
   balance.invalidate(750);assert.equal(balance.accept(segment,paused.revision,800),false);
   const switched=balance.request();balance.reset(900);assert.equal(balance.accept(segment,switched.revision,1000),false);
   assert.equal(balance.phase,'stable');assert.equal(balance.response.generations,0);
+});
+
+test('settling conditions the observed landing and bounded ankle bias without moving the displayed body',()=> {
+  for(const z of [-.34,.34]) {
+    const landing=recoveryTargets(stance,stance,new Vector3(0,0,z),true,rig,ik,feet)[3];
+    const contacts=new FootContacts(landing,rig,floor), raw=clonePose(landing);
+    raw.root.y+=.03;contacts.contacts[1].planted=false;
+    contacts.contacts[0].anchor.z-=.02; // Retain a planted anchor despite small display drift.
+    contacts.contacts[1].anchor.z+=.14; // Released foot has an obsolete anchor.
+    const before=clonePose(landing), snapshot=contacts.snapshot();
+    const goal=settlingTargets(stance,landing,raw,rig,ik,contacts)[3], p=positions(goal,rig), landed=positions(landing,rig);
+    assert.deepEqual(landing,before);assert.deepEqual(contacts.snapshot(),snapshot);
+    assert.ok(torsoTilt(goal,rig)<.06);
+    const neutral=positions(settlingTargets(stance,landing,stance,rig,ik,contacts)[3],rig);
+    for(const [i,j] of [24,28].entries()) {
+      const target=i===0 ? contacts.contacts[0].anchor : landed[j];
+      assert.ok(Math.hypot(p[j].x-target.x,p[j].z-target.z)<.01,'Keep planted anchors and use observed released-foot placement');
+      assert.ok(p[j].y>=floor[j===24 ? 0 : 1]-.012,'Conditioning bias is bounded');
+      assert.ok(p[j].y<neutral[j].y-.001,'A positive measured raw height bias lowers the conditioning ankle');
+    }
+    assert.ok(Math.min(...p.map(v=>v.y))>=0,'Biased goals keep soles above the floor');
+    assert.ok(supportMargin(centerOfMass(goal,rig),supportPolygon([p[24],p[28]],0))>.05,
+      'Settling asks for COM inside the actual landing support');
+  }
+});
+
+test('successive settling requests retain actual corrected response history and clear it on reset',()=> {
+  const balance=new BalanceRecovery(stance,rig,ik);
+  balance.begin(0);balance.push(new Vector3(0,0,.34),240);balance.release(250);
+  // Synthetic moving fixture tests history/conditioning only, not capability.
+  const segment=Array.from({length:24},(_,i)=> {
+    const pose=clonePose(stance);pose.root.z+=i*.0005;return pose;
+  });
+  for(let sequence=0;sequence<2;sequence++) {
+    assert.ok(balance.accept(segment,balance.request().revision,500+sequence*1000));
+    for(let frame=0;frame<22;frame++) balance.advance(1/30,true);
+  }
+  const displayed=clonePose(balance.pose), context=balance.response.observedContext();
+  const request=balance.request();
+  assert.deepEqual(request.context,context,'Targets must never replace the observed context');
+  assert.deepEqual(balance.pose,displayed,'Requesting new targets must not animate the character');
+  assert.ok(request.context[0].root.distanceTo(request.context[3].root)>0);
+  assert.ok(request.targets[3].root.distanceTo(request.context[3].root)>.01);
+  balance.reset(3000);assert.deepEqual(balance.request().context,Array.from({length:4},()=>stance));
 });
 
 test('contact hysteresis releases generated swings, replants quiet landings and preserves the opposite support',()=> {

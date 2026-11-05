@@ -1,5 +1,10 @@
 # Push / Balance recovery (Issue #19)
 
+This page retains the **2026-11-05 pre-merge** implementation and measured
+evidence for PR #20. See the [dated publication checks](balance-public-validation.md)
+and [continuation experiments](balance-followup-validation.md) for subsequent
+results; the earlier traces are not fresh continuation inference.
+
 The new default mode in `pose.html` treats a body drag as an external disturbance.
 The separate Move / Rotate editor and keyboard locomotion demo remain available.
 This implementation demonstrates **conditioned ONNX lateral recovery**, including

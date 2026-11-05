@@ -1,0 +1,4190 @@
+{
+  "issue": 19,
+  "baseCheckpoint": "dadfaa36d233a835a21a26547a9d65f336e4f52d",
+  "publishedSource": "3b46a9dd300e6d766542cc1407e427842af7e7d1",
+  "model": {
+    "url": "https://media.githubusercontent.com/media/NVlabs/motionbricks/54fc563aeaaf819a753d72cc9fdc6713989cdd43/motionbricks/assets/onnx/soma/mmm_v6_soma_fp32.onnx",
+    "bytes": 757864273,
+    "sha256": "856419dc72aeb14e591eebf4dd0ea05734a2506ddb00bcd39dd6dac2ad60f4fb"
+  },
+  "candidateSourceHashes": {
+    "model-source.json": "8174ce25b7628f66d2bd6b2b756faaa384b2760b21a963d3218db1f37a8c491e",
+    "src/balance.ts": "1ecab1699eab12f161e8e90fe99769ad4015b224e91c987e9edae0eb49ef41e7",
+    "src/pose-main.ts": "410372712f48873d6f7ec03a8000ebc9674c2cea7d80b4e8024e436c4f88d3a9",
+    "src/pose-response.ts": "9d59b66f5a97fa3304748bd75d2c74a673014c51624d161aefb0fd6c1ce02cd0",
+    "src/motion.ts": "cb22b69a981f2afe518f680260166560e86044465135883a2f752ba131cf1d76",
+    "src/player.ts": "7db5608cf4bfb99024c1d0495d8fa9a0d19d3440de155fdfdffca186423c1ca6",
+    "src/inference.ts": "cf8d307d157ffbf24c759621e05b5f6353a9ab16f77d2d71e8004b3a984bd5f4",
+    "src/inference.worker.ts": "611d0b752cca371860783c076459ffd667dcc5b5f2f1fab2549badf6dd49bd94",
+    "scripts/balance-smoke.mjs": "32ab3d2a6e51f1b46c91b5b4957263eaa5c2e63e57c3ce7a1bbfdf52029b41f3",
+    "scripts/balance-conditioning.mjs": "80462b713180e59ad4bd33d8c63357eef29e89ef50338b154672b51eef2a5fae"
+  },
+  "modelDelivery": {
+    "verified": true,
+    "cacheFile": "public/assets/mmm_v6_soma_fp32.onnx",
+    "cacheWorkspaceHint": "/private/var/folders/_t/12j6tqzx6wv4z2l__ttncdxc0000gn/T/gitweave-0d3a98ed-ondu_ls0/gitweave-0d3a98ed-ondu_ls0",
+    "cacheInCheckpoint": false,
+    "cacheReuse": "If still present, verify size and pinned SHA-256 before reuse; ignored cache is not guaranteed to survive worktree cleanup.",
+    "verification": "Range assembly SHA-256 and independent scripts/download-model.mjs reuse verification",
+    "method": "Preserved 300-second single connection prefix; 1 MiB completed ranges reused; final bounded two media + two official Git LFS download connections",
+    "finalAttempt": {
+      "time": "2026-11-05T13:37:50.837Z",
+      "initial": 33979959,
+      "completed": 757864273,
+      "total": 757864273,
+      "ranges": 691,
+      "concurrency": 4,
+      "block": 1048576,
+      "elapsedMs": 2884594,
+      "problems": []
+    },
+    "endToEndProductionBrowserDownload": "Not completed. This run verifies complete pinned cache delivery plus actual public-origin worker/WASM inference, separately.",
+    "publicationRetries": 0
+  },
+  "publicBundleIdentity": {
+    "checkedAt": "2026-11-05T13:52:22.461909+00:00",
+    "url": "https://takahirox.github.io/three-motionbricks/assets/pose-BZ2tgfOJ.js",
+    "sha256": "65f84a96bec27a94c6a1a9ade6360c9f51bd1902fe933de9b79e86497581030f",
+    "bytes": 33742,
+    "matchesEarlierMergeBuildHash": true,
+    "purpose": "Identify published application bundle for fresh ONNX baseline, not repeat the full asset sweep"
+  },
+  "publicBaseline": {
+    "result": "fail",
+    "capturedAt": "2026-11-05T13:40:32.787Z",
+    "origin": "https://takahirox.github.io/three-motionbricks/",
+    "browser": "157.0.8103.38",
+    "modelDelivery": "SHA-256-verified local cache; test-only redirect; not end-to-end production download",
+    "cachePermission": "local-network-access granted for isolated test origin",
+    "cacheTransfer": {
+      "requests": 1,
+      "bytes": 757864273
+    },
+    "workers": [
+      "https://takahirox.github.io/three-motionbricks/assets/inference.worker-B2nxauak.js"
+    ],
+    "resources": [
+      {
+        "url": "https://takahirox.github.io/three-motionbricks/assets/inference.worker-B2nxauak.js",
+        "status": 200
+      },
+      {
+        "url": "https://takahirox.github.io/three-motionbricks/assets/ort-wasm-simd-threaded.asyncify-AkdHdxrx.wasm",
+        "status": 200
+      }
+    ],
+    "failure": "AssertionError [ERR_ASSERTION]: No raw generated step and settling was verified",
+    "errors": [],
+    "networkFailures": [],
+    "selectedCases": [
+      "small-left",
+      "large-right",
+      "large-forward",
+      "uka-back"
+    ],
+    "cases": [
+      {
+        "name": "small-left",
+        "character": "SOMA",
+        "phase": "stable",
+        "attempts": 2,
+        "pushMeters": [
+          -0.07,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 116,
+          "firstTiltDegrees": 3.622421,
+          "lastTiltDegrees": 1.936348,
+          "maxFootLift": -0.000325,
+          "footTravel": [
+            0.022613,
+            0.012282
+          ],
+          "jointTravel": {
+            "chest": 0.035845,
+            "leftHand": 0.084906,
+            "rightHand": 0.07011,
+            "hips": 0.029601
+          },
+          "minimumRawJointHeight": 0.010217,
+          "rawFinalMargin": 0.111472,
+          "displayFinalMargin": 0.109995,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.057202,
+          "rawFinalFootHeights": [
+            -0.000325,
+            -0.001848
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.12681,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.011123,
+            0.020558
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.088116,
+            0.133197
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 1976.7,
+            "conditioningStage": null,
+            "contextRootSpan": 0.016136,
+            "initialCOM": [
+              -0.027341,
+              0.906404,
+              0.020345
+            ],
+            "finalCOM": [
+              -0.009681,
+              0.928375,
+              0.007902
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100069,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.149553,
+                  0.072029,
+                  -0.021645
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": 0.111222,
+            "minimumJointHeight": 0.010951
+          },
+          {
+            "frames": 58,
+            "milliseconds": 55.3,
+            "conditioningStage": null,
+            "contextRootSpan": 0.002419,
+            "initialCOM": [
+              -0.010491,
+              0.920518,
+              0.009143
+            ],
+            "finalCOM": [
+              -0.009449,
+              0.929816,
+              0.008045
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100204,
+                  0.072029,
+                  0.022307
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.149359,
+                  0.072029,
+                  -0.02178
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.111472,
+            "minimumJointHeight": 0.010217
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "large-right",
+        "character": "SOMA",
+        "phase": "stable",
+        "attempts": 6,
+        "pushMeters": [
+          0.34,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": false,
+          "rawFrames": 340,
+          "firstTiltDegrees": 19.416223,
+          "lastTiltDegrees": 1.715128,
+          "maxFootLift": 0.048713,
+          "footTravel": [
+            0.246885,
+            0.035429
+          ],
+          "jointTravel": {
+            "chest": 0.123915,
+            "leftHand": 0.261511,
+            "rightHand": 0.318376,
+            "hips": 0.128594
+          },
+          "minimumRawJointHeight": 0.004911,
+          "rawFinalMargin": -0.163286,
+          "displayFinalMargin": 0.078175,
+          "rawTailSettled": false,
+          "rawTailMaximumSpeed": 0.034358,
+          "rawFinalFootHeights": [
+            0.003053,
+            -0.0008
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.16476,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.060906,
+            0.068313
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.228549,
+            0.273161
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 77.7,
+            "conditioningStage": null,
+            "contextRootSpan": 0.078665,
+            "initialCOM": [
+              0.14486,
+              0.811954,
+              0.045808
+            ],
+            "finalCOM": [
+              0.154694,
+              0.915063,
+              0.034398
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.350388,
+                  0.072029,
+                  -0.040562
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.100015,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": -0.199858,
+            "minimumJointHeight": 0.009896
+          },
+          {
+            "frames": 58,
+            "milliseconds": 55.1,
+            "conditioningStage": null,
+            "contextRootSpan": 0.003582,
+            "initialCOM": [
+              0.153034,
+              0.907164,
+              0.022252
+            ],
+            "finalCOM": [
+              0.157595,
+              0.911185,
+              0.01578
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.348908,
+                  0.072029,
+                  -0.041283
+                ],
+                "releases": 1,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.052677,
+                  0.072029,
+                  -0.027379
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -1,
+            "minimumJointHeight": 0.013117
+          },
+          {
+            "frames": 58,
+            "milliseconds": 58.2,
+            "conditioningStage": null,
+            "contextRootSpan": 0.000913,
+            "initialCOM": [
+              0.158018,
+              0.910369,
+              0.011475
+            ],
+            "finalCOM": [
+              0.162706,
+              0.911868,
+              0.011041
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.411466,
+                  0.072029,
+                  -0.017928
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.054072,
+                  0.072029,
+                  -0.026857
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.076267,
+            "minimumJointHeight": 0.007344
+          },
+          {
+            "frames": 54,
+            "milliseconds": 55.1,
+            "conditioningStage": null,
+            "contextRootSpan": 0.00073,
+            "initialCOM": [
+              0.161511,
+              0.9111,
+              0.008987
+            ],
+            "finalCOM": [
+              0.162787,
+              0.912234,
+              0.009383
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.35787,
+                  0.072029,
+                  -0.041864
+                ],
+                "releases": 1,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.053753,
+                  0.072029,
+                  -0.02668
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": -0.162247,
+            "minimumJointHeight": 0.004911
+          },
+          {
+            "frames": 58,
+            "milliseconds": 54.7,
+            "conditioningStage": null,
+            "contextRootSpan": 0.001458,
+            "initialCOM": [
+              0.162386,
+              0.911744,
+              0.004993
+            ],
+            "finalCOM": [
+              0.16452,
+              0.911714,
+              0.008043
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.413082,
+                  0.072029,
+                  -0.02684
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.054082,
+                  0.072029,
+                  -0.02681
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.076504,
+            "minimumJointHeight": 0.007017
+          },
+          {
+            "frames": 54,
+            "milliseconds": 55.9,
+            "conditioningStage": null,
+            "contextRootSpan": 0.001289,
+            "initialCOM": [
+              0.162497,
+              0.910892,
+              0.006318
+            ],
+            "finalCOM": [
+              0.163541,
+              0.912408,
+              0.008143
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.371557,
+                  0.072029,
+                  -0.039363
+                ],
+                "releases": 1,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.053774,
+                  0.072029,
+                  -0.026675
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": -0.163286,
+            "minimumJointHeight": 0.006921
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "large-forward",
+        "character": "SOMA",
+        "phase": "recovering",
+        "attempts": 6,
+        "pushMeters": [
+          0,
+          0,
+          -0.34
+        ],
+        "problem": "Six ONNX sequences without stable recovery. Checkpoint capability is unverified; reset or push again.",
+        "capability": {
+          "settled": false,
+          "rawFrames": 340,
+          "firstTiltDegrees": 19.589239,
+          "lastTiltDegrees": 1.93796,
+          "maxFootLift": 0.043532,
+          "footTravel": [
+            0.252016,
+            0.036764
+          ],
+          "jointTravel": {
+            "chest": 0.143392,
+            "leftHand": 0.267018,
+            "rightHand": 0.269314,
+            "hips": 0.146617
+          },
+          "minimumRawJointHeight": 0.001549,
+          "rawFinalMargin": -0.071944,
+          "displayFinalMargin": -0.072107,
+          "rawTailSettled": false,
+          "rawTailMaximumSpeed": 0.044722,
+          "rawFinalFootHeights": [
+            0.000354,
+            -0.007978
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.169489,
+          "maxContactRootCorrectionMeters": 0.000983,
+          "rawTailFootRangesMeters": [
+            0.049037,
+            0.082625
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.215665,
+            0.325072
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 68.3,
+            "conditioningStage": null,
+            "contextRootSpan": 0.0664,
+            "initialCOM": [
+              -0.006192,
+              0.808003,
+              -0.09623
+            ],
+            "finalCOM": [
+              0.001869,
+              0.910004,
+              -0.121367
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.151543,
+                  0.072029,
+                  -0.174001
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.140763,
+                  0.072029,
+                  -0.122875
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -1,
+            "minimumJointHeight": 0.002185
+          },
+          {
+            "frames": 58,
+            "milliseconds": 56.2,
+            "conditioningStage": null,
+            "contextRootSpan": 0.003751,
+            "initialCOM": [
+              0.001357,
+              0.902266,
+              -0.125583
+            ],
+            "finalCOM": [
+              0.002083,
+              0.91186,
+              -0.142455
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.128518,
+                  0.072029,
+                  -0.236642
+                ],
+                "releases": 1,
+                "replants": 1
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.126856,
+                  0.072029,
+                  -0.124107
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.067809,
+            "minimumJointHeight": 0.006471
+          },
+          {
+            "frames": 58,
+            "milliseconds": 53.2,
+            "conditioningStage": null,
+            "contextRootSpan": 0.000514,
+            "initialCOM": [
+              0.001742,
+              0.912721,
+              -0.149147
+            ],
+            "finalCOM": [
+              -0.000128,
+              0.912389,
+              -0.152014
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.128672,
+                  0.072029,
+                  -0.235384
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.126482,
+                  0.072029,
+                  -0.135582
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.070289,
+            "minimumJointHeight": 0.002827
+          },
+          {
+            "frames": 54,
+            "milliseconds": 55,
+            "conditioningStage": null,
+            "contextRootSpan": 0.001009,
+            "initialCOM": [
+              0.000322,
+              0.914479,
+              -0.157076
+            ],
+            "finalCOM": [
+              -0.001333,
+              0.912898,
+              -0.15608
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.128811,
+                  0.072029,
+                  -0.235715
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.124637,
+                  0.072029,
+                  -0.147104
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.072217,
+            "minimumJointHeight": 0.001718
+          },
+          {
+            "frames": 58,
+            "milliseconds": 57.7,
+            "conditioningStage": null,
+            "contextRootSpan": 0.000973,
+            "initialCOM": [
+              0.000383,
+              0.914346,
+              -0.161782
+            ],
+            "finalCOM": [
+              -0.00057,
+              0.912206,
+              -0.153608
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.128848,
+                  0.072029,
+                  -0.235745
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.128033,
+                  0.072029,
+                  -0.145255
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.071541,
+            "minimumJointHeight": 0.005387
+          },
+          {
+            "frames": 54,
+            "milliseconds": 54,
+            "conditioningStage": null,
+            "contextRootSpan": 0.000851,
+            "initialCOM": [
+              -5.6e-05,
+              0.914308,
+              -0.159219
+            ],
+            "finalCOM": [
+              -0.000854,
+              0.912853,
+              -0.15578
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.128833,
+                  0.072029,
+                  -0.235767
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.125044,
+                  0.072029,
+                  -0.142693
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.071944,
+            "minimumJointHeight": 0.001549
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "uka-back",
+        "character": "CG-CA Uka",
+        "phase": "recovering",
+        "attempts": 6,
+        "pushMeters": [
+          0,
+          0,
+          0.34
+        ],
+        "problem": "Six ONNX sequences without stable recovery. Checkpoint capability is unverified; reset or push again.",
+        "capability": {
+          "settled": false,
+          "rawFrames": 348,
+          "firstTiltDegrees": 15.372523,
+          "lastTiltDegrees": 1.946863,
+          "maxFootLift": 0.059729,
+          "footTravel": [
+            0.006866,
+            0.211378
+          ],
+          "jointTravel": {
+            "chest": 0.148515,
+            "leftHand": 0.462511,
+            "rightHand": 0.353735,
+            "hips": 0.1471
+          },
+          "minimumRawJointHeight": 0.004606,
+          "rawFinalMargin": -0.097095,
+          "displayFinalMargin": -0.094694,
+          "rawTailSettled": false,
+          "rawTailMaximumSpeed": 0.041115,
+          "rawFinalFootHeights": [
+            -0.000831,
+            -0.008255
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.18,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.049374,
+            0.081886
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.218977,
+            0.315256
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 72.9,
+            "conditioningStage": null,
+            "contextRootSpan": 0.054789,
+            "initialCOM": [
+              0.005115,
+              0.804085,
+              0.211975
+            ],
+            "finalCOM": [
+              0.010451,
+              0.918114,
+              0.209433
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.158851,
+                  0.072029,
+                  0.098334
+                ],
+                "releases": 1,
+                "replants": 1
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.099961,
+                  0.072029,
+                  0.133558
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.08994,
+            "minimumJointHeight": 0.010808
+          },
+          {
+            "frames": 58,
+            "milliseconds": 53.4,
+            "conditioningStage": null,
+            "contextRootSpan": 0.001274,
+            "initialCOM": [
+              0.011382,
+              0.912952,
+              0.193298
+            ],
+            "finalCOM": [
+              0.00629,
+              0.912053,
+              0.184709
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.15999,
+                  0.072029,
+                  0.099238
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.11272,
+                  0.072029,
+                  0.17088
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.09502,
+            "minimumJointHeight": 0.009096
+          },
+          {
+            "frames": 58,
+            "milliseconds": 50.3,
+            "conditioningStage": null,
+            "contextRootSpan": 0.000551,
+            "initialCOM": [
+              0.009146,
+              0.913809,
+              0.181044
+            ],
+            "finalCOM": [
+              0.004669,
+              0.912258,
+              0.187215
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.160248,
+                  0.072029,
+                  0.098921
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.125081,
+                  0.072029,
+                  0.197473
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.09685,
+            "minimumJointHeight": 0.005337
+          },
+          {
+            "frames": 58,
+            "milliseconds": 55.1,
+            "conditioningStage": null,
+            "contextRootSpan": 0.000594,
+            "initialCOM": [
+              0.007846,
+              0.914078,
+              0.181904
+            ],
+            "finalCOM": [
+              0.004521,
+              0.912298,
+              0.186848
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.160221,
+                  0.072029,
+                  0.098964
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.124096,
+                  0.072029,
+                  0.196416
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.097077,
+            "minimumJointHeight": 0.00471
+          },
+          {
+            "frames": 58,
+            "milliseconds": 55.7,
+            "conditioningStage": null,
+            "contextRootSpan": 0.000578,
+            "initialCOM": [
+              0.007368,
+              0.914186,
+              0.181997
+            ],
+            "finalCOM": [
+              0.004394,
+              0.912306,
+              0.187575
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.160218,
+                  0.072029,
+                  0.098974
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.124093,
+                  0.072029,
+                  0.19819
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.097194,
+            "minimumJointHeight": 0.004606
+          },
+          {
+            "frames": 58,
+            "milliseconds": 74.2,
+            "conditioningStage": null,
+            "contextRootSpan": 0.000582,
+            "initialCOM": [
+              0.007627,
+              0.914146,
+              0.18218
+            ],
+            "finalCOM": [
+              0.004545,
+              0.91231,
+              0.186963
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.160215,
+                  0.072029,
+                  0.098974
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.124107,
+                  0.072029,
+                  0.19704
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.097095,
+            "minimumJointHeight": 0.004621
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 1578,
+          "allocations": 1472,
+          "maximumSecondaryAngle": 2.431311,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "default",
+            "meshes": 13,
+            "materials": 13
+          }
+        }
+      }
+    ],
+    "runtime": {
+      "common": "1.31.1",
+      "web": "1.31.1"
+    },
+    "gpu": {
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": "",
+      "maxBufferSize": 4294967292,
+      "maxStorageBufferBindingSize": 4294967292
+    },
+    "loadMs": 42418.5
+  },
+  "candidate": {
+    "result": "pass",
+    "capturedAt": "2026-11-05T13:42:54.961Z",
+    "origin": "http://127.0.0.1:4173/three-motionbricks/",
+    "browser": "157.0.8103.38",
+    "modelDelivery": "SHA-256-verified local cache; test-only redirect; not end-to-end production download",
+    "cacheTransfer": {
+      "requests": 1,
+      "bytes": 757864273
+    },
+    "workers": [
+      "http://127.0.0.1:4173/three-motionbricks/assets/inference.worker-B2nxauak.js"
+    ],
+    "resources": [
+      {
+        "url": "http://127.0.0.1:4173/three-motionbricks/assets/inference.worker-B2nxauak.js",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:4173/three-motionbricks/assets/ort-wasm-simd-threaded.asyncify-AkdHdxrx.wasm",
+        "status": 200
+      }
+    ],
+    "errors": [],
+    "networkFailures": [],
+    "cases": [
+      {
+        "name": "small-left",
+        "character": "SOMA",
+        "phase": "stable",
+        "attempts": 2,
+        "pushMeters": [
+          -0.07,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 116,
+          "firstTiltDegrees": 3.623223,
+          "lastTiltDegrees": 1.932832,
+          "maxFootLift": -0.00032,
+          "footTravel": [
+            0.022798,
+            0.012058
+          ],
+          "jointTravel": {
+            "chest": 0.035707,
+            "leftHand": 0.084958,
+            "rightHand": 0.069886,
+            "hips": 0.029485
+          },
+          "minimumRawJointHeight": 0.010238,
+          "rawFinalMargin": 0.111701,
+          "displayFinalMargin": 0.110197,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.057183,
+          "rawFinalFootHeights": [
+            -0.00032,
+            -0.001846
+          ],
+          "predictedFootContactsFinal": [
+            1.011547,
+            1.000494,
+            0.927352,
+            0.992845
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.126393,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.011194,
+            0.020688
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.088245,
+            0.133406
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 205.6,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.015957,
+            "initialCOM": [
+              -0.027353,
+              0.90644,
+              0.020304
+            ],
+            "finalCOM": [
+              -0.009671,
+              0.928374,
+              0.00786
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100069,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.149519,
+                  0.072029,
+                  -0.021729
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": 0.111239,
+            "minimumJointHeight": 0.010948
+          },
+          {
+            "frames": 58,
+            "milliseconds": 57.7,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.002136,
+            "initialCOM": [
+              -0.010465,
+              0.920639,
+              0.008877
+            ],
+            "finalCOM": [
+              -0.009613,
+              0.929819,
+              0.007759
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100203,
+                  0.072029,
+                  0.022308
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.149303,
+                  0.072029,
+                  -0.021855
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.111701,
+            "minimumJointHeight": 0.010238
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "medium-right",
+        "character": "SOMA",
+        "phase": "stable",
+        "attempts": 3,
+        "pushMeters": [
+          0.18,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 174,
+          "firstTiltDegrees": 10.656697,
+          "lastTiltDegrees": 1.832547,
+          "maxFootLift": 0.048343,
+          "footTravel": [
+            0.126464,
+            0.052278
+          ],
+          "jointTravel": {
+            "chest": 0.075169,
+            "leftHand": 0.139931,
+            "rightHand": 0.156534,
+            "hips": 0.067632
+          },
+          "minimumRawJointHeight": 0.00904,
+          "rawFinalMargin": 0.104276,
+          "displayFinalMargin": 0.099653,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.041505,
+          "rawFinalFootHeights": [
+            0.000212,
+            -0.002
+          ],
+          "predictedFootContactsFinal": [
+            1.018207,
+            0.992539,
+            0.905816,
+            0.997757
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.107625,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.029643,
+            0.041073
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.14611,
+            0.176501
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 54.5,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.028391,
+            "initialCOM": [
+              0.076112,
+              0.869208,
+              0.031702
+            ],
+            "finalCOM": [
+              0.077752,
+              0.915258,
+              0.027026
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.243267,
+                  0.072029,
+                  -0.023952
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.106071,
+                  0.072029,
+                  -0.043782
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.130849,
+            "minimumJointHeight": 0.011643
+          },
+          {
+            "frames": 58,
+            "milliseconds": 61.6,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.003604,
+            "initialCOM": [
+              0.078261,
+              0.907515,
+              0.012939
+            ],
+            "finalCOM": [
+              0.081463,
+              0.911875,
+              0.014805
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.25125,
+                  0.072029,
+                  -0.022017
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.105782,
+                  0.072029,
+                  -0.043158
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.064059,
+            "minimumJointHeight": 0.012319
+          },
+          {
+            "frames": 58,
+            "milliseconds": 53.8,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000501,
+            "initialCOM": [
+              0.080399,
+              0.911613,
+              0.007385
+            ],
+            "finalCOM": [
+              0.071881,
+              0.91188,
+              -0.02692
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.251368,
+                  0.072029,
+                  -0.022094
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.105861,
+                  0.072029,
+                  -0.043221
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.104276,
+            "minimumJointHeight": 0.00904
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "large-right",
+        "character": "SOMA",
+        "phase": "stable",
+        "attempts": 5,
+        "pushMeters": [
+          0.34,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 290,
+          "firstTiltDegrees": 19.828043,
+          "lastTiltDegrees": 1.882685,
+          "maxFootLift": 0.048761,
+          "footTravel": [
+            0.220264,
+            0.127155
+          ],
+          "jointTravel": {
+            "chest": 0.155322,
+            "leftHand": 0.270586,
+            "rightHand": 0.279985,
+            "hips": 0.153756
+          },
+          "minimumRawJointHeight": 0.006488,
+          "rawFinalMargin": 0.110088,
+          "displayFinalMargin": 0.104815,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.042449,
+          "rawFinalFootHeights": [
+            -0.000355,
+            -0.001482
+          ],
+          "predictedFootContactsFinal": [
+            1.023874,
+            0.984575,
+            0.887041,
+            0.999831
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.142002,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.037874,
+            0.039527
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.163883,
+            0.184207
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 68.3,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.053628,
+            "initialCOM": [
+              0.148167,
+              0.80997,
+              0.045665
+            ],
+            "finalCOM": [
+              0.154419,
+              0.915327,
+              0.028569
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.332069,
+                  0.072029,
+                  -0.04581
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.100015,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": -0.199504,
+            "minimumJointHeight": 0.007691
+          },
+          {
+            "frames": 58,
+            "milliseconds": 54.9,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.002262,
+            "initialCOM": [
+              0.152423,
+              0.909132,
+              0.018226
+            ],
+            "finalCOM": [
+              0.154877,
+              0.91154,
+              0.015443
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.328643,
+                  0.072029,
+                  -0.046226
+                ],
+                "releases": 1,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.055413,
+                  0.072029,
+                  -0.032961
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -1,
+            "minimumJointHeight": 0.012718
+          },
+          {
+            "frames": 58,
+            "milliseconds": 56,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000976,
+            "initialCOM": [
+              0.158043,
+              0.910605,
+              0.00869
+            ],
+            "finalCOM": [
+              0.168746,
+              0.912084,
+              -0.020543
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.406604,
+                  0.072029,
+                  -0.016841
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.058508,
+                  0.072029,
+                  -0.030696
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.106829,
+            "minimumJointHeight": 0.006488
+          },
+          {
+            "frames": 58,
+            "milliseconds": 53.4,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000444,
+            "initialCOM": [
+              0.166468,
+              0.911074,
+              -0.02342
+            ],
+            "finalCOM": [
+              0.156414,
+              0.911826,
+              -0.036363
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.375149,
+                  0.072029,
+                  -0.046405
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.022633,
+                  0.072029,
+                  -0.086362
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": 0.081143,
+            "minimumJointHeight": 0.008184
+          },
+          {
+            "frames": 58,
+            "milliseconds": 55.2,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000678,
+            "initialCOM": [
+              0.158916,
+              0.910978,
+              -0.040998
+            ],
+            "finalCOM": [
+              0.17294,
+              0.911845,
+              -0.06383
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.375277,
+                  0.072029,
+                  -0.04638
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.022604,
+                  0.072029,
+                  -0.086243
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.110088,
+            "minimumJointHeight": 0.008025
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "large-forward",
+        "character": "SOMA",
+        "phase": "stable",
+        "attempts": 3,
+        "pushMeters": [
+          0,
+          0,
+          -0.34
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 174,
+          "firstTiltDegrees": 19.114879,
+          "lastTiltDegrees": 2.077017,
+          "maxFootLift": 0.043164,
+          "footTravel": [
+            0.203829,
+            0.106733
+          ],
+          "jointTravel": {
+            "chest": 0.138222,
+            "leftHand": 0.251195,
+            "rightHand": 0.258517,
+            "hips": 0.142038
+          },
+          "minimumRawJointHeight": 0.002187,
+          "rawFinalMargin": 0.091032,
+          "displayFinalMargin": 0.082987,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.044632,
+          "rawFinalFootHeights": [
+            -0.000434,
+            -0.005906
+          ],
+          "predictedFootContactsFinal": [
+            1.008899,
+            1.000258,
+            0.950106,
+            0.991863
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.161753,
+          "maxContactRootCorrectionMeters": 0.001129,
+          "rawTailFootRangesMeters": [
+            0.029599,
+            0.057708
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.172115,
+            0.231799
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 71.2,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.066981,
+            "initialCOM": [
+              -0.005136,
+              0.81153,
+              -0.093763
+            ],
+            "finalCOM": [
+              0.002412,
+              0.910047,
+              -0.125259
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.153234,
+                  0.072029,
+                  -0.154174
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.132084,
+                  0.072029,
+                  -0.115176
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -1,
+            "minimumJointHeight": 0.002187
+          },
+          {
+            "frames": 58,
+            "milliseconds": 53.9,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.003822,
+            "initialCOM": [
+              0.001513,
+              0.902765,
+              -0.128947
+            ],
+            "finalCOM": [
+              0.002044,
+              0.911898,
+              -0.143182
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.129082,
+                  0.072029,
+                  -0.219802
+                ],
+                "releases": 1,
+                "replants": 1
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.123195,
+                  0.072029,
+                  -0.121111
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.069267,
+            "minimumJointHeight": 0.006359
+          },
+          {
+            "frames": 58,
+            "milliseconds": 54.9,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000366,
+            "initialCOM": [
+              0.001891,
+              0.912833,
+              -0.150401
+            ],
+            "finalCOM": [
+              0.001055,
+              0.912307,
+              -0.156947
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.127397,
+                  0.072029,
+                  -0.245769
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.12645,
+                  0.072029,
+                  -0.137082
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": 0.091032,
+            "minimumJointHeight": 0.003179
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "animasa-small",
+        "character": "Animasa Miku",
+        "phase": "stable",
+        "attempts": 2,
+        "pushMeters": [
+          -0.07,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 116,
+          "firstTiltDegrees": 3.969177,
+          "lastTiltDegrees": 1.935231,
+          "maxFootLift": -0.000333,
+          "footTravel": [
+            0.022415,
+            0.013469
+          ],
+          "jointTravel": {
+            "chest": 0.038086,
+            "leftHand": 0.091923,
+            "rightHand": 0.075978,
+            "hips": 0.030092
+          },
+          "minimumRawJointHeight": 0.010323,
+          "rawFinalMargin": 0.110694,
+          "displayFinalMargin": 0.109333,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.057423,
+          "rawFinalFootHeights": [
+            -0.000333,
+            -0.001853
+          ],
+          "predictedFootContactsFinal": [
+            1.011678,
+            1.000923,
+            0.927498,
+            0.992853
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.123865,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.010859,
+            0.020724
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.087742,
+            0.133794
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 54.2,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.012117,
+            "initialCOM": [
+              -0.029903,
+              0.906817,
+              0.021181
+            ],
+            "finalCOM": [
+              -0.007394,
+              0.928466,
+              0.009986
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100069,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.148875,
+                  0.072029,
+                  -0.023001
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": 0.109128,
+            "minimumJointHeight": 0.011357
+          },
+          {
+            "frames": 58,
+            "milliseconds": 54.3,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.002385,
+            "initialCOM": [
+              -0.008556,
+              0.920587,
+              0.010791
+            ],
+            "finalCOM": [
+              -0.008961,
+              0.929812,
+              0.008488
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100172,
+                  0.072029,
+                  0.022287
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.148355,
+                  0.072029,
+                  -0.023066
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.110694,
+            "minimumJointHeight": 0.010323
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 564,
+          "allocations": 376,
+          "maximumSecondaryAngle": 1.125099,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "animasa-three-mmd-loader",
+            "meshes": 17,
+            "materials": 17,
+            "sourceSpecular": [
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.25,
+                  0.25,
+                  0.25
+                ],
+                "shininess": 10
+              },
+              {
+                "specular": [
+                  0.15,
+                  0.15,
+                  0.15
+                ],
+                "shininess": 6
+              },
+              {
+                "specular": [
+                  0.4,
+                  0.4,
+                  0.4
+                ],
+                "shininess": 15
+              },
+              {
+                "specular": [
+                  0.15,
+                  0.15,
+                  0.15
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.38,
+                  0.38,
+                  0.38
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.18,
+                  0.18,
+                  0.18
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "animasa-large",
+        "character": "Animasa Miku",
+        "phase": "stable",
+        "attempts": 5,
+        "pushMeters": [
+          0.34,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 290,
+          "firstTiltDegrees": 19.240728,
+          "lastTiltDegrees": 1.920812,
+          "maxFootLift": 0.047879,
+          "footTravel": [
+            0.212104,
+            0.144061
+          ],
+          "jointTravel": {
+            "chest": 0.155176,
+            "leftHand": 0.263007,
+            "rightHand": 0.256983,
+            "hips": 0.158826
+          },
+          "minimumRawJointHeight": 0.000504,
+          "rawFinalMargin": 0.109948,
+          "displayFinalMargin": 0.104666,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.042985,
+          "rawFinalFootHeights": [
+            -0.00033,
+            -0.001551
+          ],
+          "predictedFootContactsFinal": [
+            1.024209,
+            0.984687,
+            0.889599,
+            0.999392
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.12965,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.03907,
+            0.040029
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.166799,
+            0.187373
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 54.3,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.0709,
+            "initialCOM": [
+              0.143406,
+              0.810047,
+              0.048263
+            ],
+            "finalCOM": [
+              0.158131,
+              0.913613,
+              0.032489
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.350249,
+                  0.072029,
+                  -0.036874
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.100015,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": -0.203267,
+            "minimumJointHeight": 0.000504
+          },
+          {
+            "frames": 58,
+            "milliseconds": 54.4,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.006607,
+            "initialCOM": [
+              0.158234,
+              0.902162,
+              0.021707
+            ],
+            "finalCOM": [
+              0.157578,
+              0.911012,
+              0.016854
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.348089,
+                  0.072029,
+                  -0.036445
+                ],
+                "releases": 1,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.053378,
+                  0.072029,
+                  -0.029339
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -1,
+            "minimumJointHeight": 0.012382
+          },
+          {
+            "frames": 58,
+            "milliseconds": 54,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000571,
+            "initialCOM": [
+              0.159309,
+              0.909691,
+              0.011197
+            ],
+            "finalCOM": [
+              0.172909,
+              0.912192,
+              -0.019081
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.415618,
+                  0.072029,
+                  -0.014923
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.056144,
+                  0.072029,
+                  -0.027287
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.108295,
+            "minimumJointHeight": 0.006986
+          },
+          {
+            "frames": 58,
+            "milliseconds": 51.7,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000995,
+            "initialCOM": [
+              0.170561,
+              0.910996,
+              -0.021949
+            ],
+            "finalCOM": [
+              0.161492,
+              0.911961,
+              -0.035739
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.383144,
+                  0.072029,
+                  -0.049832
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.014932,
+                  0.072029,
+                  -0.0786
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": 0.082664,
+            "minimumJointHeight": 0.007814
+          },
+          {
+            "frames": 58,
+            "milliseconds": 54.2,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000848,
+            "initialCOM": [
+              0.164438,
+              0.911262,
+              -0.04082
+            ],
+            "finalCOM": [
+              0.180529,
+              0.911823,
+              -0.061748
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.383268,
+                  0.072029,
+                  -0.049801
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.014917,
+                  0.072029,
+                  -0.078523
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.109948,
+            "minimumJointHeight": 0.007936
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 1207,
+          "allocations": 376,
+          "maximumSecondaryAngle": 2.289641,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "animasa-three-mmd-loader",
+            "meshes": 17,
+            "materials": 17,
+            "sourceSpecular": [
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.25,
+                  0.25,
+                  0.25
+                ],
+                "shininess": 10
+              },
+              {
+                "specular": [
+                  0.15,
+                  0.15,
+                  0.15
+                ],
+                "shininess": 6
+              },
+              {
+                "specular": [
+                  0.4,
+                  0.4,
+                  0.4
+                ],
+                "shininess": 15
+              },
+              {
+                "specular": [
+                  0.15,
+                  0.15,
+                  0.15
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.38,
+                  0.38,
+                  0.38
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.18,
+                  0.18,
+                  0.18
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "uka-small",
+        "character": "CG-CA Uka",
+        "phase": "stable",
+        "attempts": 2,
+        "pushMeters": [
+          -0.07,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 116,
+          "firstTiltDegrees": 3.540192,
+          "lastTiltDegrees": 2.022844,
+          "maxFootLift": -0.000373,
+          "footTravel": [
+            0.016577,
+            0.011477
+          ],
+          "jointTravel": {
+            "chest": 0.037189,
+            "leftHand": 0.087027,
+            "rightHand": 0.069856,
+            "hips": 0.030144
+          },
+          "minimumRawJointHeight": 0.010693,
+          "rawFinalMargin": 0.111629,
+          "displayFinalMargin": 0.110107,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.058994,
+          "rawFinalFootHeights": [
+            -0.000373,
+            -0.001749
+          ],
+          "predictedFootContactsFinal": [
+            1.011429,
+            1.000384,
+            0.92395,
+            0.992438
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.126005,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.011496,
+            0.020509
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.089512,
+            0.129319
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 54.6,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.012505,
+            "initialCOM": [
+              -0.029502,
+              0.907359,
+              0.019212
+            ],
+            "finalCOM": [
+              -0.010811,
+              0.928382,
+              0.006113
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100069,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.151107,
+                  0.072029,
+                  -0.020308
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": 0.113412,
+            "minimumJointHeight": 0.010729
+          },
+          {
+            "frames": 58,
+            "milliseconds": 53.7,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.001939,
+            "initialCOM": [
+              -0.011785,
+              0.921817,
+              0.007069
+            ],
+            "finalCOM": [
+              -0.009065,
+              0.929783,
+              0.008258
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100212,
+                  0.072029,
+                  0.022339
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.15203,
+                  0.072029,
+                  -0.021307
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.111629,
+            "minimumJointHeight": 0.010693
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 630,
+          "allocations": 1472,
+          "maximumSecondaryAngle": 3.131229,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "default",
+            "meshes": 13,
+            "materials": 13
+          }
+        }
+      },
+      {
+        "name": "uka-large",
+        "character": "CG-CA Uka",
+        "phase": "stable",
+        "attempts": 4,
+        "pushMeters": [
+          0.34,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 232,
+          "firstTiltDegrees": 19.982206,
+          "lastTiltDegrees": 1.855509,
+          "maxFootLift": 0.048578,
+          "footTravel": [
+            0.178558,
+            0.068057
+          ],
+          "jointTravel": {
+            "chest": 0.149912,
+            "leftHand": 0.296296,
+            "rightHand": 0.295052,
+            "hips": 0.131808
+          },
+          "minimumRawJointHeight": 0.006918,
+          "rawFinalMargin": 0.078768,
+          "displayFinalMargin": 0.078972,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.04455,
+          "rawFinalFootHeights": [
+            0.000462,
+            -0.002213
+          ],
+          "predictedFootContactsFinal": [
+            1.01848,
+            0.989652,
+            0.915254,
+            0.996497
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.141369,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.037713,
+            0.052336
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.171415,
+            0.207492
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 53.6,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.054354,
+            "initialCOM": [
+              0.153229,
+              0.807751,
+              0.046656
+            ],
+            "finalCOM": [
+              0.147441,
+              0.914761,
+              0.035141
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.351393,
+                  0.072029,
+                  -0.020062
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.100015,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": -0.192715,
+            "minimumJointHeight": 0.006918
+          },
+          {
+            "frames": 58,
+            "milliseconds": 51.3,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.002426,
+            "initialCOM": [
+              0.147938,
+              0.906476,
+              0.025217
+            ],
+            "finalCOM": [
+              0.157974,
+              0.91114,
+              0.016695
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.35281,
+                  0.072029,
+                  -0.019593
+                ],
+                "releases": 1,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.055767,
+                  0.072029,
+                  -0.027166
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.159678,
+            "minimumJointHeight": 0.01268
+          },
+          {
+            "frames": 58,
+            "milliseconds": 54.2,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000385,
+            "initialCOM": [
+              0.157116,
+              0.909448,
+              0.013948
+            ],
+            "finalCOM": [
+              0.147392,
+              0.911871,
+              -0.017895
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.353106,
+                  0.072029,
+                  -0.019743
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.056164,
+                  0.072029,
+                  -0.02773
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "finalMargin": 0.104759,
+            "minimumJointHeight": 0.007211
+          },
+          {
+            "frames": 58,
+            "milliseconds": 53.3,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000497,
+            "initialCOM": [
+              0.14558,
+              0.911459,
+              -0.020531
+            ],
+            "finalCOM": [
+              0.139858,
+              0.911907,
+              -0.036628
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.339169,
+                  0.072029,
+                  -0.052263
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.027253,
+                  0.072029,
+                  -0.08612
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": 0.078768,
+            "minimumJointHeight": 0.007823
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 1086,
+          "allocations": 1472,
+          "maximumSecondaryAngle": 2.486906,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "default",
+            "meshes": 13,
+            "materials": 13
+          }
+        }
+      },
+      {
+        "name": "uka-back",
+        "character": "CG-CA Uka",
+        "phase": "stable",
+        "attempts": 3,
+        "pushMeters": [
+          0,
+          0,
+          0.34
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 174,
+          "firstTiltDegrees": 15.412013,
+          "lastTiltDegrees": 2.078041,
+          "maxFootLift": 0.059769,
+          "footTravel": [
+            0.064943,
+            0.137682
+          ],
+          "jointTravel": {
+            "chest": 0.140986,
+            "leftHand": 0.465129,
+            "rightHand": 0.348371,
+            "hips": 0.139355
+          },
+          "minimumRawJointHeight": 0.005467,
+          "rawFinalMargin": 0.089472,
+          "displayFinalMargin": 0.083565,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.045085,
+          "rawFinalFootHeights": [
+            -0.000621,
+            -0.005598
+          ],
+          "predictedFootContactsFinal": [
+            1.008207,
+            0.996677,
+            0.943228,
+            0.991843
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.18,
+          "maxContactRootCorrectionMeters": 0,
+          "rawTailFootRangesMeters": [
+            0.032882,
+            0.060065
+          ],
+          "rawTailMaximumFootSpeeds": [
+            0.180642,
+            0.246512
+          ]
+        },
+        "sequences": [
+          {
+            "frames": 58,
+            "milliseconds": 52.2,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.056676,
+            "initialCOM": [
+              0.005151,
+              0.804768,
+              0.212523
+            ],
+            "finalCOM": [
+              0.011156,
+              0.917827,
+              0.210902
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.158154,
+                  0.072029,
+                  0.104321
+                ],
+                "releases": 1,
+                "replants": 1
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.100709,
+                  0.072029,
+                  0.147395
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.088688,
+            "minimumJointHeight": 0.010327
+          },
+          {
+            "frames": 58,
+            "milliseconds": 67.6,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.001216,
+            "initialCOM": [
+              0.013001,
+              0.913183,
+              0.198152
+            ],
+            "finalCOM": [
+              0.006933,
+              0.912088,
+              0.18814
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.159633,
+                  0.072029,
+                  0.105582
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.115358,
+                  0.072029,
+                  0.180913
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": -0.094103,
+            "minimumJointHeight": 0.009121
+          },
+          {
+            "frames": 58,
+            "milliseconds": 51.4,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000528,
+            "initialCOM": [
+              0.009956,
+              0.913661,
+              0.184195
+            ],
+            "finalCOM": [
+              0.017406,
+              0.912205,
+              0.186149
+            ],
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.159874,
+                  0.072029,
+                  0.1053
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.124416,
+                  0.072029,
+                  0.197426
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "finalMargin": 0.089472,
+            "minimumJointHeight": 0.005467
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 858,
+          "allocations": 1472,
+          "maximumSecondaryAngle": 2.579407,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "default",
+            "meshes": 13,
+            "materials": 13
+          }
+        }
+      }
+    ],
+    "runtime": {
+      "common": "1.31.1",
+      "web": "1.31.1"
+    },
+    "gpu": {
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": "",
+      "maxBufferSize": 4294967292,
+      "maxStorageBufferBindingSize": 4294967292
+    },
+    "loadMs": 2156.1
+  },
+  "conditioning": {
+    "capturedAt": "2026-11-05T13:41:08.409Z",
+    "source": "Fresh real ONNX; fixed-step controller experiment; not rendered demo evidence",
+    "runtime": {
+      "type": "loaded",
+      "id": 1,
+      "milliseconds": 2262.8,
+      "runtime": {
+        "common": "1.31.1",
+        "web": "1.31.1"
+      },
+      "gpu": {
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": "",
+        "maxBufferSize": 4294967292,
+        "maxStorageBufferBindingSize": 4294967292
+      }
+    },
+    "cases": [
+      {
+        "name": "forward",
+        "strategy": "fixed landing",
+        "phase": "recovering",
+        "problem": "Six ONNX sequences without stable recovery. Checkpoint capability is unverified; reset or push again.",
+        "attempts": 6,
+        "rawSettled": false,
+        "rawFinalMargin": -0.081342,
+        "rawTailMaximumSpeed": 0.045351,
+        "rawFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.136658,
+              0.072029,
+              -0.237423
+            ],
+            "releases": 0,
+            "replants": 0
+          },
+          {
+            "joint": "RightFoot",
+            "planted": false,
+            "anchor": [
+              -0.140452,
+              0.072029,
+              -0.13632
+            ],
+            "releases": 2,
+            "replants": 1
+          }
+        ],
+        "rawFinalFootHeights": [
+          -0.000372,
+          -0.008503
+        ],
+        "maxRawFootLift": 0.043445,
+        "footTravel": [
+          0.239355,
+          0.024332
+        ],
+        "corrected": {
+          "com": [
+            -0.003531,
+            0.912529,
+            -0.147415
+          ],
+          "capture": [
+            -0.003531,
+            0.912529,
+            -0.147415
+          ],
+          "support": [
+            [
+              0.076646,
+              0,
+              -0.128482
+            ],
+            [
+              0.085699,
+              0,
+              -0.348295
+            ],
+            [
+              0.195606,
+              0,
+              -0.343769
+            ],
+            [
+              0.186552,
+              0,
+              -0.123955
+            ]
+          ],
+          "margin": -0.080888,
+          "captureMargin": -0.080888,
+          "tilt": 0.031556,
+          "minimumJointHeight": 0.009692,
+          "contactDrift": [
+            0.011062,
+            null
+          ],
+          "contacts": [
+            {
+              "joint": "LeftFoot",
+              "planted": true,
+              "anchor": [
+                0.136126,
+                0.072029,
+                -0.236125
+              ],
+              "releases": 4,
+              "replants": 4
+            },
+            {
+              "joint": "RightFoot",
+              "planted": false,
+              "anchor": [
+                -0.142,
+                0.072029,
+                -0.145808
+              ],
+              "releases": 7,
+              "replants": 6
+            }
+          ],
+          "phase": "recovering",
+          "displacement": [
+            0,
+            0,
+            -0.34
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "needsStep": true,
+          "attempts": 6,
+          "generated": true,
+          "problem": "Six ONNX sequences without stable recovery. Checkpoint capability is unverified; reset or push again."
+        },
+        "maxContactCorrectionRadians": 0.179662,
+        "maxContactRootCorrectionMeters": 0.001053,
+        "predictedFootContactsFinal": [
+          1.007522,
+          1.007818,
+          0.914174,
+          0.982004
+        ],
+        "sequenceFinalMargins": [
+          -1,
+          -0.074182,
+          -0.082862,
+          -0.081125,
+          -0.080812,
+          -0.081342
+        ]
+      },
+      {
+        "name": "forward",
+        "strategy": "observed landing",
+        "phase": "stable",
+        "attempts": 4,
+        "rawSettled": true,
+        "rawFinalMargin": 0.077553,
+        "rawTailMaximumSpeed": 0.04163,
+        "rawFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.146191,
+              0.072029,
+              -0.229297
+            ],
+            "releases": 0,
+            "replants": 0
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.152051,
+              0.072029,
+              -0.188189
+            ],
+            "releases": 1,
+            "replants": 1
+          }
+        ],
+        "rawFinalFootHeights": [
+          1.1e-05,
+          -0.004949
+        ],
+        "maxRawFootLift": 0.043445,
+        "footTravel": [
+          0.184211,
+          0.133345
+        ],
+        "corrected": {
+          "com": [
+            -0.009822,
+            0.912165,
+            -0.166726
+          ],
+          "capture": [
+            -0.012993,
+            0.912165,
+            -0.160719
+          ],
+          "support": [
+            [
+              -0.222647,
+              0,
+              -0.097614
+            ],
+            [
+              -0.190686,
+              0,
+              -0.31528
+            ],
+            [
+              0.107388,
+              0,
+              -0.345443
+            ],
+            [
+              0.216221,
+              0,
+              -0.329462
+            ],
+            [
+              0.18426,
+              0,
+              -0.111796
+            ],
+            [
+              -0.113814,
+              0,
+              -0.081634
+            ]
+          ],
+          "margin": 0.07419,
+          "captureMargin": 0.068533,
+          "tilt": 0.033666,
+          "minimumJointHeight": 0.007767,
+          "contactDrift": [
+            0.000469,
+            0.000316
+          ],
+          "contacts": [
+            {
+              "joint": "LeftFoot",
+              "planted": true,
+              "anchor": [
+                0.145824,
+                0.072029,
+                -0.228619
+              ],
+              "releases": 4,
+              "replants": 4
+            },
+            {
+              "joint": "RightFoot",
+              "planted": true,
+              "anchor": [
+                -0.15225,
+                0.072029,
+                -0.198457
+              ],
+              "releases": 4,
+              "replants": 4
+            }
+          ],
+          "phase": "stable",
+          "displacement": [
+            0,
+            0,
+            -0.34
+          ],
+          "velocity": [
+            -0.0104,
+            -0.004044,
+            0.0197
+          ],
+          "needsStep": true,
+          "attempts": 4,
+          "generated": true
+        },
+        "maxContactCorrectionRadians": 0.179662,
+        "maxContactRootCorrectionMeters": 0.000288,
+        "predictedFootContactsFinal": [
+          1.007196,
+          1.000075,
+          0.95175,
+          0.992547
+        ],
+        "sequenceFinalMargins": [
+          -1,
+          -0.074182,
+          0.101749,
+          0.077553
+        ]
+      },
+      {
+        "name": "back",
+        "strategy": "fixed landing",
+        "phase": "recovering",
+        "problem": "Six ONNX sequences without stable recovery. Checkpoint capability is unverified; reset or push again.",
+        "attempts": 6,
+        "rawSettled": false,
+        "rawFinalMargin": -0.062979,
+        "rawTailMaximumSpeed": 0.043736,
+        "rawFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.116193,
+              0.072029,
+              0.087574
+            ],
+            "releases": 0,
+            "replants": 0
+          },
+          {
+            "joint": "RightFoot",
+            "planted": false,
+            "anchor": [
+              -0.135805,
+              0.072029,
+              0.211954
+            ],
+            "releases": 2,
+            "replants": 1
+          }
+        ],
+        "rawFinalFootHeights": [
+          -0.000219,
+          -0.008572
+        ],
+        "maxRawFootLift": 0.059809,
+        "footTravel": [
+          0.003389,
+          0.226391
+        ],
+        "corrected": {
+          "com": [
+            -0.006586,
+            0.912515,
+            0.189345
+          ],
+          "capture": [
+            -0.006586,
+            0.912515,
+            0.189345
+          ],
+          "support": [
+            [
+              0.057297,
+              0,
+              0.196849
+            ],
+            [
+              0.064662,
+              0,
+              -0.023028
+            ],
+            [
+              0.174601,
+              0,
+              -0.019345
+            ],
+            [
+              0.167235,
+              0,
+              0.200532
+            ]
+          ],
+          "margin": -0.064098,
+          "captureMargin": -0.064098,
+          "tilt": 0.039031,
+          "minimumJointHeight": 0.010797,
+          "contactDrift": [
+            0.00909,
+            null
+          ],
+          "contacts": [
+            {
+              "joint": "LeftFoot",
+              "planted": true,
+              "anchor": [
+                0.115949,
+                0.072029,
+                0.088752
+              ],
+              "releases": 1,
+              "replants": 1
+            },
+            {
+              "joint": "RightFoot",
+              "planted": false,
+              "anchor": [
+                -0.136321,
+                0.072029,
+                0.202965
+              ],
+              "releases": 7,
+              "replants": 6
+            }
+          ],
+          "phase": "recovering",
+          "displacement": [
+            0,
+            0,
+            0.34
+          ],
+          "velocity": [
+            0,
+            0,
+            0
+          ],
+          "needsStep": true,
+          "attempts": 6,
+          "generated": true,
+          "problem": "Six ONNX sequences without stable recovery. Checkpoint capability is unverified; reset or push again."
+        },
+        "maxContactCorrectionRadians": 0.18,
+        "maxContactRootCorrectionMeters": 0.000652,
+        "predictedFootContactsFinal": [
+          1.010781,
+          1.013122,
+          0.919727,
+          0.985678
+        ],
+        "sequenceFinalMargins": [
+          -0.0555,
+          -0.059003,
+          -0.061888,
+          -0.063548,
+          -0.063287,
+          -0.062979
+        ]
+      },
+      {
+        "name": "back",
+        "strategy": "observed landing",
+        "phase": "stable",
+        "attempts": 3,
+        "rawSettled": true,
+        "rawFinalMargin": 0.077992,
+        "rawTailMaximumSpeed": 0.042189,
+        "rawFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.116141,
+              0.072029,
+              0.087599
+            ],
+            "releases": 0,
+            "replants": 0
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.144102,
+              0.072029,
+              0.202302
+            ],
+            "releases": 1,
+            "replants": 1
+          }
+        ],
+        "rawFinalFootHeights": [
+          -0.000645,
+          -0.007958
+        ],
+        "maxRawFootLift": 0.059809,
+        "footTravel": [
+          0.059927,
+          0.176159
+        ],
+        "corrected": {
+          "com": [
+            -0.013502,
+            0.912692,
+            0.188957
+          ],
+          "capture": [
+            -0.016729,
+            0.912692,
+            0.196168
+          ],
+          "support": [
+            [
+              -0.209419,
+              0,
+              0.288423
+            ],
+            [
+              -0.189525,
+              0,
+              0.069324
+            ],
+            [
+              0.071121,
+              0,
+              -0.025771
+            ],
+            [
+              0.18067,
+              0,
+              -0.015824
+            ],
+            [
+              0.160777,
+              0,
+              0.203275
+            ],
+            [
+              -0.09987,
+              0,
+              0.29837
+            ]
+          ],
+          "margin": 0.073184,
+          "captureMargin": 0.067515,
+          "tilt": 0.033979,
+          "minimumJointHeight": 0.003863,
+          "contactDrift": [
+            0.000153,
+            0.000145
+          ],
+          "contacts": [
+            {
+              "joint": "LeftFoot",
+              "planted": true,
+              "anchor": [
+                0.115949,
+                0.072029,
+                0.088752
+              ],
+              "releases": 1,
+              "replants": 1
+            },
+            {
+              "joint": "RightFoot",
+              "planted": true,
+              "anchor": [
+                -0.144697,
+                0.072029,
+                0.183847
+              ],
+              "releases": 3,
+              "replants": 3
+            }
+          ],
+          "phase": "stable",
+          "displacement": [
+            0,
+            0,
+            0.34
+          ],
+          "velocity": [
+            -0.010579,
+            -0.0065,
+            0.023641
+          ],
+          "needsStep": true,
+          "attempts": 3,
+          "generated": true
+        },
+        "maxContactCorrectionRadians": 0.18,
+        "maxContactRootCorrectionMeters": 0,
+        "predictedFootContactsFinal": [
+          1.007778,
+          1.006528,
+          0.965399,
+          0.991154
+        ],
+        "sequenceFinalMargins": [
+          -0.0555,
+          -0.059003,
+          0.077992
+        ]
+      },
+      {
+        "name": "right",
+        "strategy": "fixed landing",
+        "phase": "stable",
+        "attempts": 3,
+        "rawSettled": true,
+        "rawFinalMargin": 0.073566,
+        "rawTailMaximumSpeed": 0.035128,
+        "rawFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.437852,
+              0.072029,
+              -0.016213
+            ],
+            "releases": 0,
+            "replants": 0
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.057267,
+              0.072029,
+              -0.032153
+            ],
+            "releases": 0,
+            "replants": 0
+          }
+        ],
+        "rawFinalFootHeights": [
+          0.003669,
+          -0.000185
+        ],
+        "maxRawFootLift": 0.048228,
+        "footTravel": [
+          0.268626,
+          0.028179
+        ],
+        "corrected": {
+          "com": [
+            0.168287,
+            0.911444,
+            0.011993
+          ],
+          "capture": [
+            0.165891,
+            0.911444,
+            0.013907
+          ],
+          "support": [
+            [
+              -0.117048,
+              0,
+              0.075304
+            ],
+            [
+              -0.106872,
+              0,
+              -0.14446
+            ],
+            [
+              0.385087,
+              0,
+              -0.12771
+            ],
+            [
+              0.494969,
+              0,
+              -0.122622
+            ],
+            [
+              0.484793,
+              0,
+              0.097143
+            ],
+            [
+              -0.007166,
+              0,
+              0.080393
+            ]
+          ],
+          "margin": 0.074331,
+          "captureMargin": 0.072336,
+          "tilt": 0.0301,
+          "minimumJointHeight": 0.011442,
+          "contactDrift": [
+            0.00048,
+            0.001088
+          ],
+          "contacts": [
+            {
+              "joint": "LeftFoot",
+              "planted": true,
+              "anchor": [
+                0.43494,
+                0.072029,
+                -0.015284
+              ],
+              "releases": 4,
+              "replants": 4
+            },
+            {
+              "joint": "RightFoot",
+              "planted": true,
+              "anchor": [
+                -0.057019,
+                0.072029,
+                -0.032034
+              ],
+              "releases": 1,
+              "replants": 1
+            }
+          ],
+          "phase": "stable",
+          "displacement": [
+            0.34,
+            0,
+            0
+          ],
+          "velocity": [
+            -0.00786,
+            0.007319,
+            0.00628
+          ],
+          "needsStep": true,
+          "attempts": 3,
+          "generated": true
+        },
+        "maxContactCorrectionRadians": 0.169572,
+        "maxContactRootCorrectionMeters": 0,
+        "predictedFootContactsFinal": [
+          1.020944,
+          0.981696,
+          0.905785,
+          0.996053
+        ],
+        "sequenceFinalMargins": [
+          -0.204408,
+          -0.162378,
+          0.073566
+        ]
+      },
+      {
+        "name": "right",
+        "strategy": "observed landing",
+        "phase": "stable",
+        "attempts": 3,
+        "rawSettled": true,
+        "rawFinalMargin": 0.077694,
+        "rawTailMaximumSpeed": 0.035739,
+        "rawFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.437852,
+              0.072029,
+              -0.016213
+            ],
+            "releases": 0,
+            "replants": 0
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.027447,
+              0.072029,
+              -0.093812
+            ],
+            "releases": 1,
+            "replants": 1
+          }
+        ],
+        "rawFinalFootHeights": [
+          0.001328,
+          -0.000751
+        ],
+        "maxRawFootLift": 0.048228,
+        "footTravel": [
+          0.266047,
+          0.068385
+        ],
+        "corrected": {
+          "com": [
+            0.183615,
+            0.911401,
+            -0.022151
+          ],
+          "capture": [
+            0.181681,
+            0.911401,
+            -0.018704
+          ],
+          "support": [
+            [
+              -0.090625,
+              0,
+              0.011704
+            ],
+            [
+              -0.073953,
+              0,
+              -0.207664
+            ],
+            [
+              0.035731,
+              0,
+              -0.199328
+            ],
+            [
+              0.498494,
+              0,
+              -0.123039
+            ],
+            [
+              0.481822,
+              0,
+              0.096328
+            ],
+            [
+              0.372138,
+              0,
+              0.087992
+            ]
+          ],
+          "margin": 0.078011,
+          "captureMargin": 0.074295,
+          "tilt": 0.032392,
+          "minimumJointHeight": 0.010655,
+          "contactDrift": [
+            0.001839,
+            0.000384
+          ],
+          "contacts": [
+            {
+              "joint": "LeftFoot",
+              "planted": true,
+              "anchor": [
+                0.435316,
+                0.072029,
+                -0.017524
+              ],
+              "releases": 4,
+              "replants": 4
+            },
+            {
+              "joint": "RightFoot",
+              "planted": true,
+              "anchor": [
+                -0.027447,
+                0.072029,
+                -0.093812
+              ],
+              "releases": 2,
+              "replants": 2
+            }
+          ],
+          "phase": "stable",
+          "displacement": [
+            0.34,
+            0,
+            0
+          ],
+          "velocity": [
+            -0.006343,
+            0.005463,
+            0.011311
+          ],
+          "needsStep": true,
+          "attempts": 3,
+          "generated": true
+        },
+        "maxContactCorrectionRadians": 0.169572,
+        "maxContactRootCorrectionMeters": 0,
+        "predictedFootContactsFinal": [
+          1.029286,
+          0.987744,
+          0.896084,
+          0.998592
+        ],
+        "sequenceFinalMargins": [
+          -0.204408,
+          -0.162378,
+          0.077694
+        ]
+      }
+    ],
+    "pairedPrefixChecks": {
+      "forward": {
+        "firstTwoContextsTargetsAndRawMotionsIdentical": true
+      },
+      "back": {
+        "firstTwoContextsTargetsAndRawMotionsIdentical": true
+      },
+      "right": {
+        "firstTwoContextsTargetsAndRawMotionsIdentical": true
+      }
+    },
+    "errors": []
+  },
+  "checks": {
+    "npmTest": {
+      "passed": 36,
+      "skipped": 1,
+      "reason": "Existing optional ANIMASA_SOURCE conversion fixture unavailable"
+    },
+    "build": "pass",
+    "pagesArtifact": "pass: 27 files,44.1MB; weights excluded",
+    "devBalanceInteraction": "pass",
+    "productionPrefixBalanceInteraction": "pass",
+    "poseEditorAllThreeCharacters": "pass",
+    "keyboardSmoke": "pass",
+    "publicOnnx": "actual worker/WASM and 4 inference cases completed; strict capability assertion failed; retain failure",
+    "conditioningComparison": "6 real ONNX experiments completed; fixed forward/back limited, observed landing forward/back/lateral raw settled",
+    "candidateOnnx": "pass; all 9 cases raw settled, 6 generated steps including forward/back"
+  },
+  "remaining": {
+    "issueState": "open; Refs #19",
+    "mandatoryPostMerge": "Deploy follow-up and verify its exact public bundle, actual production-origin small/large + forward/back ONNX behavior, assets/navigation and all characters.",
+    "generalCapability": "Measured conditioned kinematic recovery only; no calibrated force policy, physical simulation or universal success rate. Raw final-tail foot excursions still reach 6.0cm; support/contact settling does not mean every raw joint is stationary.",
+    "externalActions": "No push, PR, merge, comment, deployment, upload, publication retry or Project mutation."
+  }
+}

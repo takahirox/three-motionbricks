@@ -228,6 +228,13 @@ async function main() {
       const rawTrace=isPush ? recoveryTrace(segment,avatar.rig,request.context[3],balance.floor) : undefined;
       const current=controller===response && request.revision===controller.revision;
       if(isPush && current) report.lastRecovery={revision:request.revision,modelRevision:model,source:'Raw decoded MotionBricks ONNX',
+        // Pinned SOMA output channels 362..365: left heel/toe, right heel/toe.
+        // Preserve raw confidence (including out-of-range values) independently
+        // of geometric contact inference. This does not grant IK authority.
+        predictedFootContactOrder:['left heel','left toe','right heel','right toe'],
+        predictedFootContacts:segment.map((_,i)=>Array.from(result.data.subarray((i+3)*366+362,(i+4)*366))),
+        conditioningStage:balance.attempts===0 && balance.needsStep ? 'lift intention'
+          : balance.attempts>=2 && balance.needsStep ? 'observed landing / settling' : 'grounded recovery',
         tokens:result.tokens,rawMotion:new URL(location.href).searchParams.has('captureMotion')
           ? segment.map(p=>({root:p.root.toArray(),rotations:p.rotations.map(q=>q.toArray())})) : undefined,
         context:request.context.map(p=>({root:p.root.toArray(),rotations:p.rotations.map(q=>q.toArray())})),
