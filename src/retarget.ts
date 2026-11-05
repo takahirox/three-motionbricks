@@ -94,4 +94,11 @@ export class SomaRetargeter {
     this.center.position.copy(this.center.parent!.worldToLocal(centerWorld));
     this.object.updateMatrixWorld(true);
   }
+  handle(joint: typeof JOINTS[number]): Vector3 | undefined {
+    return this.bindings.find(b => b.source === JOINTS.indexOf(joint))?.bone.getWorldPosition(new Vector3());
+  }
+  captureDrivingPose(): () => void {
+    const saved = this.bindings.map(({bone}) => ({bone,position:bone.position.clone(),rotation:bone.quaternion.clone()}));
+    return () => {for (const {bone,position,rotation} of saved) {bone.position.copy(position); bone.quaternion.copy(rotation);}};
+  }
 }

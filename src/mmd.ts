@@ -1,4 +1,5 @@
-import { Mesh, SkinnedMesh, Texture, type Group, type Material } from 'three';
+import { SkinnedMesh, Vector3, type Group } from 'three';
+import { disposeScene } from './dispose';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MMDToonPlugin, createToonLighting } from 'mmd-gltf/packages/three-mmd-toon';
 import { MMDOutlinePlugin, MMDOutlineEffect } from 'mmd-gltf/packages/three-mmd-outline';
@@ -9,13 +10,12 @@ import { verifyAnimasaGLB, ANIMASA_GLB_BYTES } from './animasa';
 import { LiveMMDPhysics } from './mmd-physics';
 import { AnimasaToonPlugin, inspectToonMaterials } from './animasa-toon';
 import type { SomaAvatar } from './avatar';
-import type { Pose } from './motion';
+import { JOINTS, type Pose } from './motion';
 
 let backend: ReturnType<typeof loadAmmoBrowser> | undefined;
 function ammo(base: string) {
   return backend ??= loadAmmoBrowser(`${base}runtime/ammo.js`).catch(error => {backend = undefined; throw error;});
 }
-
 export class MMDCharacter {
   physicsEnabled = true;
   private constructor(readonly object: Group, private retarget: SomaRetargeter,
@@ -58,26 +58,20 @@ export class MMDCharacter {
       outline?.dispose(); await toon?.dispose(); throw error;
     }
   }
-  apply(pose: Pose, delta: number) {this.retarget.apply(pose); this.physics.update(delta, this.physicsEnabled); this.object.updateMatrixWorld(true);}
+  apply(pose: Pose, delta: number, authoritative = false) {
+    this.retarget.apply(pose);
+    // Secondary bones still simulate. Restore only canonical driving bones so
+    // dynamic bodies/auxiliary MMD IK cannot override a user-controlled limb.
+    const restore = authoritative ? this.retarget.captureDrivingPose() : undefined;
+    this.physics.update(delta, this.physicsEnabled); restore?.(); this.object.updateMatrixWorld(true);
+  }
+  preview(pose: Pose) {this.retarget.apply(pose);}
+  handle(joint: typeof JOINTS[number]): Vector3 | undefined {return this.retarget.handle(joint);}
+  get heightRatio() {return this.retarget.heightRatio;}
   setPhysics(enabled: boolean) {this.physicsEnabled = enabled; this.physics.reset();}
   reset() {this.physics.reset();}
   dispose() {
     this.physics.dispose(); this.effect.dispose(); this.object.removeFromParent(); disposeScene(this.object);
     this.outline.dispose(); void this.toon.dispose();
   }
-}
-
-function disposeScene(scene: Group) {
-  const geometries = new Set<SkinnedMesh['geometry']>(), materials = new Set<Material>(), textures = new Set<Texture>();
-  const skeletons = new Set<SkinnedMesh['skeleton']>();
-  scene.traverse(o => {
-    if (!(o instanceof Mesh)) return;
-    geometries.add(o.geometry);
-    for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
-      materials.add(m); for (const value of Object.values(m)) if (value instanceof Texture) textures.add(value);
-    }
-    if (o instanceof SkinnedMesh) skeletons.add(o.skeleton);
-  });
-  for (const g of geometries) g.dispose(); for (const m of materials) m.dispose();
-  for (const t of textures) t.dispose(); for (const s of skeletons) s.dispose();
 }

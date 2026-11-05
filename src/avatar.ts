@@ -1,12 +1,16 @@
 import { Bone, Group, Quaternion, SkinnedMesh, Vector3 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { JOINTS, type Pose, type Rig } from './motion';
+import { disposeScene } from './dispose';
 
 export class SomaAvatar {
   private constructor(readonly object: Group, readonly bones: Bone[], readonly rig: Rig, readonly stance: Pose,
     readonly bind: Pose, readonly bindPoints: Vector3[]) {}
   static async load(url: string): Promise<SomaAvatar> {
     const {scene} = await new GLTFLoader().loadAsync(url);
+    try {return SomaAvatar.fromScene(scene);} catch (error) {disposeScene(scene); throw error;}
+  }
+  static fromScene(scene: Group): SomaAvatar {
     const byName = new Map<string, Bone>();
     let skinned = false;
     scene.traverse(object => {
@@ -41,6 +45,7 @@ export class SomaAvatar {
       .applyQuaternion(rotations[parents[i]].clone().invert()));
     return new SomaAvatar(scene, bones, {parents, offsets}, {root: points[0], rotations}, bind, bindPoints);
   }
+  dispose(): void {this.object.removeFromParent(); disposeScene(this.object);}
   apply(pose: Pose): void {
     for (let i = 0; i < this.bones.length; i++) {
       const bone = this.bones[i], parent = bone.parent!;
