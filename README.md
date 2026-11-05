@@ -68,6 +68,48 @@ The panel shows movement intent, last inference latency, queued seconds,
 generation count and root position. **Diagnostics → Save report** records runtime,
 GPU limits, loading time, recent inference times and any error.
 
+## Interactive pose demo
+
+Open [Pose studio](https://takahirox.github.io/three-motionbricks/pose.html)
+(`pose.html` locally), or follow **Interactive pose demo** in the keyboard demo.
+SOMA, Animasa Miku and CG-CA Uka share the canonical SOMA rig. Posing starts in a
+stationary stance without requesting ONNX.
+
+- Drag a visible dot in **Move** mode. Hands follow through the arm, shoulder and
+  torso; feet follow through the leg and pelvis. **Plant other feet** retains the
+  other foot as support within reach limits. **Hips** translates the whole body.
+- **Rotate** drags turn the selected joint around camera axes, with joint limits.
+  Select a handle from the menu for keyboard control: arrows move it in world
+  X/Y, Shift + arrows rotate it. Tab to or click the scene to leave form focus.
+- Release retains the pose. Esc, pointer cancellation and window blur release
+  camera ownership. Drag empty space to orbit and scroll to zoom. **Reset pose**
+  restores the stance; model switching clears held targets.
+- **Hand reach** and **Foot move** author example IK targets. Open **MotionBricks
+  response → Load MotionBricks** to opt into actual inference (758 MB, WebGPU,
+  several GB of GPU memory). **Pause generation** keeps immediate posing active.
+  Model loading errors leave IK available with retry.
+
+Four recent full-body poses and four interpolated full-body IK goals feed the
+existing seven SOMA tensors. Target strength controls their interpolation; it
+does not represent a trained effector control parameter. Only decoded ONNX
+segments count as generated sequences. Status and saved diagnostics distinguish
+immediate IK, actual generation and bounded IK correction. The last moved/rotated
+target remains constrained until the next gesture/reset/model switch. Corrections
+are bounded, so impossible or poorly predicted reaches can miss the target.
+This is a standing-pose feasibility demo, not a general balance, collision or
+arbitrary-pose controller. Collapsed/teleporting generations pause with a reason;
+adjust/reset the pose and resume to retry. Toon/outline and secondary MMD physics
+remain active; canonical driving joints retain pose authority.
+
+Run `npm run test:pose` against a running server for manipulation/error/navigation
+coverage, or `npm run test:pose -- --model` for real hand/foot response captures.
+`DEMO_URL` and `CHROME_BIN` work as in the locomotion browser suite. Add
+`?captureMotion=1` to the pose URL to include the latest raw decoded sequence in
+**Save motion report**. Reports otherwise contain bounded displayed traces,
+context/target roots, raw endpoint positions, target error and generation/discard
+counters. See [pose validation](docs/pose-validation.md) for observed results and
+limitations. The existing keyboard locomotion entry point is preserved.
+
 ## Runtime
 
 The four most recent poses form each context. Targets specify travel direction,

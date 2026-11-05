@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
 
 export default defineConfig(({command, isPreview}) => ({
+  build: {rollupOptions:{input:{main:'index.html',pose:'pose.html'}}},
   base: command === 'build' || isPreview ? '/three-motionbricks/' : '/',
   // Only publish reviewed assets. In particular, never copy locally downloaded
   // weights, partial downloads, or arbitrary new public/ files into Pages.

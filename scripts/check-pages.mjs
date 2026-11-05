@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // Deliberately independent of Vite's copy list: check the directory actually
 // uploaded by Actions, including accidentally copied textures and renamed GLBs.
-export const requiredFiles = ['index.html', 'assets/soma.glb', 'assets/soma_n1.json',
+export const requiredFiles = ['index.html', 'pose.html', 'assets/soma.glb', 'assets/soma_n1.json',
   'assets/uka/model.glb', 'assets/uka/README.md', 'assets/uka/README.ja.md',
   'assets/uka/conversion.json', 'runtime/ammo.js', 'runtime/ammo-LICENSE', 'NOTICE.txt',
   'licenses/SOMA-X-Apache-2.0.txt', 'licenses/MotionBricks-LICENSE.txt',
@@ -39,10 +39,12 @@ export async function checkPages(root = new URL('../dist/', import.meta.url)) {
     }
     count++; bytes += content.length;
   }
-  const html = await readFile(new URL('index.html', root), 'utf8');
-  for (const [, path] of html.matchAll(/(?:src|href)="(\/[^\"]+)"/g)) {
-    assert.ok(path.startsWith('/three-motionbricks/'), `Incorrect Pages base: ${path}`);
-    await readFile(new URL(path.slice('/three-motionbricks/'.length), root));
+  for (const entry of ['index.html','pose.html']) {
+    const html = await readFile(new URL(entry, root), 'utf8');
+    for (const [, path] of html.matchAll(/(?:src|href)="(\/[^\"]+)"/g)) {
+      assert.ok(path.startsWith('/three-motionbricks/'), `Incorrect Pages base: ${path}`);
+      await readFile(new URL(path.slice('/three-motionbricks/'.length) + (path.endsWith('/') ? 'index.html' : ''), root));
+    }
   }
   for (const name of requiredFiles) await readFile(new URL(name, root));
   assert.ok(files.some(file => file.name.endsWith('.wasm')), 'Missing local ORT WASM');

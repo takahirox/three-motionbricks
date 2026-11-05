@@ -1,6 +1,4 @@
-import { AmbientLight, Color, DirectionalLight, Fog, GridHelper, Mesh, MeshStandardMaterial,
-  PerspectiveCamera, PlaneGeometry, Scene, WebGPURenderer } from 'three/webgpu';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { createStage } from './stage';
 import { SomaAvatar } from './avatar';
 import { Inference } from './inference';
 import { Keyboard } from './input';
@@ -33,23 +31,10 @@ element('download').onclick = () => {
 };
 
 async function main() {
-  const scene = new Scene(); scene.background = new Color('#101c25'); scene.fog = new Fog('#101c25', 18, 70);
-  const camera = new PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 150); camera.position.set(4, 2.5, 5);
-  // Rendering may explicitly fall back for asset preview; inference always requires WebGPU.
-  const renderer = new WebGPURenderer({antialias: true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(innerWidth, innerHeight);
-  await renderer.init();
+  const stage = await createStage(element('stage'));
+  const {scene,camera,renderer,controls,ground,grid} = stage;
   report.renderer = 'isWebGPUBackend' in renderer.backend ? 'WebGPUBackend' : 'WebGLBackend';
-  element('stage').append(renderer.domElement);
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0.9, 0); controls.enableDamping = true; controls.enablePan = false;
-  controls.minDistance = 2; controls.maxDistance = 12; controls.maxPolarAngle = Math.PI / 2 - 0.03;
-  scene.add(new AmbientLight(0xffffff, 2));
-  const sun = new DirectionalLight(0xfff0db, 3); sun.position.set(4, 7, 3); scene.add(sun);
-  const ground = new Mesh(new PlaneGeometry(200, 200), new MeshStandardMaterial({color: '#172c36', roughness: 1}));
-  ground.rotation.x = -Math.PI / 2; ground.position.y = -0.015; scene.add(ground);
-  const grid = new GridHelper(200, 200, '#36535c', '#253e49'); grid.position.y = -0.01; scene.add(grid);
-  const avatar = await SomaAvatar.load(`${import.meta.env.BASE_URL}assets/soma.glb`); scene.add(avatar.object);
+  const avatar = await SomaAvatar.load(`${import.meta.env.BASE_URL}assets/soma.glb`).catch(error => {stage.dispose(); throw error;}); scene.add(avatar.object);
   const character = element<HTMLSelectElement>('character'), characterStatus = element('character-status');
   const physicsControl = element<HTMLInputElement>('mmd-physics');
   const animasaFile = element<HTMLInputElement>('animasa-file');
@@ -170,8 +155,10 @@ async function main() {
     element('generations').textContent = String(player.generations);
     element('position').textContent = `${pose.root.x.toFixed(2)}, ${pose.root.z.toFixed(2)} m`;
   });
-  addEventListener('resize', () => {camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);});
   document.addEventListener('visibilitychange', () => characters.current?.reset());
-  addEventListener('pagehide', () => {inference?.dispose(); characters.dispose();}, {once: true});
+  window.addEventListener('pagehide', event => {
+    if (event.persisted) return; // A frozen history entry resumes these resources.
+    inference?.dispose(); characters.dispose(); avatar.dispose(); stage.dispose();
+  });
 }
 main().catch(error => {fail(error); start.disabled = true;});

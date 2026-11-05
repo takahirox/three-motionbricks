@@ -18,7 +18,11 @@ test('Pages upload check rejects unreviewed models, textures and renamed derivat
     for (const name of requiredFiles) await put(name, name.startsWith('assets/animasa/') ? await readFile(new URL(`../public/${name}`, import.meta.url)) : 'fixture');
     await put('assets/ort-wasm-12345678.wasm', 'fixture');
     await put('assets/index-12345678.js', 'fixture');
+    await put('pose.html','<a href="/three-motionbricks/">Locomotion</a><script src="/three-motionbricks/assets/index-12345678.js"></script>');
     await checkPages(root);
+    await put('pose.html','<script src="/assets/index-12345678.js"></script>');
+    await assert.rejects(checkPages(root),/Incorrect Pages base/);
+    await put('pose.html','<a href="/three-motionbricks/">Locomotion</a>');
     for (const [name, bytes, error] of [
       ['assets/animasa/other.glb', 'glTF', /Unreviewed character asset/],
       ['assets/index-abcdefgh.js', 'glTF', /Unreviewed character asset/],

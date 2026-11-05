@@ -13,6 +13,7 @@
     "assets:mmd": "tsx scripts/prepare-mmd.ts",
     "check:mmd-ik": "tsx scripts/compare-mmd-ik.ts",
     "test:browser": "node scripts/browser-smoke.mjs",
+    "test:pose": "node scripts/pose-smoke.mjs",
     "assets:animasa": "tsx scripts/prepare-animasa.ts"
   },
   "dependencies": {
