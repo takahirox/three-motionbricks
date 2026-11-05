@@ -13,18 +13,23 @@
     <section id="panel" aria-label="Pose controls">
       <label class="character-picker">Character <select id="character" disabled><option value="soma">SOMA</option><option value="animasa">MMD (Animasa Miku)</option><option value="mmd">MMD (CG-CA Uka)</option></select></label>
       <p id="character-status" role="status"></p>
-      <div class="pose-row" role="group" aria-label="Interaction mode"><button id="move" aria-pressed="true">Move</button><button id="rotate" aria-pressed="false">Rotate</button><button id="reset">Reset pose</button></div>
-      <label class="character-picker">Handle <select id="effector"><option>LeftHand</option><option>RightHand</option><option>LeftFoot</option><option>RightFoot</option><option>Head</option><option>Hips</option></select></label>
-      <div class="pose-row"><label><input id="plant" type="checkbox" checked> Plant other feet</label><label id="physics-control" hidden><input id="mmd-physics" type="checkbox" checked> MMD physics</label></div>
-      <p class="controls">Drag a dot to pose; Rotate turns around camera axes. Empty space orbits; scroll zooms. Arrow keys move the selected handle; Shift + arrows rotates. Esc releases. Hips moves the whole body.</p>
-      <div class="pose-row"><button id="reach">Hand reach</button><button id="step">Foot move</button></div>
+      <div class="pose-row" role="group" aria-label="Interaction mode"><button id="push" aria-pressed="true">Push / Balance</button><button id="move" aria-pressed="false">Move</button><button id="rotate" aria-pressed="false">Rotate</button><button id="reset">Reset pose</button></div>
+      <label class="character-picker">Handle <select id="effector"><option>LeftHand</option><option>RightHand</option><option>LeftFoot</option><option>RightFoot</option><option>Head</option><option>Hips</option><option>Chest</option><option>LeftShoulder</option><option>RightShoulder</option></select></label>
+      <div class="pose-row"><label id="plant-control"><input id="plant" type="checkbox" checked> Plant other feet</label><label id="physics-control" hidden><input id="mmd-physics" type="checkbox" checked> MMD physics</label></div>
+      <p class="controls" id="mode-help">Push a chest, shoulder or hips dot; release to request recovery. Empty space orbits; scroll zooms. Arrows push in world X/Z. Esc releases the push.</p>
+      <div id="push-controls"><label class="character-picker">Push size <select id="push-size"><option value="0.07">Small</option><option value="0.18" selected>Medium</option><option value="0.34">Large</option></select></label>
+        <div class="pose-row"><button id="push-left">Push left</button><button id="push-right">Push right</button><button id="push-forward">Push forward</button><button id="push-back">Push back</button></div>
+        <p class="model-info">Amber: external push. Green: estimated support and COM. Immediate tilt uses deterministic IK. Recovery uses ONNX; this checkpoint's balance capability is experimental. Load the model below to recover.</p>
+        <p id="balance-status" role="status"></p>
+      </div>
+      <div class="pose-row" id="pose-examples" hidden><button id="reach">Hand reach</button><button id="step">Foot move</button></div>
       <p id="interaction" role="status">Loading character…</p>
-      <details id="generation-controls"><summary>MotionBricks response</summary>
+      <details id="generation-controls" open><summary>MotionBricks response</summary>
         <p id="status" role="status" aria-live="polite">IK only · model not loaded</p>
         <div class="pose-row"><button id="load" disabled>Load MotionBricks</button><button id="pause" disabled>Pause generation</button></div>
-        <label class="character-picker">Target strength <input id="strength" type="range" min="0.2" max="1" step="0.1" value="0.8"></label>
+        <label class="character-picker" id="strength-control">Target strength <input id="strength" type="range" min="0.2" max="1" step="0.1" value="0.8"></label>
         <p class="model-info" id="model-source"></p>
-        <p class="model-info">Requires WebGPU and several GB of GPU memory. Targets condition full-body poses; arbitrary reach compliance is experimental. Held targets use bounded post-generation IK.</p>
+        <p class="model-info">Requires WebGPU and several GB of GPU memory. Push mode conditions upright recovery and landing goals; targets never play as animation. Generated motion receives bounded contact corrections. Move/Rotate retain pose targets.</p>
         <dl><dt>Accepted ONNX sequences</dt><dd id="generations">0</dd><dt>Inference</dt><dd id="latency">—</dd><dt>Playback</dt><dd id="playback">IK only</dd></dl>
       </details>
       <details><summary>Diagnostics &amp; credits</summary><pre id="diagnostics"></pre><button id="download">Save motion report</button>
