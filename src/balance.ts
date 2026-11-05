@@ -189,14 +189,20 @@ export class BalanceRecovery {
     this.displacement.set(0,0,0);this.velocity.set(0,0,0);this.lastTime=now;this.settledFor=0;
     this.attempts=0;this.generated=false;this.problem=undefined;this.needsStep=false;this.eventContext=undefined;this.idleFor=0;this.landingGoal=undefined;
     this.displayedTrace=[];this.traceTime=0;
-    this.contacts=new FootContacts(this.pose,this.rig,this.floor);
+    // Interrupt playback without re-anchoring a released foot or losing its history.
   }
   push(displacement: Vector3, now: number) {
     if (this.phase!=='pushing' || !displacement.toArray().every(Number.isFinite)) return;
     const d=horizontal(displacement).clampLength(0,.38), dt=Math.max(1/120,(now-this.lastTime)/1000);
+    const candidate=disturbedPose(this.base,d,this.rig,this.ik,this.contacts.constraints);
+    // Each new push starts at the displayed pose, so per-event displacement
+    // limits alone cannot bound accumulated tilt or pelvis lowering.
+    const problem=this.boundsProblem([candidate],'Disturbance');
+    if(problem) {this.problem=problem;return;}
+    this.problem=undefined;
     this.velocity.copy(d).sub(this.displacement).divideScalar(dt).clampLength(0,1.5);
     this.displacement.copy(d);this.lastTime=now;
-    this.response.edit(disturbedPose(this.base,d,this.rig,this.ik,this.contacts.constraints),now);
+    this.response.edit(candidate,now);
     const m=this.metrics();this.needsStep ||= m.captureMargin<-.025 || d.length()>.2;
   }
   release(now: number) {
@@ -240,12 +246,12 @@ export class BalanceRecovery {
     if(this.landingGoal) {this.goal=this.landingGoal;this.landingGoal=undefined;}
     this.lastTime=now;return this.generated;
   }
-  boundsProblem(segment: Pose[]) {
+  boundsProblem(segment: Pose[], source = 'Raw ONNX') {
     for (const pose of segment) {
       const p=positions(pose,this.rig);
-      if (Math.min(...p.map(v=>v.y))<-.025) return 'Raw ONNX body penetrates the floor; no scripted recovery substituted.';
+      if (Math.min(...p.map(v=>v.y))<-.025) return `${source} body penetrates the floor; reset or push again.`;
       if (pose.root.distanceTo(this.base.root)>.95 || torsoTilt(pose,this.rig)>.8)
-        return 'Raw ONNX recovery exceeds body safety bounds; reset or push again.';
+        return `${source} exceeds body safety bounds; reset or push again.`;
     }
   }
   /** Only small contact/nonpenetration corrections; never upright torso/arm IK. */

@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { Quaternion, Vector3 } from 'three';
 import { blendPose, clonePose, encode, positions } from '../src/motion.ts';
 import { PoseIK } from '../src/pose-ik.ts';
@@ -81,6 +82,61 @@ test('contact hysteresis releases generated swings, replants quiet landings and 
   const balance=new BalanceRecovery(stance,rig,ik);
   balance.reset(0,swing);balance.begin(100);
   assert.equal(balance.contacts.contacts[0].planted,false,'A repeated push preserves an airborne foot');
+});
+
+function repeatLargePushes(balance: BalanceRecovery, start: number) {
+  let rejected=0;
+  for(let episode=0;episode<8;episode++) {
+    const now=start+episode*500, before=clonePose(balance.pose), contacts=balance.contacts.snapshot();
+    balance.begin(now);
+    assert.deepEqual(balance.pose,before,'Interrupting recovery must not move the body');
+    assert.deepEqual(balance.contacts.snapshot(),contacts,'Interrupting recovery must retain contact history');
+    for(let frame=1;frame<=8;frame++) {
+      const safe=clonePose(balance.pose), context=balance.response.observedContext(), revision=balance.response.revision;
+      const displacement=balance.displacement.clone(), velocity=balance.velocity.clone();
+      balance.push(new Vector3(.34*frame/8,0,0),now+frame*30);
+      if(balance.problem) {
+        rejected++;
+        assert.match(balance.problem,/Disturbance.*safety|Disturbance.*bounds|Disturbance.*floor/);
+        assert.deepEqual(balance.pose,safe,'Unsafe disturbance must retain the last safe displayed pose');
+        assert.deepEqual(balance.response.observedContext(),context,'Rejected candidates must not enter context');
+        assert.equal(balance.response.revision,revision);
+        assert.deepEqual(balance.displacement,displacement);
+        assert.deepEqual(balance.velocity,velocity);
+      }
+      assert.equal(balance.boundsProblem([balance.pose]),undefined,'Every displayed disturbance must stay within body bounds');
+      assert.deepEqual(balance.contacts.snapshot(),contacts,'Pushes must retain anchors, counters and foot velocity history');
+      balance.advance(1/30,false);
+    }
+    balance.release(now+250);
+    assert.equal(balance.phase,'recovering');
+    if(balance.problem) assert.equal(balance.ready(now+450),false,'Safety stops must remain explicit after release');
+  }
+  assert.ok(rejected>0,'Repeated large pushes must exercise the disturbance safety guard');
+}
+
+test('repeated large pushes while waiting for inference never accumulate unsafe tilt or floor penetration',()=> {
+  const balance=new BalanceRecovery(stance,rig,ik);
+  repeatLargePushes(balance,0);
+  assert.equal(balance.response.generations,0);
+  balance.reset(5000);
+  assert.equal(balance.problem,undefined);assert.deepEqual(balance.pose,stance);
+});
+
+test('repeated pushes interrupting saved generated recovery preserve the safe pose and contact history',()=> {
+  // Replay saved decoded ONNX output; this does not run fresh inference.
+  const saved=JSON.parse(readFileSync(new URL('../docs/balance-traces.json',import.meta.url),'utf8'));
+  const segment=saved.rawSequences[0].rawMotion.map((p: {root:number[];rotations:number[][]})=>({
+    root:new Vector3().fromArray(p.root),rotations:p.rotations.map(q=>new Quaternion().fromArray(q).normalize())
+  }));
+  const balance=new BalanceRecovery(stance,rig,ik);
+  balance.begin(0);balance.push(new Vector3(.34,0,0),240);balance.release(250);
+  assert.ok(balance.accept(segment,balance.request().revision,500));
+  for(let frame=0;frame<50 && !balance.contacts.contacts.some(c=>c.releases>0);frame++) balance.advance(1/30,true);
+  assert.equal(balance.problem,undefined);
+  assert.ok(balance.response.remaining>0,'Interrupt active playback');
+  assert.ok(balance.contacts.contacts.some(c=>c.releases>0),'Exercise generated support switching');
+  repeatLargePushes(balance,2500);
 });
 
 test('generated correction bounds preserve torso/arms; floor and collapsed predictions fail honestly',()=> {
