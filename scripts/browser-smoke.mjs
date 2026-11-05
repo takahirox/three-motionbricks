@@ -1,13 +1,12 @@
 // Start npm run dev first. Optional real-model test: npm run test:browser -- --model
 // CHROME_BIN selects a system Chrome; otherwise run npx playwright install chromium.
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, readFile, stat } from 'node:fs/promises';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
 import model from '../model-source.json' with {type: 'json'};
 import sharp from 'sharp';
-import { createHash } from 'node:crypto';
-import { createReadStream } from 'node:fs';
-import { createServer } from 'node:http';
+import { verifiedModelCache } from './model-cache.mjs';
 import animasaFiles from './animasa-public-files.json' with {type:'json'};
 const realModel = process.argv.includes('--model');
 const animasaPath = process.env.ANIMASA_GLB;
@@ -23,21 +22,9 @@ const origin = process.env.DEMO_URL || 'http://127.0.0.1:5173/';
 // Optional verified cache avoids repeating the 758 MB transfer across GPU
 // regression runs. Only the ONNX request is redirected; production asset delivery
 // and application model URL stay unchanged. Never serve an unverified substitute.
-let modelCacheServer, modelCacheURL;
+let modelCacheServer, modelCacheURL, modelCacheStats;
 if (realModel && process.env.MODEL_CACHE) {
-  const path = process.env.MODEL_CACHE;
-  assert.equal((await stat(path)).size, model.bytes);
-  const hash = createHash('sha256');
-  for await (const chunk of createReadStream(path)) hash.update(chunk);
-  assert.equal(hash.digest('hex'), model.sha256);
-  modelCacheServer = createServer((request, response) => {
-    if (request.method !== 'GET' || request.url !== '/model.onnx') {response.writeHead(404).end(); return;}
-    response.writeHead(200, {'Content-Type':'application/octet-stream',
-      'Content-Length':model.bytes, 'Access-Control-Allow-Origin':'*'});
-    createReadStream(path).pipe(response);
-  });
-  await new Promise(resolve => modelCacheServer.listen(0, '127.0.0.1', resolve));
-  modelCacheURL = `http://127.0.0.1:${modelCacheServer.address().port}/model.onnx`;
+  ({server:modelCacheServer, url:modelCacheURL, stats:modelCacheStats} = await verifiedModelCache(process.env.MODEL_CACHE, model));
 }
 const browser = await chromium.launch({executablePath: process.env.CHROME_BIN || undefined,
   headless: true, args: ['--enable-unsafe-webgpu']});
@@ -75,6 +62,8 @@ async function waitForModel(page) {
 
 try {
   const page = await browser.newPage({viewport: {width: 1280, height: 850}});
+  if (modelCacheURL && new URL(origin).protocol === 'https:')
+    await page.context().grantPermissions(['local-network-access'], {origin:new URL(origin).origin});
   const errors = [];
   const initialHttpErrors = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -188,13 +177,14 @@ try {
   await page.screenshot({path: new URL('mobile.png', output).pathname});
   await page.setViewportSize({width: 1280, height: 850});
   if (!realModel) await page.route(/mmm_v6_soma_fp32\.onnx$/, route => route.fulfill({status:404,body:'Missing model'}));
-  if (modelCacheURL) await page.route(model.url, route => route.fulfill({status:302, headers:{location:modelCacheURL,'Access-Control-Allow-Origin':'*'}}));
+  if (modelCacheURL) await page.route(/mmm_v6_soma_fp32\.onnx$/, route => route.fulfill({status:302, headers:{location:modelCacheURL,'Access-Control-Allow-Origin':'*'}}));
   await page.locator('#start').click();
   if (realModel) await waitForModel(page);
   else await page.waitForFunction(() => document.querySelector('#status').textContent.startsWith('Blocked:') || Number(document.querySelector('#generations').textContent) > 0,
     undefined, {timeout: 30000});
   const getReport = () => page.locator('#diagnostics').textContent().then(JSON.parse);
   let report = await getReport();
+  if (modelCacheStats) assert.ok(modelCacheStats.requests>0 && modelCacheStats.bytes>=model.bytes,'Verified cache did not deliver the full model');
   if (!realModel || strictGpu) {
     assert.match(report.error, !realModel ? /HTTP 404/ : /CPU EP/);
     assert.equal(await page.locator('#start').isEnabled(), true);
@@ -335,5 +325,8 @@ try {
     await noGpuPage.close();
   }
   delete report.motionSample;
-  console.log(JSON.stringify({result:'pass',realModel,mmdMode,strictGpu,onnxDelivery:modelCacheURL ? 'SHA-256-verified local cache; test-only redirect' : 'application model URL',report},null,2));
+  console.log(JSON.stringify({result:'pass',realModel,mmdMode,strictGpu,
+    onnxDelivery:modelCacheURL ? 'SHA-256-verified local cache; test-only redirect' : 'application model URL',
+    cacheTransfer:modelCacheStats,
+    cachePermission:modelCacheURL && new URL(origin).protocol === 'https:' ? 'local-network-access granted for isolated test origin' : undefined,report},null,2));
 } finally {await browser.close(); if (modelCacheServer) await new Promise(resolve => modelCacheServer.close(resolve));}

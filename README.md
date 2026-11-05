@@ -96,17 +96,25 @@ pose holds with an explicit waiting status; there is no synthetic recovery clip.
 Four observed context poses encode the disturbance history. Small-push targets
 request upright settling; larger-push targets first request a lifted landing
 intention and then a grounded stance, continuing from actual displayed history.
+Later step-settling requests use the observed landing/support positions instead
+of repeatedly requesting the original step endpoint. A measured raw ankle-height
+bias can lower conditioning by at most 1 cm; this never changes played decoded
+frames or the geometric contact thresholds.
 These full-body IK targets **only condition ONNX**. Only decoded ONNX sequences
 play as generated movement. Torso and arms have no post-generation pose target;
 small bounded foot/contact corrections and the existing seam blend are disclosed
 in diagnostics. A safety rejection or six unsuccessful generations leaves an
 explicit recovery limitation instead of playing a controller-authored step.
 
-Measured lateral recoveries include actual generated foot lift and replant on
-all three characters. **This is conditioned recovery feasibility, not a trained
-external-force policy or general physical balance.** A large forward case showed
-recovery action but failed the strict raw settling check; a large backward case
-did not settle. See [raw versus corrected traces, captures, metrics and limits](docs/balance-validation.md).
+The observed-landing candidate passed nine measured ONNX recovery cases, including
+forward and backward generated steps and raw COM/support/contact settling across
+the canonical and retargeted characters. **This is conditioned recovery
+feasibility, not a trained external-force policy or general physical balance.**
+Raw feet still move within roughly 6 cm ranges in some final settling windows;
+bounded contacts and endpoint holding contribute to the displayed stance.
+The earlier published fixed-landing version remains limited in fresh forward/back
+checks. See [dated continuation measurements and remaining public verification](docs/balance-followup-validation.md)
+and the [earlier raw traces and limitations](docs/balance-validation.md).
 
 **Move / Rotate** preserve the original pose editor. Drag hands/feet/head/hips,
 use optional **Plant other feet**, or author **Hand reach / Foot move** examples.
@@ -121,9 +129,22 @@ Run `npm run test:balance` against a running server for push/release/cancel,
 retarget, reset and failure smoke checks; add `-- --model` for the measured
 small/medium/large ONNX sweep. `npm run test:pose` and `-- --model` retain pose
 editor regression coverage. `DEMO_URL` and `CHROME_BIN` work as in the locomotion
-suite. **Save motion report** exports raw decoded and displayed COM/support/
+suite. To reuse a complete verified model for a production-origin test, set
+`MODEL_CACHE=/absolute/path/to/mmm_v6_soma_fp32.onnx`. Only the weight request is
+redirected to a streaming local test server after size/SHA-256 verification;
+worker, WASM and application assets still come from `DEMO_URL`. This is
+cache-assisted runtime verification, not an end-to-end production download.
+For HTTPS origins the isolated test context grants Chrome local-network access
+to reach that server; it does not change an ordinary browser profile.
+`BALANCE_CASES=small-left,large-right` selects a focused model run; the default
+keeps all nine cases. `BALANCE_OUTPUT` preserves separate evidence directories.
+`-- --model --feasibility` records capability failures without failing the
+integration run; inspect each case's `capability` result before claiming recovery.
+**Save motion report** exports raw decoded and displayed COM/support/
 contact traces, conditioning poses, source labels, correction bounds and the
-pinned model revision. Add `?captureMotion=1` to include all decoded rotations
+pinned model revision. Fresh reports also retain the model's four raw predicted
+heel/toe contact confidences separately from inferred geometric contacts. Add
+`?captureMotion=1` to include all decoded rotations
 and expose full traces in the diagnostics panel. Reports without that query
 still export complete joint-position traces; ordinary panel text is summarized.
 

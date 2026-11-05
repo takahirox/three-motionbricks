@@ -12,6 +12,9 @@ checkpoint tree before recording these results was
 `3310efbc031d926905f450c36529c82027caa2a1`, exactly matching the merge commit's
 GitHub tree. No implementation was republished or changed for this verification.
 
+The [separate continuation record](balance-followup-validation.md) tracks later
+work. The incomplete results below remain dated evidence of this original check.
+
 ## Completed checks
 
 - The merge-triggered [Pages workflow](https://github.com/takahirox/three-motionbricks/actions/runs/42021728984)

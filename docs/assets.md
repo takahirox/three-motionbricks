@@ -52,9 +52,15 @@ The official `motionbricks/assets/onnx/soma/mmm_v6_soma_fp32.onnx` is 757,864,27
 with SHA-256
 `856419dc72aeb14e591eebf4dd0ea05734a2506ddb00bcd39dd6dac2ad60f4fb`.
 `npm run assets:model` downloads the LFS payload directly, verifies its length and
-hash, and writes it under `public/assets/`. An existing matching file is reused;
-a mismatching existing file is never overwritten. Weights and partial downloads
-are ignored by Git. The official batch-one manifest is bundled unchanged alongside the body under
+hash, and writes it under `public/assets/`. An existing matching file is reused.
+An interrupted download retains `public/assets/mmm_v6_soma_fp32.onnx.part`.
+Run the same command again to resume; the host must return the exact pinned
+byte range, and the complete file must still pass SHA-256 before becoming usable.
+Each invocation uses one connection, no automatic retry, and a 15-minute transfer
+deadline (`MODEL_DOWNLOAD_TIMEOUT_MS` can set another positive millisecond budget).
+Partial data and a wrong-hash file are never silently discarded or replaced.
+Weights and partial downloads are ignored by Git. The official batch-one manifest
+is bundled unchanged alongside the body under
 the upstream asset CC-BY-4.0 terms; see [notices](../THIRD_PARTY_NOTICES.md).
 
 The pretrained weights use the

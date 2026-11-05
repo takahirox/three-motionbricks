@@ -114,7 +114,7 @@ export function disturbedPose(base: Pose, displacement: Vector3, rig: Rig, ik: P
  * These poses are never enqueued for playback. A step intention is not evidence
  * of a generated step. Keep heading and the actual support origin. */
 export function recoveryTargets(stance: Pose, anchor: Pose, direction: Vector3, needsStep: boolean,
-  rig: Rig, ik: PoseIK, supports: PoseConstraint[], lift = false): Pose[] {
+  rig: Rig, ik: PoseIK, supports: PoseConstraint[], lift = false, settling = false): Pose[] {
   const yaw = heading(positions(anchor,rig))-heading(positions(stance,rig));
   const goal = clonePose(stance), turn = new Quaternion().setFromAxisAngle(up,yaw);
   goal.rotations = goal.rotations.map(q=>turn.clone().multiply(q));
@@ -133,7 +133,8 @@ export function recoveryTargets(stance: Pose, anchor: Pose, direction: Vector3, 
     goal.root.addScaledVector(step,.5); goal.root.y-=.025;
   }
   const lateral=positions(goal,rig)[22].sub(positions(goal,rig)[26]).normalize();
-  if(needsStep) for(const j of [23,27]) rotateBranch(goal,rig,j,new Quaternion().setFromAxisAngle(lateral,.7));
+  if(settling) goal.root.y-=.025;
+  if(needsStep || settling) for(const j of [23,27]) rotateBranch(goal,rig,j,new Quaternion().setFromAxisAngle(lateral,.7));
   let solved = goal;
   for (const c of intended) solved = ik.solve(solved,c,intended,false);
   for(const c of intended) {
@@ -141,6 +142,18 @@ export function recoveryTargets(stance: Pose, anchor: Pose, direction: Vector3, 
     rotateBranch(solved,rig,j,turn.clone().multiply(stance.rotations[j]).multiply(solved.rotations[j].clone().invert()));
   }
   return Array.from({length:4},()=>clonePose(solved));
+}
+
+/** Ground the observed landing, rather than repeatedly asking for the original
+ * step endpoint. Any measured ankle-height bias is conditioning only, capped at
+ * 1 cm; it never changes contact thresholds or edits decoded/model playback. */
+export function settlingTargets(stance: Pose, anchor: Pose, raw: Pose, rig: Rig, ik: PoseIK,
+  contacts: FootContacts): Pose[] {
+  const p=positions(anchor,rig), predicted=positions(raw,rig);
+  const supports=contacts.contacts.map((c,i)=>({joint:c.joint,
+    target:(c.planted ? c.anchor : p[jointIndex(c.joint)]).clone()
+      .setY(contacts.floor[i]-Math.min(.01,Math.max(0,predicted[jointIndex(c.joint)].y-contacts.floor[i])))}));
+  return recoveryTargets(stance,anchor,new Vector3(),false,rig,ik,supports,false,true);
 }
 
 export function motionMetrics(pose: Pose, rig: Rig, contacts: FootContacts, velocity = new Vector3()) {
@@ -176,6 +189,7 @@ export class BalanceRecovery {
   private eventContext?: Pose[];
   private goal: Pose[];
   private landingGoal?: Pose[];
+  private lastRaw?: Pose;
   readonly floor: number[];
   constructor(readonly stance: Pose, readonly rig: Rig, readonly ik: PoseIK) {
     this.response = new PoseResponse(stance); this.base=clonePose(stance);
@@ -189,6 +203,7 @@ export class BalanceRecovery {
     this.displacement.set(0,0,0);this.velocity.set(0,0,0);this.lastTime=now;this.settledFor=0;
     this.attempts=0;this.generated=false;this.problem=undefined;this.needsStep=false;this.eventContext=undefined;this.idleFor=0;this.landingGoal=undefined;
     this.displayedTrace=[];this.traceTime=0;
+    this.lastRaw=undefined;
     // Interrupt playback without re-anchoring a released foot or losing its history.
   }
   push(displacement: Vector3, now: number) {
@@ -220,6 +235,7 @@ export class BalanceRecovery {
     this.response.reset(pose,now);this.base=clonePose(pose);this.phase='stable';this.problem=undefined;
     this.attempts=0;this.generated=false;this.needsStep=false;this.settledFor=0;this.eventContext=undefined;this.idleFor=0;this.landingGoal=undefined;
     this.displayedTrace=[];this.traceTime=0;
+    this.lastRaw=undefined;
     this.displacement.set(0,0,0);this.velocity.set(0,0,0);this.lastCom=centerOfMass(pose,this.rig);
     this.contacts=new FootContacts(pose,this.rig,this.floor);
     const m=this.metrics(), p=positions(pose,this.rig);
@@ -232,6 +248,8 @@ export class BalanceRecovery {
   ready(now: number) {return this.phase==='recovering' && !this.problem && this.attempts<6 && this.settledFor<.4
     && this.response.ready(now) && this.response.remaining<.12;}
   request() {
+    if(this.needsStep && this.attempts>=2 && this.lastRaw)
+      this.goal=settlingTargets(this.stance,this.pose,this.lastRaw,this.rig,this.ik,this.contacts);
     return {revision:this.response.revision,context:(this.eventContext ?? this.response.observedContext()).map(clonePose),targets:this.goal.map(clonePose)};
   }
   accept(segment: Pose[], revision: number, now: number) {
@@ -242,6 +260,7 @@ export class BalanceRecovery {
     const problem = responseProblem(segment,this.rig) ?? this.boundsProblem(segment);
     if(problem) {this.problem=problem;return false;}
     this.generated=this.response.accept(segment,revision);this.eventContext=undefined;
+    this.lastRaw=clonePose(segment.at(-1)!);
     this.segmentLength=segment.length;
     if(this.landingGoal) {this.goal=this.landingGoal;this.landingGoal=undefined;}
     this.lastTime=now;return this.generated;
