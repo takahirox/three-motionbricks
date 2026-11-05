@@ -1,0 +1,3072 @@
+{
+  "issue": 19,
+  "verifiedAt": "2026-11-05T14:17:34.340088+00:00",
+  "pr": {
+    "number": 21,
+    "url": "https://github.com/takahirox/three-motionbricks/pull/21",
+    "head_sha": "01fca7f889cff404e89de126b6b736c8e7e29b0e"
+  },
+  "merged": true,
+  "merge_commit": "e4aa44e59471929febdfc703475b5f8d1ec7bb55",
+  "sourceIdentity": {
+    "candidateSourceHashesMatch": {
+      "model-source.json": true,
+      "src/balance.ts": true,
+      "src/pose-main.ts": true,
+      "src/pose-response.ts": true,
+      "src/motion.ts": true,
+      "src/player.ts": true,
+      "src/inference.ts": true,
+      "src/inference.worker.ts": true,
+      "scripts/balance-smoke.mjs": true,
+      "scripts/balance-conditioning.mjs": true
+    },
+    "mergedRuntimeDiffBytes": 0,
+    "candidateSourceHashes": {
+      "model-source.json": "8174ce25b7628f66d2bd6b2b756faaa384b2760b21a963d3218db1f37a8c491e",
+      "src/balance.ts": "1ecab1699eab12f161e8e90fe99769ad4015b224e91c987e9edae0eb49ef41e7",
+      "src/pose-main.ts": "410372712f48873d6f7ec03a8000ebc9674c2cea7d80b4e8024e436c4f88d3a9",
+      "src/pose-response.ts": "9d59b66f5a97fa3304748bd75d2c74a673014c51624d161aefb0fd6c1ce02cd0",
+      "src/motion.ts": "cb22b69a981f2afe518f680260166560e86044465135883a2f752ba131cf1d76",
+      "src/player.ts": "7db5608cf4bfb99024c1d0495d8fa9a0d19d3440de155fdfdffca186423c1ca6",
+      "src/inference.ts": "cf8d307d157ffbf24c759621e05b5f6353a9ab16f77d2d71e8004b3a984bd5f4",
+      "src/inference.worker.ts": "611d0b752cca371860783c076459ffd667dcc5b5f2f1fab2549badf6dd49bd94",
+      "scripts/balance-smoke.mjs": "32ab3d2a6e51f1b46c91b5b4957263eaa5c2e63e57c3ce7a1bbfdf52029b41f3",
+      "scripts/balance-conditioning.mjs": "80462b713180e59ad4bd33d8c63357eef29e89ef50338b154672b51eef2a5fae"
+    }
+  },
+  "deployment": {
+    "conclusion": "success",
+    "created_at": "2026-11-05T14:05:43Z",
+    "head_sha": "e4aa44e59471929febdfc703475b5f8d1ec7bb55",
+    "html_url": "https://github.com/takahirox/three-motionbricks/actions/runs/42041687578",
+    "id": 42041687578,
+    "status": "completed",
+    "updated_at": "2026-11-05T14:07:30Z"
+  },
+  "deploymentJobs": [
+    {
+      "conclusion": "success",
+      "name": "build",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v7",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@v7",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm ci",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm test",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm run build",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run npm run check:pages",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/upload-pages-artifact@v5",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@v7",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v7",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "conclusion": "success",
+      "name": "deploy",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/configure-pages@v6",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Deploy to GitHub Pages",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    }
+  ],
+  "publicResources": {
+    "checkedAt": "2026-11-05T14:10:13.983177+00:00",
+    "mergeCommit": "e4aa44e59471929febdfc703475b5f8d1ec7bb55",
+    "origin": "https://takahirox.github.io/three-motionbricks/",
+    "files": [
+      {
+        "path": "NOTICE.txt",
+        "status": 200,
+        "bytes": 2290,
+        "sha256": "346270843eb7ef3fa34412881e06a21b854a0d7a944d325ea31120e8b24a0445",
+        "expectedSha256": "346270843eb7ef3fa34412881e06a21b854a0d7a944d325ea31120e8b24a0445",
+        "matches": true,
+        "elapsedSeconds": 0.402
+      },
+      {
+        "path": "assets/animasa/README.md",
+        "status": 200,
+        "bytes": 3077,
+        "sha256": "9bbc20df5cdfcdf62ac81e7373eb6f40d79b9f16698814d4fdf79c3a21388d62",
+        "expectedSha256": "9bbc20df5cdfcdf62ac81e7373eb6f40d79b9f16698814d4fdf79c3a21388d62",
+        "matches": true,
+        "elapsedSeconds": 0.363
+      },
+      {
+        "path": "assets/animasa/conversion.json",
+        "status": 200,
+        "bytes": 5693,
+        "sha256": "369d901b19ca41649319d61fe853ee5878c00d2e5bc27c1105ccf80c11e51349",
+        "expectedSha256": "369d901b19ca41649319d61fe853ee5878c00d2e5bc27c1105ccf80c11e51349",
+        "matches": true,
+        "elapsedSeconds": 0.346
+      },
+      {
+        "path": "assets/animasa/model.glb",
+        "status": 200,
+        "bytes": 1220308,
+        "sha256": "cc3bd0a0c5620a248dda1bbb8b7e2c97aab7c8d863ef9a6add817bd56311cc07",
+        "expectedSha256": "cc3bd0a0c5620a248dda1bbb8b7e2c97aab7c8d863ef9a6add817bd56311cc07",
+        "matches": true,
+        "elapsedSeconds": 1.671
+      },
+      {
+        "path": "assets/animasa/notices/Readme.txt",
+        "status": 200,
+        "bytes": 1156,
+        "sha256": "7b34ff053cfbf42322977fe2b0e3f90492c83dac2a1a001f6f4b2561197a4225",
+        "expectedSha256": "7b34ff053cfbf42322977fe2b0e3f90492c83dac2a1a001f6f4b2561197a4225",
+        "matches": true,
+        "elapsedSeconds": 0.358
+      },
+      {
+        "path": "assets/animasa/notices/miku/readme.txt",
+        "status": 200,
+        "bytes": 203,
+        "sha256": "702a3f62567fc9c8becbdb47a73058683086ba75e236612a3e8e8d5486cd0a9e",
+        "expectedSha256": "702a3f62567fc9c8becbdb47a73058683086ba75e236612a3e8e8d5486cd0a9e",
+        "matches": true,
+        "elapsedSeconds": 0.373
+      },
+      {
+        "path": "assets/animasa/notices/miku/readme_miku_v2.txt",
+        "status": 200,
+        "bytes": 19465,
+        "sha256": "6732866be1a712d7af142fcbf59f7e3bab8691ea472f86bb674020b13d51355a",
+        "expectedSha256": "6732866be1a712d7af142fcbf59f7e3bab8691ea472f86bb674020b13d51355a",
+        "matches": true,
+        "elapsedSeconds": 0.383
+      },
+      {
+        "path": "assets/inference.worker-B2nxauak.js",
+        "status": 200,
+        "bytes": 124281,
+        "sha256": "2df1285a0aa4ccd5b1f8fcde275590959aaf79ed6a40e00514b94a5ec2a06441",
+        "expectedSha256": "2df1285a0aa4ccd5b1f8fcde275590959aaf79ed6a40e00514b94a5ec2a06441",
+        "matches": true,
+        "elapsedSeconds": 0.542
+      },
+      {
+        "path": "assets/main-CBJskjki.js",
+        "status": 200,
+        "bytes": 6824,
+        "sha256": "75629c58120ee3725c877056fc38059be049e338fe1658f55917e8e917e6c47a",
+        "expectedSha256": "75629c58120ee3725c877056fc38059be049e338fe1658f55917e8e917e6c47a",
+        "matches": true,
+        "elapsedSeconds": 0.616
+      },
+      {
+        "path": "assets/mmd-15zj-Q3L.js",
+        "status": 200,
+        "bytes": 68709,
+        "sha256": "c19fa9573d595b2795f9cca81ea408e422557ee0d244a702706bcd999e77b6b3",
+        "expectedSha256": "c19fa9573d595b2795f9cca81ea408e422557ee0d244a702706bcd999e77b6b3",
+        "matches": true,
+        "elapsedSeconds": 0.53
+      },
+      {
+        "path": "assets/ort-wasm-simd-threaded.asyncify-AkdHdxrx.wasm",
+        "status": 200,
+        "bytes": 28747738,
+        "sha256": "ca319e9539cd0f1e291cf56074760121eaf39650f5dbf84b6e52c07f4b2944ec",
+        "expectedSha256": "ca319e9539cd0f1e291cf56074760121eaf39650f5dbf84b6e52c07f4b2944ec",
+        "matches": true,
+        "elapsedSeconds": 90.683
+      },
+      {
+        "path": "assets/pose-CGQYfjlh.js",
+        "status": 200,
+        "bytes": 34524,
+        "sha256": "a7f7fba1f4ccc9d82de48cd44b74db03365e99d07f9493711c2dc67649d39f55",
+        "expectedSha256": "a7f7fba1f4ccc9d82de48cd44b74db03365e99d07f9493711c2dc67649d39f55",
+        "matches": true,
+        "elapsedSeconds": 0.434
+      },
+      {
+        "path": "assets/pose-JR6v2frT.css",
+        "status": 200,
+        "bytes": 872,
+        "sha256": "70479aef8cb644f01c14c6ca75d66172750ed47c4c4264ec7a791f5505918791",
+        "expectedSha256": "70479aef8cb644f01c14c6ca75d66172750ed47c4c4264ec7a791f5505918791",
+        "matches": true,
+        "elapsedSeconds": 0.391
+      },
+      {
+        "path": "assets/preload-helper-CUgHk4mz.css",
+        "status": 200,
+        "bytes": 2256,
+        "sha256": "b523a954dcf14bd7e19cd4001e29f2055a04fdaee125954a70c0414abb7f92ee",
+        "expectedSha256": "b523a954dcf14bd7e19cd4001e29f2055a04fdaee125954a70c0414abb7f92ee",
+        "matches": true,
+        "elapsedSeconds": 0.374
+      },
+      {
+        "path": "assets/preload-helper-DkA-4ow-.js",
+        "status": 200,
+        "bytes": 922608,
+        "sha256": "db6d01683de95ec0ace24e140a654978f1812943dba4cd447396f29846923254",
+        "expectedSha256": "db6d01683de95ec0ace24e140a654978f1812943dba4cd447396f29846923254",
+        "matches": true,
+        "elapsedSeconds": 2.023
+      },
+      {
+        "path": "assets/soma.glb",
+        "status": 200,
+        "bytes": 1338208,
+        "sha256": "4255e39f5c3558e5f92a326f584290a4ea9f7529410571f38b380775e611b1d9",
+        "expectedSha256": "4255e39f5c3558e5f92a326f584290a4ea9f7529410571f38b380775e611b1d9",
+        "matches": true,
+        "elapsedSeconds": 4.583
+      },
+      {
+        "path": "assets/soma_n1.json",
+        "status": 200,
+        "bytes": 2061,
+        "sha256": "ed41ab5bf481383fa46bdf0322b0c1b96426973e5038b731bc31276121051aaa",
+        "expectedSha256": "ed41ab5bf481383fa46bdf0322b0c1b96426973e5038b731bc31276121051aaa",
+        "matches": true,
+        "elapsedSeconds": 0.344
+      },
+      {
+        "path": "assets/uka/README.ja.md",
+        "status": 200,
+        "bytes": 6071,
+        "sha256": "89b0f87f29d88026d940d1c85c99b31e700cdcdf12d95be07cb14cf9ac89dfbd",
+        "expectedSha256": "89b0f87f29d88026d940d1c85c99b31e700cdcdf12d95be07cb14cf9ac89dfbd",
+        "matches": true,
+        "elapsedSeconds": 0.324
+      },
+      {
+        "path": "assets/uka/README.md",
+        "status": 200,
+        "bytes": 5005,
+        "sha256": "a351933cf917c517c98881ca87145af5ed0f6e346aab48228ae7381327082b1a",
+        "expectedSha256": "a351933cf917c517c98881ca87145af5ed0f6e346aab48228ae7381327082b1a",
+        "matches": true,
+        "elapsedSeconds": 0.423
+      },
+      {
+        "path": "assets/uka/conversion.json",
+        "status": 200,
+        "bytes": 7075,
+        "sha256": "104d6c11f61ca773b970076715026479ff8a3687a9c685c6e2cd756d9707c1e9",
+        "expectedSha256": "104d6c11f61ca773b970076715026479ff8a3687a9c685c6e2cd756d9707c1e9",
+        "matches": true,
+        "elapsedSeconds": 0.528
+      },
+      {
+        "path": "assets/uka/model.glb",
+        "status": 200,
+        "bytes": 9611684,
+        "sha256": "7e783e058fab6081689b588e2fa3b41bf7633f77493f2c7bbd7c641adba838bd",
+        "expectedSha256": "7e783e058fab6081689b588e2fa3b41bf7633f77493f2c7bbd7c641adba838bd",
+        "matches": true,
+        "elapsedSeconds": 26.573
+      },
+      {
+        "path": "index.html",
+        "status": 200,
+        "bytes": 3342,
+        "sha256": "7dabb8b6ad18dc2cd1c456cdad40912c6a21b791fb22c7f5fba04b5afbc3a2ea",
+        "expectedSha256": "7dabb8b6ad18dc2cd1c456cdad40912c6a21b791fb22c7f5fba04b5afbc3a2ea",
+        "matches": true,
+        "elapsedSeconds": 0.37
+      },
+      {
+        "path": "licenses/MotionBricks-LICENSE.txt",
+        "status": 200,
+        "bytes": 34215,
+        "sha256": "94571f8dc8a121eff4e57add70ee015ae2878f7a8bc464f35f7dc8ff6897e1a1",
+        "expectedSha256": "94571f8dc8a121eff4e57add70ee015ae2878f7a8bc464f35f7dc8ff6897e1a1",
+        "matches": true,
+        "elapsedSeconds": 0.581
+      },
+      {
+        "path": "licenses/SOMA-X-Apache-2.0.txt",
+        "status": 200,
+        "bytes": 11387,
+        "sha256": "d1a7d615ab8eff4de143b1456f46dabf232f54daf0fcf9a70442bb6f637a9e95",
+        "expectedSha256": "d1a7d615ab8eff4de143b1456f46dabf232f54daf0fcf9a70442bb6f637a9e95",
+        "matches": true,
+        "elapsedSeconds": 0.358
+      },
+      {
+        "path": "pose.html",
+        "status": 200,
+        "bytes": 5339,
+        "sha256": "64de592eeca0a5a5e393a06e3dffa05e3d0c975ae76266ab3ed4acc69ab036e3",
+        "expectedSha256": "64de592eeca0a5a5e393a06e3dffa05e3d0c975ae76266ab3ed4acc69ab036e3",
+        "matches": true,
+        "elapsedSeconds": 0.412
+      },
+      {
+        "path": "runtime/ammo-LICENSE",
+        "status": 200,
+        "bytes": 904,
+        "sha256": "c31332f4670d02c475fca0dde6a48b46333a78eb83594195f010d0c6caebdd11",
+        "expectedSha256": "c31332f4670d02c475fca0dde6a48b46333a78eb83594195f010d0c6caebdd11",
+        "matches": true,
+        "elapsedSeconds": 0.41
+      },
+      {
+        "path": "runtime/ammo.js",
+        "status": 200,
+        "bytes": 1881243,
+        "sha256": "422b87333fec6272a592088f96bd672dc8f62b9649b12d44e493fd427e89fff8",
+        "expectedSha256": "422b87333fec6272a592088f96bd672dc8f62b9649b12d44e493fd427e89fff8",
+        "matches": true,
+        "elapsedSeconds": 7.936
+      }
+    ],
+    "passed": true,
+    "elapsedSeconds": 92.417
+  },
+  "singleConnectionModelTransfer": {
+    "method": "repository single-connection download",
+    "deadlineSeconds": 300,
+    "result": "timeout; resumable prefix retained",
+    "bytesRetained": 132514935,
+    "totalBytes": 757864273,
+    "notCapabilityEvidence": true
+  },
+  "modelDelivery": {
+    "capturedAt": "2026-11-05T14:14:45.835034+00:00",
+    "initialPrefixBytes": 132514935,
+    "completedBytes": 757864273,
+    "totalBytes": 757864273,
+    "concurrency": 4,
+    "endpointConnections": {
+      "officialLFS": 2,
+      "pinnedMedia": 2
+    },
+    "rangeBytes": 1048576,
+    "deadlineSeconds": 900,
+    "elapsedSeconds": 144.042,
+    "rangesPerWorker": [
+      132,
+      119,
+      168,
+      177
+    ],
+    "errors": [],
+    "pinnedHeadersVerified": true,
+    "publicationRetries": 0,
+    "bytes": 757864273,
+    "sha256": "856419dc72aeb14e591eebf4dd0ea05734a2506ddb00bcd39dd6dac2ad60f4fb",
+    "verified": true,
+    "cacheWorkspaceHint": "/private/var/folders/_t/12j6tqzx6wv4z2l__ttncdxc0000gn/T/gitweave-0d3a98ed-ceb34l2p/gitweave-0d3a98ed-ceb34l2p",
+    "cacheFile": "public/assets/mmm_v6_soma_fp32.onnx",
+    "cacheInCheckpoint": false
+  },
+  "publicONNX": {
+    "result": "pass",
+    "capturedAt": "2026-11-05T14:17:20.954Z",
+    "origin": "https://takahirox.github.io/three-motionbricks/",
+    "browser": "157.0.8103.38",
+    "modelDelivery": "SHA-256-verified local cache; test-only redirect; not end-to-end production download",
+    "cachePermission": "local-network-access granted for isolated test origin",
+    "cacheTransfer": {
+      "requests": 1,
+      "bytes": 757864273
+    },
+    "feasibilityOnly": false,
+    "workers": [
+      "https://takahirox.github.io/three-motionbricks/assets/inference.worker-B2nxauak.js"
+    ],
+    "resources": [
+      {
+        "url": "https://takahirox.github.io/three-motionbricks/assets/inference.worker-B2nxauak.js",
+        "status": 200
+      },
+      {
+        "url": "https://takahirox.github.io/three-motionbricks/assets/ort-wasm-simd-threaded.asyncify-AkdHdxrx.wasm",
+        "status": 200
+      }
+    ],
+    "networkFailures": [],
+    "realModel": true,
+    "model": {
+      "url": "https://media.githubusercontent.com/media/NVlabs/motionbricks/54fc563aeaaf819a753d72cc9fdc6713989cdd43/motionbricks/assets/onnx/soma/mmm_v6_soma_fp32.onnx",
+      "bytes": 757864273,
+      "sha256": "856419dc72aeb14e591eebf4dd0ea05734a2506ddb00bcd39dd6dac2ad60f4fb"
+    },
+    "errors": [],
+    "cases": [
+      {
+        "name": "small-left",
+        "character": "SOMA",
+        "phase": "stable",
+        "attempts": 2,
+        "pushMeters": [
+          -0.07,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 116,
+          "firstTiltDegrees": 3.614081,
+          "lastTiltDegrees": 1.928243,
+          "maxFootLift": -0.000316,
+          "footTravel": [
+            0.022615,
+            0.012205
+          ],
+          "jointTravel": {
+            "chest": 0.035717,
+            "leftHand": 0.084778,
+            "rightHand": 0.069838,
+            "hips": 0.029493
+          },
+          "minimumRawJointHeight": 0.010262,
+          "rawFinalMargin": 0.111636,
+          "displayFinalMargin": 0.110136,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.057116,
+          "rawFinalFootHeights": [
+            -0.000316,
+            -0.001847
+          ],
+          "predictedFootContactsFinal": [
+            1.011488,
+            1.000449,
+            0.927165,
+            0.992851
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.126811,
+          "maxContactRootCorrectionMeters": 0
+        },
+        "rawTailFeet": [
+          {
+            "jointIndex": 24,
+            "horizontalRangeMeters": 0.007714,
+            "maximumSpeedMetersPerSecond": 0.088189
+          },
+          {
+            "jointIndex": 28,
+            "horizontalRangeMeters": 0.019302,
+            "maximumSpeedMetersPerSecond": 0.132995
+          }
+        ],
+        "sequences": [
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 188.1,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.016151,
+            "initialCOM": [
+              -0.027291,
+              0.906477,
+              0.020271
+            ],
+            "finalCOM": [
+              -0.009709,
+              0.928374,
+              0.007842
+            ],
+            "finalMargin": 0.111245,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100069,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.149477,
+                  0.072029,
+                  -0.021743
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.010948
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 56,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.001761,
+            "initialCOM": [
+              -0.010606,
+              0.920815,
+              0.008867
+            ],
+            "finalCOM": [
+              -0.009477,
+              0.929821,
+              0.007843
+            ],
+            "finalMargin": 0.111636,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100204,
+                  0.072029,
+                  0.022308
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.149256,
+                  0.072029,
+                  -0.021867
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.010262
+          }
+        ],
+        "displayedFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.100069,
+              0.072029,
+              0.022392
+            ],
+            "releases": 0,
+            "replants": 0
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.149008,
+              0.072029,
+              -0.021575
+            ],
+            "releases": 1,
+            "replants": 1
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "medium-right",
+        "character": "SOMA",
+        "phase": "stable",
+        "attempts": 3,
+        "pushMeters": [
+          0.18,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 174,
+          "firstTiltDegrees": 10.517227,
+          "lastTiltDegrees": 1.871651,
+          "maxFootLift": 0.048208,
+          "footTravel": [
+            0.088082,
+            0.005892
+          ],
+          "jointTravel": {
+            "chest": 0.060971,
+            "leftHand": 0.14854,
+            "rightHand": 0.151096,
+            "hips": 0.055927
+          },
+          "minimumRawJointHeight": 0.008729,
+          "rawFinalMargin": 0.114032,
+          "displayFinalMargin": 0.10926,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.043622,
+          "rawFinalFootHeights": [
+            5.8e-05,
+            -0.002336
+          ],
+          "predictedFootContactsFinal": [
+            1.017484,
+            0.998007,
+            0.920827,
+            0.994575
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.108476,
+          "maxContactRootCorrectionMeters": 0
+        },
+        "rawTailFeet": [
+          {
+            "jointIndex": 24,
+            "horizontalRangeMeters": 0.022886,
+            "maximumSpeedMetersPerSecond": 0.140207
+          },
+          {
+            "jointIndex": 28,
+            "horizontalRangeMeters": 0.045648,
+            "maximumSpeedMetersPerSecond": 0.198002
+          }
+        ],
+        "sequences": [
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 63.3,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.035307,
+            "initialCOM": [
+              0.076803,
+              0.870736,
+              0.030863
+            ],
+            "finalCOM": [
+              0.081798,
+              0.915246,
+              0.028601
+            ],
+            "finalMargin": -0.126918,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.258276,
+                  0.072029,
+                  -0.023575
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.100015,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.012235
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 58.6,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.002661,
+            "initialCOM": [
+              0.079407,
+              0.908156,
+              0.019435
+            ],
+            "finalCOM": [
+              0.079561,
+              0.911747,
+              0.019682
+            ],
+            "finalMargin": -0.124376,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.199615,
+                  0.072029,
+                  -0.011737
+                ],
+                "releases": 1,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.100118,
+                  0.072029,
+                  0.022386
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.011685
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 56,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000651,
+            "initialCOM": [
+              0.076839,
+              0.911464,
+              0.018483
+            ],
+            "finalCOM": [
+              0.058922,
+              0.911935,
+              0.007833
+            ],
+            "finalMargin": 0.114032,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.218881,
+                  0.072029,
+                  -0.014596
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.100301,
+                  0.072029,
+                  0.022389
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.008729
+          }
+        ],
+        "displayedFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.218835,
+              0.072029,
+              -0.014547
+            ],
+            "releases": 2,
+            "replants": 2
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.100015,
+              0.072029,
+              0.022392
+            ],
+            "releases": 0,
+            "replants": 0
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "large-right",
+        "character": "SOMA",
+        "phase": "stable",
+        "attempts": 5,
+        "pushMeters": [
+          0.34,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 290,
+          "firstTiltDegrees": 19.047683,
+          "lastTiltDegrees": 1.825557,
+          "maxFootLift": 0.048881,
+          "footTravel": [
+            0.224626,
+            0.137276
+          ],
+          "jointTravel": {
+            "chest": 0.15455,
+            "leftHand": 0.268484,
+            "rightHand": 0.261651,
+            "hips": 0.153576
+          },
+          "minimumRawJointHeight": 0.004136,
+          "rawFinalMargin": 0.11057,
+          "displayFinalMargin": 0.105086,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.040206,
+          "rawFinalFootHeights": [
+            -0.000401,
+            -0.001368
+          ],
+          "predictedFootContactsFinal": [
+            1.023656,
+            0.98543,
+            0.890527,
+            1.000369
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.13441,
+          "maxContactRootCorrectionMeters": 0
+        },
+        "rawTailFeet": [
+          {
+            "jointIndex": 24,
+            "horizontalRangeMeters": 0.037126,
+            "maximumSpeedMetersPerSecond": 0.165716
+          },
+          {
+            "jointIndex": 28,
+            "horizontalRangeMeters": 0.041767,
+            "maximumSpeedMetersPerSecond": 0.190043
+          }
+        ],
+        "sequences": [
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 55.9,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.054136,
+            "initialCOM": [
+              0.152218,
+              0.811085,
+              0.045067
+            ],
+            "finalCOM": [
+              0.161425,
+              0.914612,
+              0.031352
+            ],
+            "finalMargin": -0.206573,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.34096,
+                  0.072029,
+                  -0.037493
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.100015,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.004136
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 59.7,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.003794,
+            "initialCOM": [
+              0.158463,
+              0.906157,
+              0.021089
+            ],
+            "finalCOM": [
+              0.15718,
+              0.911383,
+              0.016368
+            ],
+            "finalMargin": -1,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.337773,
+                  0.072029,
+                  -0.035659
+                ],
+                "releases": 1,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.054045,
+                  0.072029,
+                  -0.029105
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.012493
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 55.5,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000444,
+            "initialCOM": [
+              0.160191,
+              0.910151,
+              0.010311
+            ],
+            "finalCOM": [
+              0.17292,
+              0.912137,
+              -0.019178
+            ],
+            "finalMargin": 0.106992,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.412478,
+                  0.072029,
+                  -0.016105
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.055497,
+                  0.072029,
+                  -0.028569
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.006274
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 58.3,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000642,
+            "initialCOM": [
+              0.170493,
+              0.911152,
+              -0.021851
+            ],
+            "finalCOM": [
+              0.161907,
+              0.911844,
+              -0.03616
+            ],
+            "finalMargin": 0.079339,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.383841,
+                  0.072029,
+                  -0.049014
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.017712,
+                  0.072029,
+                  -0.087793
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.008597
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 53.5,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000824,
+            "initialCOM": [
+              0.164618,
+              0.911203,
+              -0.041268
+            ],
+            "finalCOM": [
+              0.179142,
+              0.911861,
+              -0.066325
+            ],
+            "finalMargin": 0.11057,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.383911,
+                  0.072029,
+                  -0.048984
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.01843,
+                  0.072029,
+                  -0.086903
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.00813
+          }
+        ],
+        "displayedFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.383591,
+              0.072029,
+              -0.04893
+            ],
+            "releases": 3,
+            "replants": 3
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.018389,
+              0.072029,
+              -0.086874
+            ],
+            "releases": 2,
+            "replants": 2
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "large-forward",
+        "character": "SOMA",
+        "phase": "stable",
+        "attempts": 3,
+        "pushMeters": [
+          0,
+          0,
+          -0.34
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 174,
+          "firstTiltDegrees": 19.680984,
+          "lastTiltDegrees": 2.164528,
+          "maxFootLift": 0.044027,
+          "footTravel": [
+            0.198576,
+            0.101258
+          ],
+          "jointTravel": {
+            "chest": 0.132846,
+            "leftHand": 0.26463,
+            "rightHand": 0.271112,
+            "hips": 0.136396
+          },
+          "minimumRawJointHeight": 0.002632,
+          "rawFinalMargin": 0.086643,
+          "displayFinalMargin": 0.079872,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.043954,
+          "rawFinalFootHeights": [
+            -0.000494,
+            -0.005863
+          ],
+          "predictedFootContactsFinal": [
+            1.008326,
+            1.000094,
+            0.94607,
+            0.991827
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.163011,
+          "maxContactRootCorrectionMeters": 0.000943
+        },
+        "rawTailFeet": [
+          {
+            "jointIndex": 24,
+            "horizontalRangeMeters": 0.027206,
+            "maximumSpeedMetersPerSecond": 0.168146
+          },
+          {
+            "jointIndex": 28,
+            "horizontalRangeMeters": 0.058243,
+            "maximumSpeedMetersPerSecond": 0.238745
+          }
+        ],
+        "sequences": [
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 55.7,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.053483,
+            "initialCOM": [
+              -0.004629,
+              0.815683,
+              -0.09663
+            ],
+            "finalCOM": [
+              0.002653,
+              0.913961,
+              -0.121699
+            ],
+            "finalMargin": -1,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.151752,
+                  0.072029,
+                  -0.180054
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.146852,
+                  0.072029,
+                  -0.125293
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.002632
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 55,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.004945,
+            "initialCOM": [
+              0.002481,
+              0.908663,
+              -0.127232
+            ],
+            "finalCOM": [
+              0.002196,
+              0.912213,
+              -0.143243
+            ],
+            "finalMargin": -0.06789,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.128447,
+                  0.072029,
+                  -0.240596
+                ],
+                "releases": 1,
+                "replants": 1
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.135046,
+                  0.072029,
+                  -0.121399
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.006489
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 55.1,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.00084,
+            "initialCOM": [
+              0.001823,
+              0.913276,
+              -0.149635
+            ],
+            "finalCOM": [
+              -0.000699,
+              0.912289,
+              -0.154661
+            ],
+            "finalMargin": 0.086643,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.128572,
+                  0.072029,
+                  -0.239758
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.133578,
+                  0.072029,
+                  -0.144772
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.002775
+          }
+        ],
+        "displayedFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.12837,
+              0.072029,
+              -0.238978
+            ],
+            "releases": 3,
+            "replants": 3
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.139819,
+              0.072029,
+              -0.160096
+            ],
+            "releases": 3,
+            "replants": 3
+          }
+        ],
+        "mmd": null
+      },
+      {
+        "name": "animasa-small",
+        "character": "Animasa Miku",
+        "phase": "stable",
+        "attempts": 2,
+        "pushMeters": [
+          -0.07,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 116,
+          "firstTiltDegrees": 3.719137,
+          "lastTiltDegrees": 2.032737,
+          "maxFootLift": -0.000856,
+          "footTravel": [
+            0.018845,
+            0.015722
+          ],
+          "jointTravel": {
+            "chest": 0.039979,
+            "leftHand": 0.092516,
+            "rightHand": 0.065347,
+            "hips": 0.032127
+          },
+          "minimumRawJointHeight": 0.008973,
+          "rawFinalMargin": 0.08666,
+          "displayFinalMargin": 0.087653,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.058997,
+          "rawFinalFootHeights": [
+            -0.000856,
+            -0.002263
+          ],
+          "predictedFootContactsFinal": [
+            1.015836,
+            1.000249,
+            0.928807,
+            0.991785
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.126819,
+          "maxContactRootCorrectionMeters": 0
+        },
+        "rawTailFeet": [
+          {
+            "jointIndex": 24,
+            "horizontalRangeMeters": 0.007746,
+            "maximumSpeedMetersPerSecond": 0.088701
+          },
+          {
+            "jointIndex": 28,
+            "horizontalRangeMeters": 0.0187,
+            "maximumSpeedMetersPerSecond": 0.124313
+          }
+        ],
+        "sequences": [
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 55.4,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.014896,
+            "initialCOM": [
+              -0.027503,
+              0.90623,
+              0.020519
+            ],
+            "finalCOM": [
+              -0.00879,
+              0.928361,
+              0.008336
+            ],
+            "finalMargin": 0.083826,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.152586,
+                  0.072029,
+                  -0.016189
+                ],
+                "releases": 1,
+                "replants": 1
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.149152,
+                  0.072029,
+                  -0.022215
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.010926
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 52.6,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.002379,
+            "initialCOM": [
+              -0.006794,
+              0.920253,
+              0.008085
+            ],
+            "finalCOM": [
+              -0.003908,
+              0.929185,
+              0.005165
+            ],
+            "finalMargin": 0.08666,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.152687,
+                  0.072029,
+                  -0.016457
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.148787,
+                  0.072029,
+                  -0.022004
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.008973
+          }
+        ],
+        "displayedFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.152451,
+              0.072029,
+              -0.016284
+            ],
+            "releases": 1,
+            "replants": 1
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.148537,
+              0.072029,
+              -0.02171
+            ],
+            "releases": 1,
+            "replants": 1
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 549,
+          "allocations": 376,
+          "maximumSecondaryAngle": 2.344667,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "animasa-three-mmd-loader",
+            "meshes": 17,
+            "materials": 17,
+            "sourceSpecular": [
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.25,
+                  0.25,
+                  0.25
+                ],
+                "shininess": 10
+              },
+              {
+                "specular": [
+                  0.15,
+                  0.15,
+                  0.15
+                ],
+                "shininess": 6
+              },
+              {
+                "specular": [
+                  0.4,
+                  0.4,
+                  0.4
+                ],
+                "shininess": 15
+              },
+              {
+                "specular": [
+                  0.15,
+                  0.15,
+                  0.15
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.38,
+                  0.38,
+                  0.38
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.18,
+                  0.18,
+                  0.18
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "animasa-large",
+        "character": "Animasa Miku",
+        "phase": "stable",
+        "attempts": 4,
+        "pushMeters": [
+          0.34,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 232,
+          "firstTiltDegrees": 19.818317,
+          "lastTiltDegrees": 1.969108,
+          "maxFootLift": 0.048917,
+          "footTravel": [
+            0.210698,
+            0.068233
+          ],
+          "jointTravel": {
+            "chest": 0.147426,
+            "leftHand": 0.278273,
+            "rightHand": 0.301128,
+            "hips": 0.140348
+          },
+          "minimumRawJointHeight": 0.005563,
+          "rawFinalMargin": 0.080301,
+          "displayFinalMargin": 0.080437,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.044678,
+          "rawFinalFootHeights": [
+            0.000668,
+            -0.001959
+          ],
+          "predictedFootContactsFinal": [
+            1.022373,
+            0.987331,
+            0.908713,
+            0.996423
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.134322,
+          "maxContactRootCorrectionMeters": 0
+        },
+        "rawTailFeet": [
+          {
+            "jointIndex": 24,
+            "horizontalRangeMeters": 0.037332,
+            "maximumSpeedMetersPerSecond": 0.177996
+          },
+          {
+            "jointIndex": 28,
+            "horizontalRangeMeters": 0.053624,
+            "maximumSpeedMetersPerSecond": 0.213566
+          }
+        ],
+        "sequences": [
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 57.1,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.060087,
+            "initialCOM": [
+              0.14699,
+              0.804245,
+              0.046759
+            ],
+            "finalCOM": [
+              0.146587,
+              0.914869,
+              0.031706
+            ],
+            "finalMargin": -0.191758,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.338488,
+                  0.072029,
+                  -0.030463
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.100015,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.005563
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 54.4,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.004192,
+            "initialCOM": [
+              0.145635,
+              0.907695,
+              0.022184
+            ],
+            "finalCOM": [
+              0.15362,
+              0.91129,
+              0.01666
+            ],
+            "finalMargin": -1,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.334437,
+                  0.072029,
+                  -0.031739
+                ],
+                "releases": 1,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.054381,
+                  0.072029,
+                  -0.026806
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.012854
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 56.2,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000808,
+            "initialCOM": [
+              0.155988,
+              0.910549,
+              0.010663
+            ],
+            "finalCOM": [
+              0.169479,
+              0.912187,
+              -0.017985
+            ],
+            "finalMargin": 0.10778,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.407412,
+                  0.072029,
+                  -0.015015
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.055293,
+                  0.072029,
+                  -0.026645
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.006355
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 54.8,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000639,
+            "initialCOM": [
+              0.166768,
+              0.911468,
+              -0.020543
+            ],
+            "finalCOM": [
+              0.156346,
+              0.911836,
+              -0.034991
+            ],
+            "finalMargin": 0.080301,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.370952,
+                  0.072029,
+                  -0.049846
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.023987,
+                  0.072029,
+                  -0.084469
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.007301
+          }
+        ],
+        "displayedFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.370706,
+              0.072029,
+              -0.049755
+            ],
+            "releases": 3,
+            "replants": 3
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.02394,
+              0.072029,
+              -0.084153
+            ],
+            "releases": 2,
+            "replants": 2
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 999,
+          "allocations": 376,
+          "maximumSecondaryAngle": 2.462053,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "animasa-three-mmd-loader",
+            "meshes": 17,
+            "materials": 17,
+            "sourceSpecular": [
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.25,
+                  0.25,
+                  0.25
+                ],
+                "shininess": 10
+              },
+              {
+                "specular": [
+                  0.15,
+                  0.15,
+                  0.15
+                ],
+                "shininess": 6
+              },
+              {
+                "specular": [
+                  0.4,
+                  0.4,
+                  0.4
+                ],
+                "shininess": 15
+              },
+              {
+                "specular": [
+                  0.15,
+                  0.15,
+                  0.15
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.38,
+                  0.38,
+                  0.38
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.18,
+                  0.18,
+                  0.18
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "uka-small",
+        "character": "CG-CA Uka",
+        "phase": "stable",
+        "attempts": 2,
+        "pushMeters": [
+          -0.07,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 116,
+          "firstTiltDegrees": 3.505944,
+          "lastTiltDegrees": 2.022478,
+          "maxFootLift": -0.000374,
+          "footTravel": [
+            0.016987,
+            0.011728
+          ],
+          "jointTravel": {
+            "chest": 0.037198,
+            "leftHand": 0.086581,
+            "rightHand": 0.069519,
+            "hips": 0.030183
+          },
+          "minimumRawJointHeight": 0.01075,
+          "rawFinalMargin": 0.111787,
+          "displayFinalMargin": 0.110235,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.05896,
+          "rawFinalFootHeights": [
+            -0.000374,
+            -0.001748
+          ],
+          "predictedFootContactsFinal": [
+            1.011458,
+            1.000355,
+            0.923822,
+            0.99244
+          ],
+          "generatedStep": false,
+          "maxContactCorrectionRadians": 0.126013,
+          "maxContactRootCorrectionMeters": 0
+        },
+        "rawTailFeet": [
+          {
+            "jointIndex": 24,
+            "horizontalRangeMeters": 0.008019,
+            "maximumSpeedMetersPerSecond": 0.08961
+          },
+          {
+            "jointIndex": 28,
+            "horizontalRangeMeters": 0.019232,
+            "maximumSpeedMetersPerSecond": 0.129121
+          }
+        ],
+        "sequences": [
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 52.3,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.013148,
+            "initialCOM": [
+              -0.029598,
+              0.907448,
+              0.01919
+            ],
+            "finalCOM": [
+              -0.011158,
+              0.928388,
+              0.00599
+            ],
+            "finalMargin": 0.113514,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100069,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.151541,
+                  0.072029,
+                  -0.020255
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.01075
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 53.3,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.001945,
+            "initialCOM": [
+              -0.012064,
+              0.921825,
+              0.007016
+            ],
+            "finalCOM": [
+              -0.009073,
+              0.929784,
+              0.008301
+            ],
+            "finalMargin": 0.111787,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.100216,
+                  0.072029,
+                  0.02234
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.151786,
+                  0.072029,
+                  -0.020518
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.010769
+          }
+        ],
+        "displayedFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.100069,
+              0.072029,
+              0.022392
+            ],
+            "releases": 0,
+            "replants": 0
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.151541,
+              0.072029,
+              -0.020255
+            ],
+            "releases": 1,
+            "replants": 1
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 629,
+          "allocations": 1472,
+          "maximumSecondaryAngle": 2.200982,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "default",
+            "meshes": 13,
+            "materials": 13
+          }
+        }
+      },
+      {
+        "name": "uka-large",
+        "character": "CG-CA Uka",
+        "phase": "stable",
+        "attempts": 5,
+        "pushMeters": [
+          0.34,
+          0,
+          0
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 290,
+          "firstTiltDegrees": 20.28594,
+          "lastTiltDegrees": 1.889856,
+          "maxFootLift": 0.048113,
+          "footTravel": [
+            0.216935,
+            0.141738
+          ],
+          "jointTravel": {
+            "chest": 0.156789,
+            "leftHand": 0.273769,
+            "rightHand": 0.279202,
+            "hips": 0.155749
+          },
+          "minimumRawJointHeight": 0.002957,
+          "rawFinalMargin": 0.11012,
+          "displayFinalMargin": 0.1048,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.042574,
+          "rawFinalFootHeights": [
+            -0.000373,
+            -0.001432
+          ],
+          "predictedFootContactsFinal": [
+            1.023937,
+            0.985938,
+            0.890754,
+            0.999735
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.149429,
+          "maxContactRootCorrectionMeters": 0
+        },
+        "rawTailFeet": [
+          {
+            "jointIndex": 24,
+            "horizontalRangeMeters": 0.034133,
+            "maximumSpeedMetersPerSecond": 0.162142
+          },
+          {
+            "jointIndex": 28,
+            "horizontalRangeMeters": 0.041918,
+            "maximumSpeedMetersPerSecond": 0.184728
+          }
+        ],
+        "sequences": [
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 50,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.060522,
+            "initialCOM": [
+              0.154634,
+              0.809564,
+              0.047922
+            ],
+            "finalCOM": [
+              0.155514,
+              0.914013,
+              0.034702
+            ],
+            "finalMargin": -0.200637,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.321013,
+                  0.072029,
+                  -0.029215
+                ],
+                "releases": 3,
+                "replants": 2
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.100015,
+                  0.072029,
+                  0.022392
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.002957
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 50.2,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.003598,
+            "initialCOM": [
+              0.15536,
+              0.904794,
+              0.023799
+            ],
+            "finalCOM": [
+              0.158287,
+              0.911165,
+              0.015804
+            ],
+            "finalMargin": -0.15834,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": false,
+                "anchor": [
+                  0.336839,
+                  0.072029,
+                  -0.029477
+                ],
+                "releases": 1,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.053874,
+                  0.072029,
+                  -0.027495
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.012699
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 53.5,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000394,
+            "initialCOM": [
+              0.161323,
+              0.91,
+              0.009631
+            ],
+            "finalCOM": [
+              0.175869,
+              0.912147,
+              -0.019643
+            ],
+            "finalMargin": 0.107595,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.415851,
+                  0.072029,
+                  -0.014401
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.051971,
+                  0.072029,
+                  -0.029979
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.005902
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 50.3,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000501,
+            "initialCOM": [
+              0.173319,
+              0.911591,
+              -0.02175
+            ],
+            "finalCOM": [
+              0.16413,
+              0.911866,
+              -0.033697
+            ],
+            "finalMargin": 0.079922,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.384573,
+                  0.072029,
+                  -0.042669
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.016422,
+                  0.072029,
+                  -0.087204
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.00883
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 53.7,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.00049,
+            "initialCOM": [
+              0.166777,
+              0.911101,
+              -0.038562
+            ],
+            "finalCOM": [
+              0.180276,
+              0.911841,
+              -0.063105
+            ],
+            "finalMargin": 0.11012,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.384685,
+                  0.072029,
+                  -0.042648
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.016871,
+                  0.072029,
+                  -0.087544
+                ],
+                "releases": 0,
+                "replants": 0
+              }
+            ],
+            "minimumJointHeight": 0.007607
+          }
+        ],
+        "displayedFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.384312,
+              0.072029,
+              -0.04259
+            ],
+            "releases": 3,
+            "replants": 3
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.016825,
+              0.072029,
+              -0.08751
+            ],
+            "releases": 2,
+            "replants": 2
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 1301,
+          "allocations": 1472,
+          "maximumSecondaryAngle": 3.0402,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "default",
+            "meshes": 13,
+            "materials": 13
+          }
+        }
+      },
+      {
+        "name": "uka-back",
+        "character": "CG-CA Uka",
+        "phase": "stable",
+        "attempts": 3,
+        "pushMeters": [
+          0,
+          0,
+          0.34
+        ],
+        "problem": null,
+        "capability": {
+          "settled": true,
+          "rawFrames": 174,
+          "firstTiltDegrees": 16.790114,
+          "lastTiltDegrees": 2.070683,
+          "maxFootLift": 0.137832,
+          "footTravel": [
+            0.097331,
+            0.141273
+          ],
+          "jointTravel": {
+            "chest": 0.206053,
+            "leftHand": 0.378528,
+            "rightHand": 0.298066,
+            "hips": 0.205645
+          },
+          "minimumRawJointHeight": 0.005574,
+          "rawFinalMargin": 0.089578,
+          "displayFinalMargin": 0.083778,
+          "rawTailSettled": true,
+          "rawTailMaximumSpeed": 0.045098,
+          "rawFinalFootHeights": [
+            -0.000701,
+            -0.005625
+          ],
+          "predictedFootContactsFinal": [
+            1.00801,
+            0.997092,
+            0.943175,
+            0.991895
+          ],
+          "generatedStep": true,
+          "maxContactCorrectionRadians": 0.161699,
+          "maxContactRootCorrectionMeters": 0
+        },
+        "rawTailFeet": [
+          {
+            "jointIndex": 24,
+            "horizontalRangeMeters": 0.030165,
+            "maximumSpeedMetersPerSecond": 0.177607
+          },
+          {
+            "jointIndex": 28,
+            "horizontalRangeMeters": 0.059892,
+            "maximumSpeedMetersPerSecond": 0.248011
+          }
+        ],
+        "sequences": [
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 52.7,
+            "conditioningStage": "lift intention",
+            "contextRootSpan": 0.059724,
+            "initialCOM": [
+              0.006487,
+              0.813474,
+              0.211373
+            ],
+            "finalCOM": [
+              0.011275,
+              0.917402,
+              0.22211
+            ],
+            "finalMargin": -0.086737,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.15614,
+                  0.072029,
+                  0.114973
+                ],
+                "releases": 1,
+                "replants": 1
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.095665,
+                  0.072029,
+                  0.148563
+                ],
+                "releases": 2,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.014211
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 68.4,
+            "conditioningStage": "grounded recovery",
+            "contextRootSpan": 0.001115,
+            "initialCOM": [
+              0.013596,
+              0.912228,
+              0.209909
+            ],
+            "finalCOM": [
+              0.006678,
+              0.912132,
+              0.192052
+            ],
+            "finalMargin": -0.088567,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.153295,
+                  0.072029,
+                  0.113531
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": false,
+                "anchor": [
+                  -0.114316,
+                  0.072029,
+                  0.19734
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.008834
+          },
+          {
+            "source": "Raw decoded MotionBricks ONNX",
+            "frames": 58,
+            "milliseconds": 52.1,
+            "conditioningStage": "observed landing / settling",
+            "contextRootSpan": 0.000535,
+            "initialCOM": [
+              0.009128,
+              0.913789,
+              0.188631
+            ],
+            "finalCOM": [
+              0.014154,
+              0.912193,
+              0.193813
+            ],
+            "finalMargin": 0.089578,
+            "finalContacts": [
+              {
+                "joint": "LeftFoot",
+                "planted": true,
+                "anchor": [
+                  0.153648,
+                  0.072029,
+                  0.113053
+                ],
+                "releases": 0,
+                "replants": 0
+              },
+              {
+                "joint": "RightFoot",
+                "planted": true,
+                "anchor": [
+                  -0.125932,
+                  0.072029,
+                  0.205553
+                ],
+                "releases": 1,
+                "replants": 1
+              }
+            ],
+            "minimumJointHeight": 0.005574
+          }
+        ],
+        "displayedFinalContacts": [
+          {
+            "joint": "LeftFoot",
+            "planted": true,
+            "anchor": [
+              0.153053,
+              0.072029,
+              0.114134
+            ],
+            "releases": 1,
+            "replants": 1
+          },
+          {
+            "joint": "RightFoot",
+            "planted": true,
+            "anchor": [
+              -0.127469,
+              0.072029,
+              0.192427
+            ],
+            "releases": 3,
+            "replants": 3
+          }
+        ],
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 869,
+          "allocations": 1472,
+          "maximumSecondaryAngle": 2.625423,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "default",
+            "meshes": 13,
+            "materials": 13
+          }
+        }
+      }
+    ],
+    "runtime": {
+      "common": "1.31.1",
+      "web": "1.31.1"
+    },
+    "gpu": {
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": "",
+      "maxBufferSize": 4294967292,
+      "maxStorageBufferBindingSize": 4294967292
+    },
+    "loadMs": 13205.1,
+    "loading": [
+      {
+        "elapsedMs": 32,
+        "status": "Downloading model\u2026"
+      },
+      {
+        "elapsedMs": 535,
+        "status": "Downloading 379 / 758 MB\u2026"
+      },
+      {
+        "elapsedMs": 1039,
+        "status": "Compiling WebGPU kernels\u2026"
+      },
+      {
+        "elapsedMs": 13693,
+        "status": "Model loaded \u00b7 waiting for ONNX response"
+      }
+    ]
+  },
+  "poseEditor": {
+    "result": "pass",
+    "realModel": false,
+    "reports": [
+      {
+        "label": "SOMA",
+        "handError": 0.0,
+        "footError": 0.000622
+      },
+      {
+        "label": "Animasa Miku",
+        "handError": 0.002473,
+        "footError": 0.000101,
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 114,
+          "allocations": 376,
+          "maximumSecondaryAngle": 1.05905,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "animasa-three-mmd-loader",
+            "meshes": 17,
+            "materials": 17,
+            "sourceSpecular": [
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.25,
+                  0.25,
+                  0.25
+                ],
+                "shininess": 10
+              },
+              {
+                "specular": [
+                  0.15,
+                  0.15,
+                  0.15
+                ],
+                "shininess": 6
+              },
+              {
+                "specular": [
+                  0.4,
+                  0.4,
+                  0.4
+                ],
+                "shininess": 15
+              },
+              {
+                "specular": [
+                  0.15,
+                  0.15,
+                  0.15
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.38,
+                  0.38,
+                  0.38
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0.18,
+                  0.18,
+                  0.18
+                ],
+                "shininess": 5
+              },
+              {
+                "specular": [
+                  0,
+                  0,
+                  0
+                ],
+                "shininess": 5
+              }
+            ]
+          }
+        }
+      },
+      {
+        "label": "CG-CA Uka",
+        "handError": 0.000147,
+        "footError": 3e-06,
+        "mmd": {
+          "physicsEnabled": true,
+          "steps": 347,
+          "allocations": 1472,
+          "maximumSecondaryAngle": 2.282661,
+          "shading": {
+            "model": "MMD_materials_toon",
+            "compatibility": "default",
+            "meshes": 13,
+            "materials": 13
+          }
+        }
+      }
+    ],
+    "errors": [],
+    "resourceTimeoutMs": 180000,
+    "timeoutOverride": "Isolated Playwright launch wrapper set page default timeout; repository script unchanged."
+  },
+  "keyboard": {
+    "result": "pass",
+    "capturedAt": "2026-11-05T14:11:03.415Z",
+    "browser": "157.0.8103.38",
+    "gpu": {
+      "secureContext": true,
+      "adapter": {
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      }
+    },
+    "keyboard": [
+      "W walk",
+      "Shift run",
+      "blur clears intent"
+    ],
+    "errors": [],
+    "networkFailures": []
+  },
+  "publicationRetries": 0,
+  "endToEndProductionModelDownload": "Not performed: complete official pinned payload was verified locally and streamed through the test-only cache redirect. Worker/WASM/application/character resources remained at the production origin. No second full transfer was triggered.",
+  "remaining": {
+    "mandatoryPostMergeChecks": [],
+    "limits": [
+      "Raw final-window feet still span up to 6 cm; bounded contacts, seam and endpoint hold contribute to display.",
+      "Medium-right settled with 8.8 cm travel, below the generated-step threshold.",
+      "Ordinary end-to-end production browser model download was not tested; public inference used the complete hash-verified cache.",
+      "Measured conditioned recovery is not a native force policy or guarantee of universal/no-slip physical balance."
+    ]
+  },
+  "closed": true,
+  "issueOutcome": {
+    "state": "closed",
+    "stateReason": "completed",
+    "closedAt": "2026-11-05T14:21:26Z",
+    "commentId": 6660347411,
+    "commentURL": "https://github.com/takahirox/three-motionbricks/issues/19#issuecomment-6660347411"
+  }
+}

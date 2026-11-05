@@ -1,5 +1,8 @@
 # Issue #19 continuation after PR #20
 
+Subsequent [PR #21 post-merge verification](balance-merged-validation.md) records
+fresh deployed results. This page retains the earlier pre-merge evidence.
+
 Work on 2026-11-05 starts from checkpoint
 `dadfaa36d233a835a21a26547a9d65f336e4f52d`, which retains merged PR #20
 (`3b46a9dd300e6d766542cc1407e427842af7e7d1`) and its dated publication evidence.
