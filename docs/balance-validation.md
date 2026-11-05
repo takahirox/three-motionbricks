@@ -202,11 +202,11 @@ DEMO_URL=http://127.0.0.1:4173/three-motionbricks/ npm run test:balance
 DEMO_URL=http://127.0.0.1:4173/three-motionbricks/ npm run test:pose
 ```
 
-Required post-merge verification remains **pending**: verify successful existing
-Pages deployment, load the public `pose.html` over HTTPS and verify JS, worker,
-WASM, all character resources/notices, navigation and real-model small/large
-pushes. Confirm that the published UI distinguishes raw generation, bounded
-correction and capability limits. This node does not push or deploy; local build
-and preview checks do not establish publication success. General forward/back
-recovery remains an explicit model/conditioning limitation, not a completed
-capability claim.
+The [post-merge publication report](balance-public-validation.md) records the
+successful merge-triggered Pages deployment, exact public-resource hashes,
+published source/correction labels, and focused browser checks. Required
+public-origin real-model small/large pushes remain **incomplete**: model transfer
+did not complete in that verification. Fetching JS/worker/WASM does not establish
+successful inference. General forward/back recovery remains an explicit
+model/conditioning limitation, not a completed capability claim. Keep Issue #19
+open; local build and preview checks do not substitute for the remaining checks.
