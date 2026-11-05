@@ -1,6 +1,0 @@
-# Preserve verified upstream notice bytes, including their CRLF line endings.
-public/assets/uka/README*.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
-# Every published Animasa file is hash-pinned; preserve its exact bytes on checkout.
-public/assets/animasa/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
-# The unmodified, hash-verified compiled Ammo resource is an opaque build asset.
-public/runtime/ammo.js -text -diff
