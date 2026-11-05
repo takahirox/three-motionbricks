@@ -62,6 +62,12 @@ export class FootContacts {
     });
     this.previous = this.contacts.map(c=>c.anchor.clone());
   }
+  snapshot() {
+    return {contacts:this.contacts.map(c=>({...c,anchor:c.anchor.clone()})),previous:this.previous.map(p=>p.clone())};
+  }
+  restore(state: ReturnType<FootContacts['snapshot']>) {
+    this.contacts=state.contacts;this.previous=state.previous;
+  }
   update(pose: Pose, dt: number) {
     if (dt<=0) return;
     const p = positions(pose,this.rig);
@@ -253,11 +259,18 @@ export class BalanceRecovery {
   }
   advance(dt: number, running: boolean) {
     const playing = running && this.phase==='recovering' && !this.problem && this.response.remaining>0;
+    // PoseResponse replaces its pose before invoking the correction callback.
+    // Keep the displayed pose and contact history together if playback is rejected.
+    const safePose=this.pose, safeContacts=playing ? this.contacts.snapshot() : undefined, safeCorrection=this.correction;
     this.response.advance(dt,playing,playing ? pose=> {
       this.contacts.update(pose,dt);
       const corrected=this.correct(pose), problem=this.boundsProblem([corrected]);
       this.correction={angle:Math.max(...pose.rotations.map((q,j)=>q.angleTo(corrected.rotations[j]))),root:pose.root.distanceTo(corrected.root)};
-      if(problem) {this.problem=`Playback safety stop: ${problem}`;return clonePose(this.pose);}
+      if(problem) {
+        this.problem=`Playback safety stop: ${problem}`;
+        this.contacts.restore(safeContacts!);this.correction=safeCorrection;
+        return clonePose(safePose);
+      }
       return corrected;
     } : undefined);
     const com=centerOfMass(this.pose,this.rig);

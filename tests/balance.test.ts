@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Vector3 } from 'three';
-import { clonePose, encode, positions } from '../src/motion.ts';
+import { Quaternion, Vector3 } from 'three';
+import { blendPose, clonePose, encode, positions } from '../src/motion.ts';
 import { PoseIK } from '../src/pose-ik.ts';
 import { BalanceRecovery, disturbedPose, FootContacts, recoveryTargets, supportMargin, supportPolygon, torsoTilt } from '../src/balance.ts';
 import { somaFixture } from './mmd-fixture.ts';
@@ -94,6 +94,37 @@ test('generated correction bounds preserve torso/arms; floor and collapsed predi
   assert.equal(balance.accept([bad,bad],balance.request().revision,300),false);
   assert.match(balance.problem!,/floor|standing/);assert.equal(balance.phase,'recovering');
   assert.equal(balance.response.generations,0);assert.equal(balance.ready(1000),false);
+});
+
+test('unsafe playback seam between valid input poses holds the last safe display and contact history',()=> {
+  const balance=new BalanceRecovery(stance,rig,ik);
+  // Synthetic input tests the seam safety guard, not ONNX recovery capability.
+  // Opposite leg angles clear the floor at either endpoint. Interpolation
+  // straightens the legs below the floor while the seam correction fades.
+  const endpoints=[-.8,.8].map(angle=> {
+    const pose=clonePose(stance);
+    for(const j of [22,26]) pose.rotations[j].premultiply(new Quaternion().setFromAxisAngle(new Vector3(1,0,0),angle));
+    return pose;
+  });
+  const minimum=Math.min(...endpoints.flatMap(p=>positions(p,rig).map(p=>p.y)));
+  for(const pose of endpoints) pose.root.y+=.005-minimum;
+  balance.reset(0,endpoints[0]);balance.begin(0);balance.release(100);
+  const segment=Array.from({length:12},()=>clonePose(endpoints[1]));
+  assert.equal(balance.boundsProblem(endpoints),undefined);
+  assert.match(balance.boundsProblem([blendPose(endpoints[0],endpoints[1],.5)])!,/floor/);
+  assert.ok(balance.accept(segment,balance.request().revision,300));
+  const safePose=clonePose(balance.pose), safeContacts=balance.contacts.snapshot();
+  balance.advance(1/30,true);
+  assert.match(balance.problem!,/Playback safety stop:.*floor/);
+  assert.deepEqual(balance.pose,safePose,'Rejected playback must retain the preceding safe pose');
+  assert.ok(balance.metrics().minimumJointHeight>=-.025);
+  assert.deepEqual(balance.contacts.snapshot(),safeContacts,'Rejected feet must not change anchors, counters or velocity history');
+  assert.deepEqual(balance.response.observedContext(),Array.from({length:4},()=>safePose));
+  assert.deepEqual(balance.displayedTrace.at(-1)!.joints,positions(safePose,rig).map(p=>p.toArray()));
+  assert.equal(balance.phase,'recovering');assert.equal(balance.ready(1000),false);
+  balance.advance(.1,true);
+  assert.deepEqual(balance.pose,safePose,'A safety stop must keep holding the safe pose');
+  assert.deepEqual(balance.contacts.snapshot(),safeContacts);
 });
 
 test('only played generated upright motion with settled contacts can transition to stable',()=> {
