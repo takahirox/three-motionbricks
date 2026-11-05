@@ -1,7 +1,7 @@
 import { Quaternion, Vector3 } from 'three';
 import { clonePose, JOINTS, positions, type Pose, type Rig } from './motion';
 
-export const EFFECTORS = ['LeftHand', 'RightHand', 'LeftFoot', 'RightFoot', 'Head', 'Hips'] as const;
+export const EFFECTORS = ['LeftHand', 'RightHand', 'LeftFoot', 'RightFoot', 'Head', 'Hips', 'Chest', 'LeftShoulder', 'RightShoulder'] as const;
 export type Effector = typeof EFFECTORS[number];
 export interface PoseConstraint {joint: Effector; target: Vector3}
 export const jointIndex = (name: Effector) => JOINTS.indexOf(name);

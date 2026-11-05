@@ -14,7 +14,8 @@
     "check:mmd-ik": "tsx scripts/compare-mmd-ik.ts",
     "test:browser": "node scripts/browser-smoke.mjs",
     "test:pose": "node scripts/pose-smoke.mjs",
-    "assets:animasa": "tsx scripts/prepare-animasa.ts"
+    "assets:animasa": "tsx scripts/prepare-animasa.ts",
+    "test:balance": "node scripts/balance-smoke.mjs"
   },
   "dependencies": {
     "ammojs-typed": "1.0.6",

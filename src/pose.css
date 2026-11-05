@@ -5,6 +5,7 @@
 .pose-row {display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px;}
 .pose-row button {margin: 0; padding: 6px 10px;}
 .pose-row label {font-size: 12px;}
+.pose-demo [hidden] {display: none;}
 .pose-demo #physics-control:not([hidden]) {margin: 0;}
 button[aria-pressed="false"] {background: transparent; color: #b5c6ce; border-color: #52717f;}
 #interaction {font-size: 12px; color: #ffd07a;}

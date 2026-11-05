@@ -68,47 +68,64 @@ The panel shows movement intent, last inference latency, queued seconds,
 generation count and root position. **Diagnostics → Save report** records runtime,
 GPU limits, loading time, recent inference times and any error.
 
-## Interactive pose demo
+## Push recovery and pose studio
 
 Open [Pose studio](https://takahirox.github.io/three-motionbricks/pose.html)
 (`pose.html` locally), or follow **Interactive pose demo** in the keyboard demo.
-SOMA, Animasa Miku and CG-CA Uka share the canonical SOMA rig. Posing starts in a
-stationary stance without requesting ONNX.
+SOMA, Animasa Miku and CG-CA Uka share canonical SOMA interaction and conditioning.
+The keyboard locomotion entry point remains unchanged.
 
-- Drag a visible dot in **Move** mode. Hands follow through the arm, shoulder and
-  torso; feet follow through the leg and pelvis. **Plant other feet** retains the
-  other foot as support within reach limits. **Hips** translates the whole body.
-- **Rotate** drags turn the selected joint around camera axes, with joint limits.
-  Select a handle from the menu for keyboard control: arrows move it in world
-  X/Y, Shift + arrows rotate it. Tab to or click the scene to leave form focus.
-- Release retains the pose. Esc, pointer cancellation and window blur release
-  camera ownership. Drag empty space to orbit and scroll to zoom. **Reset pose**
-  restores the stance; model switching clears held targets.
-- **Hand reach** and **Foot move** author example IK targets. Open **MotionBricks
-  response → Load MotionBricks** to opt into actual inference (758 MB, WebGPU,
-  several GB of GPU memory). **Pause generation** keeps immediate posing active.
-  Model loading errors leave IK available with retry.
+**Push / Balance** starts standing. Load MotionBricks to enable recovery (758 MB,
+WebGPU, several GB of GPU memory), then drag a chest, shoulder or hips dot.
+Feet initially stay planted while the pelvis lowers, torso tilts and arms counter
+rotate. This immediate disturbance uses **deterministic IK**, labeled separately
+from generation. Release, Esc, pointer cancellation or blur removes the push;
+ONNX then generates the recovery candidate. Without the model, the disturbed
+pose holds with an explicit waiting status; there is no synthetic recovery clip.
 
-Four recent full-body poses and four interpolated full-body IK goals feed the
-existing seven SOMA tensors. Target strength controls their interpolation; it
-does not represent a trained effector control parameter. Only decoded ONNX
-segments count as generated sequences. Status and saved diagnostics distinguish
-immediate IK, actual generation and bounded IK correction. The last moved/rotated
-target remains constrained until the next gesture/reset/model switch. Corrections
-are bounded, so impossible or poorly predicted reaches can miss the target.
-This is a standing-pose feasibility demo, not a general balance, collision or
-arbitrary-pose controller. Collapsed/teleporting generations pause with a reason;
-adjust/reset the pose and resume to retry. Toon/outline and secondary MMD physics
-remain active; canonical driving joints retain pose authority.
+- **Push left/right/forward/back** apply a repeatable 240 ms disturbance. Select
+  Small (7 cm), Medium (18 cm) or Large (34 cm); these are handle displacements,
+  not a calibrated force. Arrows push along world X/Z after focusing the scene.
+- Green ground marks show estimated support and COM; the amber line shows the
+  external disturbance. Status distinguishes actively pushed, recovering and
+  stable by estimated support metrics. Large pushes can request a step.
+- **Reset pose** restores standing. New pushes interrupt the actual displayed
+  response; reset, character switching and mode changes invalidate old results.
+  Empty space orbits the camera and the wheel zooms.
 
-Run `npm run test:pose` against a running server for manipulation/error/navigation
-coverage, or `npm run test:pose -- --model` for real hand/foot response captures.
-`DEMO_URL` and `CHROME_BIN` work as in the locomotion browser suite. Add
-`?captureMotion=1` to the pose URL to include the latest raw decoded sequence in
-**Save motion report**. Reports otherwise contain bounded displayed traces,
-context/target roots, raw endpoint positions, target error and generation/discard
-counters. See [pose validation](docs/pose-validation.md) for observed results and
-limitations. The existing keyboard locomotion entry point is preserved.
+Four observed context poses encode the disturbance history. Small-push targets
+request upright settling; larger-push targets first request a lifted landing
+intention and then a grounded stance, continuing from actual displayed history.
+These full-body IK targets **only condition ONNX**. Only decoded ONNX sequences
+play as generated movement. Torso and arms have no post-generation pose target;
+small bounded foot/contact corrections and the existing seam blend are disclosed
+in diagnostics. A safety rejection or six unsuccessful generations leaves an
+explicit recovery limitation instead of playing a controller-authored step.
+
+Measured lateral recoveries include actual generated foot lift and replant on
+all three characters. **This is conditioned recovery feasibility, not a trained
+external-force policy or general physical balance.** A large forward case showed
+recovery action but failed the strict raw settling check; a large backward case
+did not settle. See [raw versus corrected traces, captures, metrics and limits](docs/balance-validation.md).
+
+**Move / Rotate** preserve the original pose editor. Drag hands/feet/head/hips,
+use optional **Plant other feet**, or author **Hand reach / Foot move** examples.
+Move-Hips translates the body; Rotate uses camera axes with joint limits. Arrows
+move in X/Y and Shift + arrows rotate after focusing the scene. Release retains
+these pose targets. Model generation uses interpolated pose-matching goals and
+bounded held-target correction, separate from push recovery. Target strength
+applies only to this editor. See [original pose validation](docs/pose-validation.md).
+MMD toon/outline, secondary physics and asset notices remain intact.
+
+Run `npm run test:balance` against a running server for push/release/cancel,
+retarget, reset and failure smoke checks; add `-- --model` for the measured
+small/medium/large ONNX sweep. `npm run test:pose` and `-- --model` retain pose
+editor regression coverage. `DEMO_URL` and `CHROME_BIN` work as in the locomotion
+suite. **Save motion report** exports raw decoded and displayed COM/support/
+contact traces, conditioning poses, source labels, correction bounds and the
+pinned model revision. Add `?captureMotion=1` to include all decoded rotations
+and expose full traces in the diagnostics panel. Reports without that query
+still export complete joint-position traces; ordinary panel text is summarized.
 
 ## Runtime
 

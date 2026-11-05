@@ -20,6 +20,7 @@ try {
   await page.waitForFunction(()=>document.querySelector('#interaction').textContent.includes('Rest pose'));
   await page.waitForFunction(()=>document.querySelector('#diagnostics').textContent.includes('handles'));
   assert.ok(!requests.some(url=>url.includes('.onnx')),'Posing must not request ONNX');
+  await page.locator('#move').click();
   await page.locator('canvas').focus(); await page.keyboard.press('ArrowUp');
   await page.waitForFunction(()=>JSON.parse(document.querySelector('#diagnostics').textContent).edits>0);
   const keyboardRotations = (await report()).rotations;
@@ -85,10 +86,10 @@ try {
   await page.setViewportSize({width:390,height:844}); await page.waitForTimeout(300);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   const mobile = await report();
-  for(const handle of Object.values(mobile.handles)) assert.ok(handle.screen[1] < 844*0.58,'Handles remain above mobile controls');
+  for(const handle of Object.entries(mobile.handles).filter(([joint])=>!['Chest','LeftShoulder','RightShoulder'].includes(joint)).map(([,h])=>h)) assert.ok(handle.screen[1] < 844*0.58,'Handles remain above mobile controls');
   await page.screenshot({path:new URL('mobile.png',output).pathname});
   await page.setViewportSize({width:1280,height:850});
-  await page.locator('#generation-controls summary').click();
+  await page.locator('#generation-controls').evaluate(details=>{details.open=true;});
   if (realModel) {
     await page.locator('#reach').click(); await page.locator('#load').click();
     let lastStatus = '', lastProgress = Date.now(), lastLog = 0;
@@ -156,7 +157,7 @@ try {
     const noGPU = await browser.newPage();
     await noGPU.addInitScript(()=>Object.defineProperty(navigator,'gpu',{get:()=>undefined}));
     await noGPU.goto(url.href); await noGPU.waitForFunction(()=>document.querySelector('#interaction').textContent.includes('Rest pose'));
-    await noGPU.locator('#reach').click(); await noGPU.locator('#generation-controls summary').click(); await noGPU.locator('#load').click();
+    await noGPU.locator('#move').click(); await noGPU.locator('#reach').click(); await noGPU.locator('#generation-controls').evaluate(details=>{details.open=true;}); await noGPU.locator('#load').click();
     await noGPU.waitForFunction(()=>document.querySelector('#status').textContent.includes('WebGPU is unavailable'));
     await noGPU.waitForFunction(()=>{const text=document.querySelector('#diagnostics').textContent;return text && JSON.parse(text).edits>0;});
     const fallback = JSON.parse(await noGPU.locator('#diagnostics').textContent());

@@ -1,4 +1,5 @@
-import { Quaternion, Vector3 } from 'three';
+import { BufferGeometry, Float32BufferAttribute, Line, LineBasicMaterial, LineLoop, Mesh, MeshBasicMaterial, Quaternion, SphereGeometry, Vector3 } from 'three';
+import { BalanceRecovery, PUSH_JOINTS, recoveryTrace } from './balance';
 import { createStage } from './stage';
 import { SomaAvatar } from './avatar';
 import { CharacterSelection } from './characters';
@@ -15,7 +16,7 @@ import './pose.css';
 const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 const status = el('status'), load = el<HTMLButtonElement>('load'), pause = el<HTMLButtonElement>('pause');
 const modelURL = import.meta.env.PROD ? model.url : new URL(`${import.meta.env.BASE_URL}assets/mmm_v6_soma_fp32.onnx`,location.href).href;
-const report: Record<string,any> = {time:new Date().toISOString(),webgpu:Boolean(navigator.gpu),model:modelURL,
+const report: Record<string,any> = {time:new Date().toISOString(),webgpu:Boolean(navigator.gpu),model:modelURL,modelRevision:model,
   generations:0,discarded:0,trace:[],source:'IK only'};
 el('model-source').textContent = import.meta.env.PROD ? 'Load downloads 758 MB from NVIDIA. Browser caching is temporary.'
   : 'Load uses the local 758 MB model (npm run assets:model).';
@@ -24,7 +25,15 @@ async function main() {
   const stage = await createStage(el('stage')), {scene,camera,renderer,controls} = stage;
   report.renderer = 'isWebGPUBackend' in renderer.backend ? 'WebGPUBackend' : 'WebGLBackend';
   const avatar = await SomaAvatar.load(`${import.meta.env.BASE_URL}assets/soma.glb`).catch(error => {stage.dispose(); throw error;}); scene.add(avatar.object);
-  const ik = new PoseIK(avatar.rig,avatar.stance), response = new PoseResponse(avatar.stance);
+  const ik = new PoseIK(avatar.rig,avatar.stance), editor = new PoseResponse(avatar.stance);
+  const balance = new BalanceRecovery(avatar.stance,avatar.rig,ik);
+  let response = editor, pushOrigin = new Vector3();
+  let impulse: {start:number;direction:Vector3} | undefined;
+  const supportLine = new LineLoop(new BufferGeometry(),new LineBasicMaterial({color:0x9de2ca,depthTest:false}));
+  supportLine.geometry.setAttribute('position',new Float32BufferAttribute(new Float32Array(24),3));
+  const pushLine = new Line(new BufferGeometry(),new LineBasicMaterial({color:0xffd07a,depthTest:false}));
+  const comDot = new Mesh(new SphereGeometry(.025,10,8),new MeshBasicMaterial({color:0x9de2ca,depthTest:false}));
+  scene.add(supportLine,pushLine,comDot);
   const character = el<HTMLSelectElement>('character'), effector = el<HTMLSelectElement>('effector');
   const plant = el<HTMLInputElement>('plant'), physics = el<HTMLInputElement>('mmd-physics');
   let base = clonePose(response.pose), held: PoseConstraint | undefined, supports: PoseConstraint[] = [];
@@ -60,6 +69,17 @@ async function main() {
   };
   const manipulate = (change: Manipulation, begin: boolean) => {
     effector.value = change.joint;
+    if (pointer.mode === 'push') {
+      if (begin) {
+        impulse=undefined; pushOrigin.copy(visiblePoint(change.joint)); balance.begin(performance.now());
+        report.recoverySequences=[];delete report.lastRecovery;
+      }
+      if (change.position) {
+        balance.push(change.position.clone().sub(pushOrigin).multiplyScalar(1/(characters.current?.heightRatio ?? 1)),performance.now());
+        report.source='Deterministic disturbance IK';
+      }
+      return;
+    }
     if (begin) {
       base = clonePose(response.pose);
       held = pointer.mode === 'move' ? {joint:change.joint,target:visiblePoint(change.joint)} : undefined;
@@ -80,24 +100,39 @@ async function main() {
     }
   };
   const pointer = new PosePointer(renderer.domElement,camera,controls,manipulate,() => {
-    el('interaction').textContent = `${pointer.selected} · pose retained`;
+    if(pointer.mode==='push') {balance.release(performance.now());el('interaction').textContent='Push released · recovery requested';}
+    else el('interaction').textContent = `${pointer.selected} · pose retained`;
   }); scene.add(pointer.object);
-  const clearTargets = () => {pointer.cancel(); held = undefined; heldRotation = undefined; supports = [];};
+  const clearTargets = () => {pointer.cancel(); impulse=undefined; held = undefined; heldRotation = undefined; supports = [];};
   const reset = () => {
-    clearTargets(); response.reset(avatar.stance,performance.now()); characters.current?.reset();
-    report.source = 'IK only'; el('interaction').textContent = 'Rest pose · drag a handle';
+    clearTargets(); editor.reset(avatar.stance,performance.now()); balance.reset(performance.now()); characters.current?.reset();
+    report.source = 'IK only'; el('interaction').textContent = pointer.mode==='push' ? 'Rest pose · push a body dot' : 'Rest pose · drag a handle';
+    report.recoverySequences=[];delete report.lastRecovery;
   };
   el('reset').onclick = reset;
-  for (const mode of ['move','rotate'] as const) el(mode).onclick = () => {
-    pointer.cancel(); pointer.mode = mode;
-    for (const name of ['move','rotate']) el(name).setAttribute('aria-pressed',String(name === mode));
+  for (const mode of ['push','move','rotate'] as const) el(mode).onclick = () => {
+    const current=clonePose(response.pose);
+    clearTargets(); response.edit(current,performance.now()); pointer.mode = mode;
+    response=mode==='push' ? balance.response : editor;
+    if(mode==='push') balance.reset(performance.now(),current); else response.reset(current,performance.now());
+    pointer.selected=mode==='push' ? 'Chest' : 'LeftHand';effector.value=pointer.selected;
+    for(const option of effector.options) option.hidden=mode==='push'
+      ? !PUSH_JOINTS.includes(option.value as typeof PUSH_JOINTS[number]) : ['Chest','LeftShoulder','RightShoulder'].includes(option.value);
+    el('push-controls').hidden=mode!=='push';el('pose-examples').hidden=mode==='push';plant.disabled=mode==='push';
+    el('plant-control').hidden=el('strength-control').hidden=mode==='push';
+    el('mode-help').textContent=mode==='push'
+      ? 'Push a chest, shoulder or hips dot; release to request recovery. Arrows push in world X/Z. Esc releases. Empty space orbits; scroll zooms.'
+      : 'Drag a dot to pose; Rotate turns around camera axes. Arrows move; Shift + arrows rotate. Release retains pose. In Move, Hips moves the whole body. Empty space orbits; scroll zooms.';
+    report.source='IK only';
+    for (const name of ['push','move','rotate']) el(name).setAttribute('aria-pressed',String(name === mode));
   };
   effector.onchange = () => {pointer.cancel(); pointer.selected = effector.value as Effector;};
   plant.onchange = () => {supports = captureSupports(response.pose,pointer.selected); response.edit(response.pose,performance.now());};
   physics.onchange = () => characters.current?.setPhysics(physics.checked);
   character.disabled = false;
   character.onchange = async () => {
-    clearTargets(); response.reset(response.pose,performance.now()); pointer.selected = 'LeftHand'; effector.value = pointer.selected;
+    clearTargets(); editor.reset(avatar.stance,performance.now()); balance.reset(performance.now()); characters.current?.reset();
+    pointer.selected = pointer.mode==='push' ? 'Chest' : 'LeftHand'; effector.value = pointer.selected;
     const selection = character.value;
     el('character-status').textContent = selection === 'soma' ? '' : 'Loading character…';
     try {
@@ -116,10 +151,27 @@ async function main() {
   }
   el('reach').onclick = () => example('LeftHand',new Vector3(0.12,0.3,-0.25));
   el('step').onclick = () => example('LeftFoot',new Vector3(0,0.12,-0.25));
+  function pushExample(direction: Vector3) {
+    if(pointer.mode!=='push') el('push').click();
+    clearTargets();balance.begin(performance.now());
+    report.recoverySequences=[];
+    delete report.lastRecovery;
+    impulse={start:performance.now(),direction:direction.multiplyScalar(Number(el<HTMLSelectElement>('push-size').value))};
+    report.source='Deterministic disturbance IK';
+  }
+  el('push-left').onclick=()=>pushExample(new Vector3(-1,0,0));
+  el('push-right').onclick=()=>pushExample(new Vector3(1,0,0));
+  el('push-forward').onclick=()=>pushExample(new Vector3(0,0,-1));
+  el('push-back').onclick=()=>pushExample(new Vector3(0,0,1));
   const keyboard = (event: KeyboardEvent) => {
     if (!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(event.key) || pointer.active
       || (event.target instanceof HTMLElement && event.target.closest('input,select,button,summary'))) return;
-    event.preventDefault(); const joint = pointer.selected;
+    event.preventDefault();
+    if(pointer.mode==='push') {
+      pushExample(new Vector3(event.key==='ArrowLeft' ? -1 : event.key==='ArrowRight' ? 1 : 0,0,
+        event.key==='ArrowUp' ? -1 : event.key==='ArrowDown' ? 1 : 0));return;
+    }
+    const joint = pointer.selected;
     manipulate({joint},true);
     if (event.shiftKey || pointer.mode === 'rotate') {
       manipulate({joint,rotation:new Quaternion().setFromAxisAngle(new Vector3(0,1,0),event.key === 'ArrowLeft' || event.key === 'ArrowDown' ? -0.08 : 0.08)},false);
@@ -157,12 +209,14 @@ async function main() {
   async function generate() {
     if (!inference || pending) return;
     pending = true;
-    const strength = Number(el<HTMLInputElement>('strength').value), request = response.request(strength);
+    const strength = Number(el<HTMLInputElement>('strength').value), isPush=pointer.mode==='push';
+    const controller=response;
+    const request = isPush ? balance.request() : response.request(strength);
     const {features,placement} = encode(request.context,request.targets,avatar.rig);
     try {
       const result = await inference.run(features); latency = result.milliseconds;
       const segment = decode(result.data,result.tokens,placement);
-      if (request.revision === response.revision) {
+      if (!isPush && request.revision === controller.revision) {
         const problem = responseProblem(segment,avatar.rig);
         if (problem) {
           running = false; response.edit(response.pose,performance.now());
@@ -171,10 +225,29 @@ async function main() {
           pause.textContent = 'Resume generation'; return;
         }
       }
-      if (response.accept(segment,request.revision)) {
-        report.source = 'MotionBricks + bounded IK'; status.textContent = held || heldRotation
+      const rawTrace=isPush ? recoveryTrace(segment,avatar.rig,request.context[3],balance.floor) : undefined;
+      const current=controller===response && request.revision===controller.revision;
+      if(isPush && current) report.lastRecovery={revision:request.revision,modelRevision:model,source:'Raw decoded MotionBricks ONNX',
+        tokens:result.tokens,rawMotion:new URL(location.href).searchParams.has('captureMotion')
+          ? segment.map(p=>({root:p.root.toArray(),rotations:p.rotations.map(q=>q.toArray())})) : undefined,
+        context:request.context.map(p=>({root:p.root.toArray(),rotations:p.rotations.map(q=>q.toArray())})),
+        targets:request.targets.map(p=>({root:p.root.toArray(),rotations:p.rotations.map(q=>q.toArray())})),
+        milliseconds:latency,rawTrace,correctionBounds:{radians:.18,rootMeters:.025,seamFrames:8}};
+      if(isPush && current) {
+        report.recoverySequences ??=[];
+        report.recoverySequences.push(report.lastRecovery);
+        if(report.recoverySequences.length>6) report.recoverySequences.shift();
+      }
+      const accepted=isPush ? balance.accept(segment,request.revision,performance.now()) : controller.accept(segment,request.revision);
+      if(isPush && current && !accepted) {
+        report.lastRecovery.problem=balance.problem;report.source='ONNX rejected · deterministic disturbed pose held';
+        status.textContent=balance.problem ?? 'Stale recovery discarded';
+      }
+      if (accepted && current) {
+        report.source = isPush ? 'MotionBricks + bounded contacts' : 'MotionBricks + bounded IK'; status.textContent = isPush
+          ? 'Actual ONNX recovery candidate · bounded contacts · capability unverified' : held || heldRotation
           ? 'Actual ONNX motion · bounded IK target correction' : 'Actual ONNX motion · full-body playback';
-        report.lastGeneration = {revision:request.revision,tokens:result.tokens,frames:segment.length,milliseconds:latency,targetStrength:strength,
+        report.lastGeneration = {revision:request.revision,tokens:result.tokens,frames:segment.length,milliseconds:latency,targetStrength:isPush ? undefined : strength,
           contextRoots:request.context.map(p=>p.root.toArray()),targetRoots:request.targets.map(p=>p.root.toArray()),
           contextEnd:positions(request.context[3],avatar.rig).map(p=>p.toArray()),targetEnd:positions(request.targets[3],avatar.rig).map(p=>p.toArray()),
           rawStart:positions(segment[0],avatar.rig).map(p=>p.toArray()),rawEnd:positions(segment.at(-1)!,avatar.rig).map(p=>p.toArray()),
@@ -198,10 +271,26 @@ async function main() {
   renderer.setAnimationLoop(() => {
     const now = performance.now(), delta = Math.min((now-last)/1000,0.05); last = now;
     if (!document.hidden) {
-      if (running && loaded && !pending && response.ready(now) && response.remaining < 0.12) void generate();
-      response.advance(delta,running,running && (held || heldRotation) ? constrain : undefined);
+      if(impulse) {
+        const t=Math.min(1,(now-impulse.start)/240);balance.push(impulse.direction.clone().multiplyScalar(t),now);
+        if(t===1) {impulse=undefined;balance.release(now);}
+      }
+      if (running && loaded && !pending && (pointer.mode==='push' ? balance.ready(now) : response.ready(now) && response.remaining<.12)) void generate();
+      if(pointer.mode==='push') balance.advance(delta,running);
+      else response.advance(delta,running,running && (held || heldRotation) ? constrain : undefined);
     }
     const pose = response.pose; avatar.apply(pose);
+    const pushing=pointer.mode==='push', metrics=balance.metrics();
+    supportLine.visible=comDot.visible=pushing;pushLine.visible=pushing && balance.phase==='pushing';
+    if(pushing) {
+      const coords=metrics.support.flatMap(p=>[p[0],.008,p[2]]);
+      const attribute=supportLine.geometry.getAttribute('position');
+      for(let i=0;i<coords.length;i++) attribute.array[i]=coords[i];
+      attribute.needsUpdate=true;supportLine.geometry.setDrawRange(0,coords.length/3);supportLine.geometry.computeBoundingSphere();
+      comDot.position.fromArray(metrics.com).setY(.015);
+      const chest=visiblePoint('Chest');
+      pushLine.geometry.setFromPoints([chest,chest.clone().add(balance.displacement)]);
+    }
     const mmd = characters.current;
     if (mmd && !document.hidden) {
       try {mmd.apply(pose,delta,true);} catch (error) {
@@ -219,12 +308,22 @@ async function main() {
         const world = visiblePoint(joint), screen = world.clone().project(camera);
         return [joint,{world:world.toArray(),screen:[rect.left+(screen.x+1)/2*rect.width,rect.top+(1-screen.y)/2*rect.height]}];
       }));
+      report.mode=pointer.mode;
+      if(pushing) {
+        report.balance=metrics;report.displayedRecoveryTrace=balance.displayedTrace;
+        el('balance-status').textContent=`${balance.phase==='pushing' ? 'Actively pushed · deterministic IK' : balance.phase==='stable'
+          ? balance.generated ? 'Stable by estimated support metrics · inspect raw evidence' : 'Stable stance'
+          : balance.problem ? `Recovery limited · ${balance.problem}` : !loaded ? 'Recovering · load MotionBricks to continue'
+          : !running ? 'Recovering · generation paused' : 'Recovering · ONNX candidate'}${balance.needsStep ? balance.phase==='stable' ? ' · step conditioned' : ' · step needed' : ''}`;
+        el('interaction').textContent=balance.phase==='stable' && !balance.generated ? 'Rest pose · push a body dot'
+          : `Support margin ${(metrics.margin*100).toFixed(1)} cm · torso ${(metrics.tilt*180/Math.PI).toFixed(1)}°`;
+      }
       report.root = pose.root.toArray(); report.rotations = pose.rotations.map(q=>q.toArray());
       report.camera = camera.position.toArray();
       report.revision = response.revision; report.edits = edits; report.generations = response.generations;
       report.discarded = response.discarded; report.active = pointer.active; report.orbitEnabled = controls.enabled;
       report.targetErrorMeters = held ? visiblePoint(held.joint).distanceTo(held.target) : 0;
-      if (held && report.targetErrorMeters > 0.05)
+      if (!pushing && held && report.targetErrorMeters > 0.05)
         el('interaction').textContent = `${held.joint} · reach limit · ${(report.targetErrorMeters*100).toFixed(0)} cm from target`;
       else if (el('interaction').textContent?.includes('reach limit'))
         el('interaction').textContent = `${pointer.selected} · target retained`;
@@ -235,23 +334,32 @@ async function main() {
         report.trace.push({time:now,root:pose.root.toArray(),hand:points[13].toArray(),foot:points[24].toArray(),source:report.source});
         if (report.trace.length > 120) report.trace.shift();
       }
-      el('diagnostics').textContent = JSON.stringify(report,null,2);
+      // Full traces stay in Save report; avoid rendering megabytes of JSON in
+      // ordinary interaction. Validation opts into all samples explicitly.
+      const diagnostics=new URL(location.href).searchParams.has('captureMotion') ? report : {...report,
+        recoverySequences:report.recoverySequences?.map((s: any)=>({revision:s.revision,source:s.source,frames:s.rawTrace.length,milliseconds:s.milliseconds,problem:s.problem})),
+        lastRecovery:report.lastRecovery ? {revision:report.lastRecovery.revision,source:report.lastRecovery.source,
+          frames:report.lastRecovery.rawTrace.length,correctionBounds:report.lastRecovery.correctionBounds,problem:report.lastRecovery.problem} : undefined,
+        displayedRecoveryTrace:`${balance.displayedTrace.length} samples · Save report for full traces`};
+      el('diagnostics').textContent = JSON.stringify(diagnostics,null,2);
       el('generations').textContent = String(response.generations);
       el('latency').textContent = latency ? `${Math.round(latency)} ms` : '—';
       el('playback').textContent = running ? `${response.remaining.toFixed(2)} s${pending ? ' · inferring' : response.remaining === 0 ? ' · holding' : ''}` : loaded ? 'Paused' : 'IK only';
     }
   });
-  const visibility = () => {pointer.cancel(); characters.current?.reset();};
+  const visibility = () => {pointer.cancel(); if(impulse) {impulse=undefined;balance.release(performance.now());} response.edit(response.pose,performance.now());characters.current?.reset();};
   document.addEventListener('visibilitychange',visibility);
   el('download').onclick = () => {
     const url = URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
     const a = document.createElement('a'); a.href = url; a.download = 'motionbricks-pose-report.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
   };
-  el('interaction').textContent = 'Rest pose · drag a handle';
+  el('push').click();
+  el('interaction').textContent = 'Rest pose · push a body dot';
   window.addEventListener('pagehide',event => {
     pointer.cancel();
     if (event.persisted) return;
     removeEventListener('keydown',keyboard); document.removeEventListener('visibilitychange',visibility);
+    for(const object of [supportLine,pushLine,comDot]) {object.geometry.dispose();object.material.dispose();object.removeFromParent();}
     pointer.dispose(); inference?.dispose(); characters.dispose(); avatar.dispose(); stage.dispose();
   });
 }

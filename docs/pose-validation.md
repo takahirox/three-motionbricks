@@ -1,5 +1,10 @@
 # Interactive pose demo (Issue #17)
 
+This document records the original **Move / Rotate** pose editor. Issue #19 adds
+a separate default **Push / Balance** mode; its disturbance, recovery conditioning,
+raw ONNX measurements and limits are in [balance validation](balance-validation.md).
+The editor behavior and historical measurements below do not establish push recovery.
+
 `pose.html` is a second Vite entry point. The existing `index.html` remains the
 keyboard locomotion demo. Both use the same stage, SOMA loader, MMD loader,
 retargeter, inference worker, model URL and resource disposal. No character assets,

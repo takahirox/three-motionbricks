@@ -64,6 +64,8 @@ export class PoseResponse {
     this.intentContext = undefined;
   }
   get remaining() {return this.player.remaining;}
+  /** The latest displayed 30 Hz samples, including the current disturbance. */
+  observedContext() {return [...this.history.slice(1),this.pose].map(clonePose);}
   ready(now: number) {return now - this.editedAt >= 180;}
   request(strength: number) {
     const context = (this.intentContext ?? this.history).map(clonePose);

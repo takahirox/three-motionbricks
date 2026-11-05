@@ -8,7 +8,7 @@ export type Manipulation = {joint: Effector; position?: Vector3; rotation?: Quat
 export class PosePointer {
   readonly object = new Group();
   selected: Effector = 'LeftHand';
-  mode: 'move' | 'rotate' = 'move';
+  mode: 'move' | 'rotate' | 'push' = 'move';
   active = false;
   private meshes: Mesh<SphereGeometry,MeshBasicMaterial>[];
   private ring = new Mesh(new TorusGeometry(0.09,0.005,8,40),new MeshBasicMaterial({color:0xffd07a,depthTest:false}));
@@ -44,7 +44,7 @@ export class PosePointer {
   private down = (event: PointerEvent) => {
     if (event.button !== 0 || this.active) return;
     this.project(event);
-    const hit = this.ray.intersectObjects(this.meshes,false)[0]; if (!hit) return;
+    const hit = this.ray.intersectObjects(this.meshes.filter(m=>m.visible),false)[0]; if (!hit) return;
     event.preventDefault(); event.stopImmediatePropagation();
     this.canvas.focus({preventScroll:true});
     this.selected = hit.object.userData.joint;
@@ -60,14 +60,14 @@ export class PosePointer {
   private move = (event: PointerEvent) => {
     this.project(event);
     if (!this.active) {
-      const hit = this.ray.intersectObjects(this.meshes,false)[0];
+      const hit = this.ray.intersectObjects(this.meshes.filter(m=>m.visible),false)[0];
       this.canvas.style.cursor = hit ? 'grab' : '';
       for (const mesh of this.meshes) mesh.scale.setScalar(mesh === hit?.object ? 1.35 : 1);
       return;
     }
     if (event.pointerId !== this.pointerId) return;
     event.preventDefault();
-    if (this.mode === 'move') {
+    if (this.mode !== 'rotate') {
       const point = this.ray.ray.intersectPlane(this.plane,new Vector3());
       if (point) this.changed({joint:this.selected,position:point.add(this.offset)},false);
     } else {
@@ -87,6 +87,8 @@ export class PosePointer {
   };
   update(point: (joint: Effector) => Vector3) {
     for (const mesh of this.meshes) {
+      mesh.visible = this.mode === 'push' ? ['Hips','Chest','LeftShoulder','RightShoulder'].includes(mesh.userData.joint)
+        : !['Chest','LeftShoulder','RightShoulder'].includes(mesh.userData.joint);
       mesh.position.copy(point(mesh.userData.joint));
       mesh.material.color.set(mesh.userData.joint === this.selected ? 0xffd07a : 0x8ce4ff);
     }
