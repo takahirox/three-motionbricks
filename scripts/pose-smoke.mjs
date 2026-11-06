@@ -40,6 +40,34 @@ try {
     assert.equal((await report()).orbitEnabled,true); if(cancel) await page.mouse.up();
     await page.waitForTimeout(300); return before;
   };
+  // Change settings while pointer capture owns a real hand drag. Dispatching
+  // the control events avoids releasing the mouse to reach the settings panel.
+  const [sx,sy]=(await report()).handles.LeftHand.screen;
+  await page.mouse.move(sx,sy); await page.mouse.down();
+  await page.mouse.move(sx+10,sy-10,{steps:6}); await page.waitForTimeout(300);
+  for(const setting of ['strength','plant']) {
+    const before=await report();
+    await page.locator(`#${setting}`).evaluate(input=> {
+      if(input.type==='range') input.value='0.5'; else input.checked=!input.checked;
+      input.dispatchEvent(new Event(input.type==='range' ? 'input' : 'change',{bubbles:true}));
+    });
+    await page.waitForFunction(revision=>JSON.parse(document.querySelector('#diagnostics').textContent).revision>revision,before.revision);
+    const changed=await report();
+    assert.equal(changed.active,true,`${setting}: retain pointer capture`);
+    assert.equal(changed.orbitEnabled,false);
+    assert.equal(changed.control?.joint,'LeftHand',`${setting}: retain held control`);
+    assert.equal(changed.control.held,true);
+    await page.mouse.move(sx+(setting==='strength' ? 20 : 30),sy-(setting==='strength' ? 20 : 30),{steps:6});
+    await page.waitForTimeout(300);
+    const moved=await report();
+    assert.ok(distance(moved.handles.LeftHand.world,before.handles.LeftHand.world)>.02,`${setting}: hand follows further movement`);
+    assert.ok(moved.targetErrorMeters<.06,`${setting}: target error ${moved.targetErrorMeters}`);
+  }
+  await page.mouse.up();
+  await page.waitForFunction(()=>!JSON.parse(document.querySelector('#diagnostics').textContent).active);
+  assert.equal((await report()).orbitEnabled,true);
+  await page.locator('#plant').check(); await page.locator('#reset').click();
+  await page.waitForTimeout(300);
   for (const [value,label] of [['soma','SOMA'],['animasa','Animasa Miku'],['mmd','CG-CA Uka']]) {
     await page.selectOption('#character',value);
     await page.waitForFunction(label=>JSON.parse(document.querySelector('#diagnostics').textContent).character===label,label);

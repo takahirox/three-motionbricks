@@ -138,7 +138,7 @@ async function main() {
     for (const name of ['push','move','rotate']) el(name).setAttribute('aria-pressed',String(name === mode));
   };
   effector.onchange = () => {clearTargets(); editor.edit(editor.pose,performance.now()); pointer.selected = effector.value as Effector;};
-  plant.onchange = () => {supports = captureSupports(response.pose,pointer.selected); response.edit(response.pose,performance.now());};
+  plant.onchange = () => {supports = captureSupports(response.pose,pointer.selected); response.invalidatePlayback();};
   physics.onchange = () => characters.current?.setPhysics(physics.checked);
   character.disabled = false;
   character.onchange = async () => {
@@ -214,11 +214,11 @@ async function main() {
     } catch (error) {fail(error);} finally {pending = false;}
   };
   pause.onclick = () => {
-    running = !running; response.edit(response.pose,performance.now());
+    running = !running; response.invalidatePlayback();
     pause.textContent = running ? 'Pause generation' : 'Resume generation';
     status.textContent = running ? 'Waiting for ONNX response' : 'Generation paused · posing remains active';
   };
-  el<HTMLInputElement>('strength').oninput = () => response.edit(response.pose,performance.now());
+  el<HTMLInputElement>('strength').oninput = () => response.invalidatePlayback();
   async function generate() {
     if (!inference || pending) return;
     pending = true;

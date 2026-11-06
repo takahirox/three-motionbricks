@@ -66,6 +66,9 @@ export class PoseResponse {
   get remaining() {return this.player.remaining;}
   /** Resume from an IK-only preview without clearing observed history or control. */
   reanchorPlayback() {this.player = new MotionPlayer(this.pose);}
+  /** Discard motion computed with old settings without ending the active drag
+   * or clearing its observed trajectory and release fade. */
+  invalidatePlayback() {this.revision++; this.reanchorPlayback();}
   /** The latest displayed 30 Hz samples, including the current disturbance. */
   observedContext() {return [...this.history.slice(1),this.pose].map(clonePose);}
   ready(now: number) {return now - this.editedAt >= 180;}

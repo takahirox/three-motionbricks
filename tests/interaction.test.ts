@@ -95,6 +95,47 @@ test('enabling playback after IK-only preview retains the displayed pose, histor
   }
 });
 
+test('settings invalidate queued and in-flight motion without ending move/rotate control',()=> {
+  for(const rotate of [false,true]) {
+    const response=new InteractionResponse(stance);
+    response.begin('LeftHand',rotate ? undefined : points[13],rotate ? stance.rotations[13] : undefined,0);
+    for(let frame=1;frame<=4;frame++) {
+      const target=points[13].clone().add(new Vector3(0,frame*.02,0));
+      const rotation=new Quaternion().setFromAxisAngle(new Vector3(0,1,0),frame*.05).multiply(stance.rotations[13]);
+      response.update(rotate ? undefined : target,rotate ? rotation : undefined,frame*1000/30);
+      response.pose=rotate ? ik.rotate(stance,'LeftHand',new Quaternion().setFromAxisAngle(new Vector3(0,1,0),frame*.05))
+        : ik.direct(response.pose,{joint:'LeftHand',target});
+      response.advance(1/30,false);
+    }
+    const segment=Array.from({length:18},()=>clonePose(stance));
+    const before=response.request(1), displayed=clonePose(response.pose);
+    assert.ok(response.accept(segment,before.revision));
+    assert.ok(response.remaining>0);
+    response.invalidatePlayback();
+    const after=response.request(1);
+    assert.ok(after.revision>before.revision);
+    assert.deepEqual({...after,revision:before.revision},before,'Keep trajectory, timestamps and context');
+    assert.equal(response.correctionWeight,1);
+    assert.equal(response.remaining,0,'Discard queued motion using the old settings');
+    assert.equal(response.accept(segment,before.revision),false,'Reject old in-flight output');
+    response.advance(1/30,true);
+    assert.ok(response.pose.root.distanceTo(displayed.root)<1e-6,'Hold the displayed root until fresh output arrives');
+    assert.ok(response.pose.rotations.every((q,j)=>q.angleTo(displayed.rotations[j])<1e-6),'Hold displayed rotations');
+    const nextTarget=points[13].clone().add(new Vector3(0,.1,0));
+    const nextRotation=new Quaternion().setFromAxisAngle(new Vector3(0,1,0),.3).multiply(stance.rotations[13]);
+    response.update(rotate ? undefined : nextTarget,rotate ? nextRotation : undefined,200);
+    if(rotate) assert.ok(response.control!.rotation!.angleTo(nextRotation)<1e-6);
+    else assert.deepEqual(response.control!.position,nextTarget);
+    assert.ok(response.accept(segment,after.revision),'Accept output using the new settings');
+    response.release(210); response.advance(.1,false);
+    const releaseWeight=response.correctionWeight;
+    response.invalidatePlayback();
+    assert.equal(response.correctionWeight,releaseWeight,'Keep the release fade clock');
+    response.advance(.3,false);
+    assert.equal(response.control,undefined,'Release still completes');
+  }
+});
+
 test('30 Hz displayed history replaces endpoint intent; movement/release accept in-flight motion without starvation',()=> {
   const response=new InteractionResponse(stance);
   response.begin('LeftHand',points[13],undefined,0);
