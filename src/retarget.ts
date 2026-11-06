@@ -95,7 +95,14 @@ export class SomaRetargeter {
     this.object.updateMatrixWorld(true);
   }
   handle(joint: typeof JOINTS[number]): Vector3 | undefined {
-    return this.bindings.find(b => b.source === JOINTS.indexOf(joint))?.bone.getWorldPosition(new Vector3());
+    const point = this.bindings.find(b => b.source === JOINTS.indexOf(joint))?.bone.getWorldPosition(new Vector3());
+    // Animasa's single upper-body pivot sits beside the pelvis. Present the
+    // anatomical chest above it so chest and pelvis remain separately pickable.
+    if (joint==='Chest' && point && !this.bindings.some(b=>b.source===JOINTS.indexOf('Spine1'))) {
+      const neck = this.bindings.find(b=>b.source===JOINTS.indexOf('Neck2'))?.bone.getWorldPosition(new Vector3());
+      if (neck) point.lerp(neck,.65);
+    }
+    return point;
   }
   captureDrivingPose(): () => void {
     const saved = this.bindings.map(({bone}) => ({bone,position:bone.position.clone(),rotation:bone.quaternion.clone()}));

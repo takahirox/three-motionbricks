@@ -88,7 +88,7 @@ export class PosePointer {
   update(point: (joint: Effector) => Vector3) {
     for (const mesh of this.meshes) {
       mesh.visible = this.mode === 'push' ? ['Hips','Chest','LeftShoulder','RightShoulder'].includes(mesh.userData.joint)
-        : !['Chest','LeftShoulder','RightShoulder'].includes(mesh.userData.joint);
+        : true;
       mesh.position.copy(point(mesh.userData.joint));
       mesh.material.color.set(mesh.userData.joint === this.selected ? 0xffd07a : 0x8ce4ff);
     }

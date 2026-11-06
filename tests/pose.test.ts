@@ -136,6 +136,7 @@ test('all visible effectors map to canonical joints on both MMD rigs; authority 
       const handle = retarget.handle(name); assert.ok(handle?.toArray().every(Number.isFinite),name);
       assert.ok(mapping.some(m=>m.source===name)); assert.ok(jointIndex(name)<30);
     }
+    assert.ok(retarget.handle('Chest')!.distanceTo(retarget.handle('Hips')!)>.1,'Chest and pelvis handles are distinct');
     const handBinding = mapping.find(m=>m.source==='LeftHand')!, hand = retarget.byName.get(handBinding.target)!;
     const previous = hand.quaternion.clone(), restore = retarget.captureDrivingPose();
     const secondary = [...retarget.byName.values()].find(b=>!mapping.some(m=>retarget.byName.get(m.target)===b))!;

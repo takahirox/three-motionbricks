@@ -42,7 +42,7 @@ export class PoseResponse {
   revision = 0;
   generations = 0;
   discarded = 0;
-  private history: Pose[];
+  protected history: Pose[];
   private player: MotionPlayer;
   private accumulator = 0;
   private editedAt = -Infinity;

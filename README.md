@@ -68,15 +68,37 @@ The panel shows movement intent, last inference latency, queued seconds,
 generation count and root position. **Diagnostics → Save report** records runtime,
 GPU limits, loading time, recent inference times and any error.
 
-## Push recovery and pose studio
+## Direct interaction and pose studio
 
 Open [Pose studio](https://takahirox.github.io/three-motionbricks/pose.html)
 (`pose.html` locally), or follow **Interactive pose demo** in the keyboard demo.
 SOMA, Animasa Miku and CG-CA Uka share canonical SOMA interaction and conditioning.
 The keyboard locomotion entry point remains unchanged.
 
-**Push / Balance** starts standing. Load MotionBricks to enable recovery (758 MB,
-WebGPU, several GB of GPU memory), then drag a chest, shoulder or hips dot.
+**Move / Rotate** is the primary workflow. Hold and drag a hand, foot, head,
+chest, shoulder or pelvis dot; Rotate turns the selected branch around camera
+axes. Arrows move in X/Y and Shift + arrows rotate after focusing the scene.
+Load MotionBricks (758 MB, WebGPU, several GB of GPU memory) for experimental
+responses while dragging and after release. Without it, the labeled **IK-only
+preview** provides immediate posing and holds on release.
+
+The selected part has limited direct IK authority; decoded MotionBricks controls
+the other joints. Pointer changes coalesce during inference, and release fades
+the direct constraint. Pelvis input is an external root constraint, limited to
+25 cm / 0.4 rad, with optional **Pelvis foot contacts**; its mechanical translation
+is not counted as an AI reaction. Unrelated joints are not solved into future
+full-body IK goals. The model still accepts full pose frames, with sparse edits
+to selected features and neutral values elsewhere: it has **no native per-joint
+constraint mask**.
+
+Real A/B tests show causal uncontrolled-joint differences, but hand reactions are
+modest and seam blending can be larger than those differences. **General natural
+whole-body reaction quality remains unverified; Issue #22 remains open.** See
+[conditioning, ownership and real ONNX evidence](docs/interaction-validation.md).
+MMD Toon, outlines, secondary physics and asset notices remain intact.
+
+**Push / Balance** retains the specialist standing recovery workflow. Load
+MotionBricks, then drag a chest, shoulder or hips dot.
 Feet initially stay planted while the pelvis lowers, torso tilts and arms counter
 rotate. This immediate disturbance uses **deterministic IK**, labeled separately
 from generation. Release, Esc, pointer cancellation or blur removes the push;
@@ -116,20 +138,13 @@ The earlier published fixed-landing version remains limited in fresh forward/bac
 checks. See [dated continuation measurements and remaining public verification](docs/balance-followup-validation.md)
 and the [earlier raw traces and limitations](docs/balance-validation.md).
 
-**Move / Rotate** preserve the original pose editor. Drag hands/feet/head/hips,
-use optional **Plant other feet**, or author **Hand reach / Foot move** examples.
-Move-Hips translates the body; Rotate uses camera axes with joint limits. Arrows
-move in X/Y and Shift + arrows rotate after focusing the scene. Release retains
-these pose targets. Model generation uses interpolated pose-matching goals and
-bounded held-target correction, separate from push recovery. Target strength
-applies only to this editor. See [original pose validation](docs/pose-validation.md).
-MMD toon/outline, secondary physics and asset notices remain intact.
-
 Run `npm run test:balance` against a running server for push/release/cancel,
 retarget, reset and failure smoke checks; add `-- --model` for the measured
-small/medium/large ONNX sweep. `npm run test:pose` and `-- --model` retain pose
-editor regression coverage. `DEMO_URL` and `CHROME_BIN` work as in the locomotion
-suite. To reuse a complete verified model for a production-origin test, set
+small/medium/large ONNX sweep. `npm run test:pose` retains IK preview regressions.
+`npm run test:interaction` (also `test:pose -- --model`) measures sustained real
+pointer manipulation on all three characters; `npm run test:interaction:conditioning`
+isolates raw ONNX A/B differences on a development origin. `DEMO_URL` and
+`CHROME_BIN` work as in the locomotion suite. To reuse a complete verified model for a production-origin test, set
 `MODEL_CACHE=/absolute/path/to/mmm_v6_soma_fp32.onnx`. Only the weight request is
 redirected to a streaming local test server after size/SHA-256 verification;
 worker, WASM and application assets still come from `DEMO_URL`. This is

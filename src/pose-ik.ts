@@ -60,9 +60,9 @@ export class PoseIK {
     for (let p = this.rig.parents[j]; p > 0; p = this.rig.parents[p]) result.push(p);
     return result;
   }
-  private step(pose: Pose, c: PoseConstraint) {
+  private step(pose: Pose, c: PoseConstraint, chain = this.chain(jointIndex(c.joint))) {
     const end = jointIndex(c.joint);
-    for (const j of this.chain(end)) {
+    for (const j of chain) {
       const points = positions(pose,this.rig), from = points[end].clone().sub(points[j]);
       const to = c.target.clone().sub(points[j]);
       if (from.lengthSq() < 1e-10 || to.lengthSq() < 1e-10) continue;
@@ -81,6 +81,23 @@ export class PoseIK {
       }
       rotateBranch(pose,this.rig,j,delta); this.limit(pose,j);
     }
+  }
+  /** Direct interaction owns only the nearest chain. Branch rotations preserve
+   * local skin transforms; opposite limbs and the root remain model-owned.
+   * A pelvis constraint necessarily moves the root: only the legs may compensate
+   * for captured foot contacts. This is external input, never an AI reaction. */
+  direct(input: Pose, constraint: PoseConstraint, contacts: PoseConstraint[] = []): Pose {
+    const pose = clonePose(input), j = jointIndex(constraint.joint);
+    if (!constraint.target.toArray().every(Number.isFinite)) return pose;
+    if (j === 0) {
+      pose.root.add(constraint.target.clone().sub(pose.root).clampLength(0,0.08));
+      for (let n=0;n<12;n++) for (const c of contacts)
+        this.step(pose,c,this.chain(jointIndex(c.joint)).filter(i=>i>=22));
+    } else {
+      const chain = this.chain(j).slice(0,constraint.joint.includes('Hand') ? 3 : 2);
+      for (let n=0;n<16;n++) this.step(pose,constraint,chain);
+    }
+    return pose;
   }
   solve(input: Pose, constraint: PoseConstraint, planted: PoseConstraint[] = [], bodyFollow = true): Pose {
     const pose = clonePose(input), target = constraint.target;

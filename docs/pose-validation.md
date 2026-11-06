@@ -1,7 +1,11 @@
 # Interactive pose demo (Issue #17)
 
-This document records the original **Move / Rotate** pose editor. Issue #19 adds
-a separate default **Push / Balance** mode; its disturbance, recovery conditioning,
+> Historical pose-editor measurements. Issue #22 replaces the current Move/Rotate
+> conditioning and ownership path; see [continuous interaction evidence](interaction-validation.md).
+> These results do not validate natural interaction-conditioned whole-body reactions.
+
+This document records the original **Move / Rotate** pose editor. Issue #19 added
+a separate **Push / Balance** mode (the default at that time); its disturbance, recovery conditioning,
 raw ONNX measurements and limits are in [balance validation](balance-validation.md).
 The editor behavior and historical measurements below do not establish push recovery.
 
