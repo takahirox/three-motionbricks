@@ -19,6 +19,7 @@ const copyControl = (c: PartControl): PartControl => ({...c,position:c.position?
  * release do not starve in-flight inference; new grabs/reset/pause invalidate it.
  * Only displayed poses enter the 30 Hz context, including during underruns. */
 export class InteractionResponse extends PoseResponse {
+  protected override seam = 'adaptive' as const;
   control?: PartControl;
   samples: (PartControl & {sampledAt:number})[] = [];
   private now = 0;
@@ -52,7 +53,8 @@ export class InteractionResponse extends PoseResponse {
   override request(_strength: number) {
     const context = this.history.map(clonePose), anchor = context[3];
     return {revision:this.revision,context,targets:Array.from({length:4},()=>clonePose(anchor)),
-      control:this.control ? copyControl(this.control) : undefined,controls:this.samples.map(copyControl),now:this.now};
+      control:this.control ? copyControl(this.control) : undefined,
+      controls:this.samples.map(c=>({...copyControl(c),sampledAt:c.sampledAt})),now:this.now};
   }
   override advance(delta: number, running: boolean, constrain?: (pose: Pose) => Pose) {
     this.now += delta*1000;
@@ -67,6 +69,25 @@ export class InteractionResponse extends PoseResponse {
   }
 }
 
+/** Fit the last 100 ms of distinct pointer observations. Render sampling may
+ * repeat one event; count it once. Fall back to event velocity before enough
+ * history exists. This conditions targets only, never animates the body. */
+export function controlVelocity(control: PartControl, samples: PartControl[]): Vector3 {
+  const unique=new Map<number,Vector3>();
+  for(const c of [...samples,control]) if(c.position && c.joint===control.joint && c.updatedAt<=control.updatedAt && c.updatedAt>=control.updatedAt-100)
+    unique.set(c.updatedAt,c.position);
+  const points=[...unique].sort((a,b)=>a[0]-b[0]);
+  if(points.length<2 || points.at(-1)![0]-points[0][0]<1000/FPS-1e-6) return control.velocity.clone();
+  const meanTime=points.reduce((s,[t])=>s+t,0)/points.length;
+  const mean=points.reduce((s,[,p])=>s.add(p),new Vector3()).divideScalar(points.length);
+  const velocity=new Vector3();let denominator=0;
+  for(const [t,p] of points) {
+    const dt=(t-meanTime)/1000;
+    velocity.addScaledVector(p.clone().sub(mean),dt);denominator+=dt*dt;
+  }
+  return velocity.divideScalar(denominator).clampLength(0,2);
+}
+
 /** Experimental sparse feature edits, NOT native partial-joint constraints.
  * All untouched features hold the latest plausible displayed pose. No completed
  * future IK pose is supplied. The checkpoint still sees full pose frames.
@@ -78,6 +99,7 @@ export function encodeInteraction(request: ReturnType<InteractionResponse['reque
   const anchor = request.context[3], points = positions(anchor,rig);
   const trajectory: {position?: number[];rotation?: number[]}[] = [];
   const weight = Math.max(0,Math.min(1,strength));
+  const velocity = c ? controlVelocity(c,request.controls) : new Vector3();
   for (let i=0;i<4;i++) {
     const f = i+4;
     // Legitimate whole-frame masking, never one mask value per joint.
@@ -86,7 +108,7 @@ export function encodeInteraction(request: ReturnType<InteractionResponse['reque
     if (!c) continue;
     const j = jointIndex(c.joint), horizon=leadSeconds+i/FPS;
     const recency = c.held ? Math.exp(-Math.max(0,request.now-c.updatedAt)/150) : 0;
-    const target = c.position?.clone().add(c.velocity.clone().multiplyScalar(horizon*recency).clampLength(0,.12));
+    const target = c.position?.clone().add(velocity.clone().multiplyScalar(horizon*recency).clampLength(0,.12));
     const rotation = c.rotation ? new Quaternion().slerp(c.angularVelocity,horizon*recency).multiply(c.rotation) : undefined;
     trajectory.push({position:target?.toArray(),rotation:rotation?.toArray()});
     if (target) {

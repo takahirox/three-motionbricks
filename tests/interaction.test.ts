@@ -3,11 +3,58 @@ import assert from 'node:assert/strict';
 import { Quaternion, Vector3 } from 'three';
 import { clonePose, encode, positions } from '../src/motion.ts';
 import { PoseIK } from '../src/pose-ik.ts';
-import { encodeInteraction, InteractionResponse, jointChanges } from '../src/interaction.ts';
+import { controlVelocity, encodeInteraction, InteractionResponse, jointChanges } from '../src/interaction.ts';
+import { MotionPlayer } from '../src/player.ts';
 import { boundedCorrection } from '../src/pose-response.ts';
 import { somaFixture } from './mmd-fixture.ts';
 const {stance,rig}=somaFixture(), ik=new PoseIK(rig,stance);
 const points=positions(stance,rig);
+
+test('trajectory velocity uses distinct recent observations rather than one noisy pointer event',()=> {
+  const response=new InteractionResponse(stance);
+  response.begin('LeftHand',points[13],undefined,0);
+  for(let i=1;i<=3;i++) {
+    response.update(points[13].clone().add(new Vector3(0,i/30,0)),undefined,i*1000/30);
+    response.advance(1/30,false);
+  }
+  // A 1 ms rendering/pointer jitter must not reverse a sustained upward path.
+  response.update(points[13].clone().add(new Vector3(0,.099,0)),undefined,101);
+  let request=response.request(1);
+  assert.ok(request.control!.velocity.y<0);
+  assert.ok(controlVelocity(request.control!,request.controls).y>.9);
+  // Repeated render samples of the same event must not bias the fit.
+  const velocity=controlVelocity(request.control!,request.controls);
+  assert.ok(controlVelocity(request.control!,request.controls.flatMap(c=>[c,c,c])).distanceTo(velocity)<1e-8);
+  for(let i=1;i<=4;i++) {
+    response.update(points[13].clone().add(new Vector3(0,.099-i/30,0)),undefined,101+i*1000/30);
+    response.advance(1/30,false);
+  }
+  request=response.request(1);
+  assert.ok(controlVelocity(request.control!,request.controls).y<-.9,'A sustained reversal replaces the earlier trend');
+  response.release(240);
+  const released=response.request(1);
+  assert.ok(encodeInteraction(released,rig).trajectory.every(t=>new Vector3().fromArray(t.position!).distanceTo(released.control!.position!)<1e-8),
+    'No extrapolation on release, even when the observed trajectory was moving');
+});
+
+test('adaptive interaction seams reach raw motion earlier for small offsets without altering large fades',()=> {
+  const segment=Array.from({length:18},(_,i)=> {
+    const p=clonePose(stance);p.root.x+=.005+i*.001;
+    p.rotations[3].premultiply(new Quaternion().setFromAxisAngle(new Vector3(0,1,0),.08+i*.001));
+    p.rotations[19].premultiply(new Quaternion().setFromAxisAngle(new Vector3(0,1,0),.6+i*.001));
+    return p;
+  });
+  const adaptive=new MotionPlayer(stance,'adaptive'), fixed=new MotionPlayer(stance);
+  adaptive.accept(segment,0);fixed.accept(segment,0);
+  assert.ok(adaptive.pose.rotations.every((q,j)=>q.angleTo(stance.rotations[j])<1e-6));
+  adaptive.advance(2/30);fixed.advance(2/30);
+  assert.ok(adaptive.pose.root.distanceTo(segment[2].root)<1e-8);
+  assert.ok(adaptive.pose.rotations[3].angleTo(segment[2].rotations[3])<1e-6,'Small offset has no seam after two frames');
+  assert.ok(fixed.pose.rotations[3].angleTo(segment[2].rotations[3])>.05);
+  assert.ok(adaptive.pose.rotations[19].angleTo(fixed.pose.rotations[19])<1e-6,'Keep the eight-frame fade for a large offset');
+  adaptive.advance(6/30);
+  assert.ok(adaptive.pose.rotations.every((q,j)=>q.angleTo(segment[8].rotations[j])<1e-6),'All seam corrections expire');
+});
 
 test('direct hand control preserves opposite arm, torso, root and leg ownership',()=> {
   const target=points[13].clone().add(new Vector3(.02,.08,-.06));

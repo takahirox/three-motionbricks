@@ -267,7 +267,7 @@ async function main() {
           features:Object.fromEntries(Object.entries(features).map(([k,v])=>[k,Array.from(v)])),
           rawMotion:segment.map(serializePose),perJointRawChange:jointChanges(segment[0],segment.at(-1)!,avatar.rig),
           rawRootTravel:segment.at(-1)!.root.distanceTo(segment[0].root),
-          correctionBounds:{radians:.45,rootMeters:.08,releaseSeconds:.35,seamFrames:8}};
+          correctionBounds:{radians:.45,rootMeters:.08,releaseSeconds:.35,seamFrames:[2,8],seam:'per-component adaptive fade'}};
         report.interactionSequences ??=[]; report.interactionSequences.push(evidence);
         if(report.interactionSequences.length>12) report.interactionSequences.shift();
       }

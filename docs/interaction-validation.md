@@ -1,5 +1,11 @@
 # Continuous direct interaction feasibility — Issue #22
 
+The [continuation report](interaction-continuation-validation.md) records the
+current trajectory/seam fixes, fresh real ONNX evidence, bounded continuous
+conditioning experiments and all seven acceptance criteria. The measurements
+below are preserved historical evidence from the initial implementation; they
+must not be presented as measurements of the updated source.
+
 This implementation makes Move/Rotate the primary interaction and runs real
 MotionBricks during dragging and release. **Issue #22 should remain open.** The
 measurements establish a working experimental pipeline and causal conditioning
@@ -39,7 +45,8 @@ historical implementations; they are not acceptance evidence for this requiremen
   gesture revision; release also accepts an in-flight segment. A new grab,
   reset, mode/character switch, pause or visibility interruption invalidates old
   work. Accepted output is blended from the actually displayed pose, with the
-  existing eight-frame seam fade. Underruns hold the last model frame while the
+  per-component two-to-eight-frame seam fade (eight frames for large offsets).
+  Underruns hold the last model frame while the
   selected part stays responsive. Release fades direct correction over 350 ms,
   then removes the control and requests neutral continuation of the current
   pose, without forcing a standing stock pose.
@@ -75,7 +82,10 @@ solved with IK for conditioning.
 
 Targets predict 0.5–0.6 seconds ahead, matching the end of the shortest supported
 six-token/18-frame segment. Linear prediction is capped at 12 cm and 2 m/s;
-angular velocity is capped at 3 rad/s. Velocity influence decays with 150 ms
+the continuation fits velocity from distinct observations over the last 100 ms
+instead of relying only on the latest pointer event. The original event
+estimate remains the fallback until enough observations are available.
+Angular velocity is capped at 3 rad/s. Velocity influence decays with 150 ms
 recency. The conditioning slider blends selected features against their neutral
 values; it does not change mask semantics or correction authority. The default
 uses four target frames. The A/B test also exercises one target frame and an
@@ -226,8 +236,8 @@ The checkpoint has no native sparse joint-trajectory input. These experiments
 neither prove that all possible conditioning schemes fail nor justify labeling
 the current reactions as general physical behavior.
 
-A separate next step is to evaluate adapting/training a controller with explicit
-per-joint temporal constraints and contact conditioning, while preserving the
-same direct-control/generated-control boundary. That work needs its own agreed
-model/training scope and evidence. No new model, training run or hand-authored
-reaction policy is substituted here.
+The continuation also tested supported feature/frame masking and continuous
+feedback before reassessing the fallback. See its measured tradeoffs and bounded
+options in the [continuation report](interaction-continuation-validation.md#decision-boundary).
+No separate controller, model or training scope has been agreed. No new model,
+training run or hand-authored reaction policy is substituted here.
