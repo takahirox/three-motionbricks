@@ -42,11 +42,12 @@ export class PoseResponse {
   revision = 0;
   generations = 0;
   discarded = 0;
-  private history: Pose[];
+  protected history: Pose[];
   private player: MotionPlayer;
   private accumulator = 0;
   private editedAt = -Infinity;
   private intentContext?: Pose[];
+  protected seam: 'fixed' | 'adaptive' = 'fixed';
   constructor(stance: Pose) {
     this.pose = clonePose(stance); this.goal = clonePose(stance);
     this.history = Array.from({length:4},() => clonePose(stance));
@@ -57,13 +58,18 @@ export class PoseResponse {
     // must not replace the trajectory with four copies of the held goal.
     this.intentContext = this.history.map(clonePose);
     this.pose = clonePose(pose); this.goal = clonePose(pose);
-    this.revision++; this.editedAt = now; this.player = new MotionPlayer(pose);
+    this.revision++; this.editedAt = now; this.player = new MotionPlayer(pose,this.seam);
   }
   reset(pose: Pose, now: number) {
     this.edit(pose,now); this.history = Array.from({length:4},() => clonePose(pose)); this.accumulator = 0;
     this.intentContext = undefined;
   }
   get remaining() {return this.player.remaining;}
+  /** Resume from an IK-only preview without clearing observed history or control. */
+  reanchorPlayback() {this.player = new MotionPlayer(this.pose,this.seam);}
+  /** Discard motion computed with old settings without ending the active drag
+   * or clearing its observed trajectory and release fade. */
+  invalidatePlayback() {this.revision++; this.reanchorPlayback();}
   /** The latest displayed 30 Hz samples, including the current disturbance. */
   observedContext() {return [...this.history.slice(1),this.pose].map(clonePose);}
   ready(now: number) {return now - this.editedAt >= 180;}
@@ -75,7 +81,7 @@ export class PoseResponse {
     if (revision !== this.revision) {this.discarded++; return false;}
     // A request can take seconds: start at the actually displayed pose/history,
     // rather than an obsolete queued endpoint.
-    this.player = new MotionPlayer(this.pose);
+    this.player = new MotionPlayer(this.pose,this.seam);
     this.player.accept(segment,this.player.revision); this.intentContext = undefined; this.generations++; return true;
   }
   advance(delta: number, running: boolean, constrain?: (pose: Pose) => Pose) {

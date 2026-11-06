@@ -5,6 +5,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 const origin = process.env.DEMO_URL || 'http://127.0.0.1:5173/';
 const realModel = process.argv.includes('--model');
+if (realModel) {await import('./interaction-smoke.mjs');process.exit(0);}
 const output = new URL('../.artifacts/pose/',import.meta.url);
 await mkdir(output,{recursive:true});
 const browser = await chromium.launch({executablePath:process.env.CHROME_BIN || undefined,headless:true,args:['--enable-unsafe-webgpu']});
@@ -39,6 +40,34 @@ try {
     assert.equal((await report()).orbitEnabled,true); if(cancel) await page.mouse.up();
     await page.waitForTimeout(300); return before;
   };
+  // Change settings while pointer capture owns a real hand drag. Dispatching
+  // the control events avoids releasing the mouse to reach the settings panel.
+  const [sx,sy]=(await report()).handles.LeftHand.screen;
+  await page.mouse.move(sx,sy); await page.mouse.down();
+  await page.mouse.move(sx+10,sy-10,{steps:6}); await page.waitForTimeout(300);
+  for(const setting of ['strength','plant']) {
+    const before=await report();
+    await page.locator(`#${setting}`).evaluate(input=> {
+      if(input.type==='range') input.value='0.5'; else input.checked=!input.checked;
+      input.dispatchEvent(new Event(input.type==='range' ? 'input' : 'change',{bubbles:true}));
+    });
+    await page.waitForFunction(revision=>JSON.parse(document.querySelector('#diagnostics').textContent).revision>revision,before.revision);
+    const changed=await report();
+    assert.equal(changed.active,true,`${setting}: retain pointer capture`);
+    assert.equal(changed.orbitEnabled,false);
+    assert.equal(changed.control?.joint,'LeftHand',`${setting}: retain held control`);
+    assert.equal(changed.control.held,true);
+    await page.mouse.move(sx+(setting==='strength' ? 20 : 30),sy-(setting==='strength' ? 20 : 30),{steps:6});
+    await page.waitForTimeout(300);
+    const moved=await report();
+    assert.ok(distance(moved.handles.LeftHand.world,before.handles.LeftHand.world)>.02,`${setting}: hand follows further movement`);
+    assert.ok(moved.targetErrorMeters<.06,`${setting}: target error ${moved.targetErrorMeters}`);
+  }
+  await page.mouse.up();
+  await page.waitForFunction(()=>!JSON.parse(document.querySelector('#diagnostics').textContent).active);
+  assert.equal((await report()).orbitEnabled,true);
+  await page.locator('#plant').check(); await page.locator('#reset').click();
+  await page.waitForTimeout(300);
   for (const [value,label] of [['soma','SOMA'],['animasa','Animasa Miku'],['mmd','CG-CA Uka']]) {
     await page.selectOption('#character',value);
     await page.waitForFunction(label=>JSON.parse(document.querySelector('#diagnostics').textContent).character===label,label);
@@ -47,7 +76,7 @@ try {
     await drag('LeftHand',35,-35); const reached = await report();
     assert.ok(distance(initial.handles.LeftHand.world,reached.handles.LeftHand.world)>0.1);
     assert.ok(reached.targetErrorMeters < 0.06,`${label} hand error ${reached.targetErrorMeters}`);
-    assert.ok(distance(initial.rotations[3],reached.rotations[3])>0.005,'Torso follows');
+    assert.ok(distance(initial.rotations[3],reached.rotations[3])<0.001,'Direct hand IK leaves torso model-owned');
     await page.waitForTimeout(500);
     assert.ok(distance((await report()).handles.LeftHand.world,reached.handles.LeftHand.world)<0.001,'Release retains pose');
     await page.locator('#rotate').click(); const preRotate = await report();
@@ -57,14 +86,13 @@ try {
     await page.locator('#move').click(); await page.locator('#reset').click(); await page.waitForTimeout(300);
     const preFoot = await report();
     await drag('LeftFoot',12,-25); const foot = await report();
-    assert.ok(distance(foot.root,preFoot.root)>0.01,'Foot moves pelvis');
+    assert.ok(distance(foot.root,preFoot.root)<0.001,'Direct foot IK leaves root model-owned');
     assert.ok(distance(foot.handles.RightFoot.world,preFoot.handles.RightFoot.world)<0.045,'Other foot stays planted');
     await page.locator('#reset').click(); await page.waitForTimeout(300);
     const preHips = await report(); await drag('Hips',25,0); const hips = await report();
     const shift = hips.root.map((v,i)=>v-preHips.root[i]);
-    assert.ok(distance(hips.root,preHips.root)>0.05);
-    for(const joint of ['Head','LeftHand','LeftFoot'])
-      assert.ok(distance(hips.handles[joint].world.map((v,i)=>v-preHips.handles[joint].world[i]),shift)<0.01,`${label} coherent root ${joint}`);
+    assert.ok(distance(hips.root,preHips.root)>0.03);
+    assert.ok(distance(hips.handles.LeftFoot.world.map((v,i)=>v-preHips.handles.LeftFoot.world[i]),shift)>0.02,`${label} pelvis contact compensation`);
     if(value!=='soma') {
       assert.ok(hips.mmd.steps>0); assert.ok(hips.mmd.allocations>0); assert.ok(hips.mmd.maximumSecondaryAngle>0.02);
       await page.locator('#mmd-physics').uncheck(); await page.waitForTimeout(300);
@@ -90,79 +118,20 @@ try {
   await page.screenshot({path:new URL('mobile.png',output).pathname});
   await page.setViewportSize({width:1280,height:850});
   await page.locator('#generation-controls').evaluate(details=>{details.open=true;});
-  if (realModel) {
-    await page.locator('#reach').click(); await page.locator('#load').click();
-    let lastStatus = '', lastProgress = Date.now(), lastLog = 0;
-    for (;;) {
-      const text = await page.locator('#status').textContent(), now = Date.now();
-      if(text!==lastStatus) {lastStatus=text;lastProgress=now;}
-      if(now-lastLog>30000) {console.log(text);lastLog=now;}
-      if((await report()).generations>0) break;
-      assert.ok(!(await report()).error,text); assert.ok(now-lastProgress<930000,`Stalled: ${text}`);
-      await page.waitForTimeout(1000);
-    }
-    for (const [label,button,strength] of [['hand','reach','0.8'],['foot','step','1'],['hand-soft','reach','0.4']]) {
-      await page.locator('#strength').evaluate((input,value)=>{input.value=value;input.dispatchEvent(new Event('input'));},strength);
-      await page.locator('#reset').click(); await page.locator(`#${button}`).click();
-      const before = (await report()).generations;
-      await page.waitForFunction(n=>JSON.parse(document.querySelector('#diagnostics').textContent).generations>n || JSON.parse(document.querySelector('#diagnostics').textContent).error,before,{timeout:180000});
-      await page.waitForTimeout(80); const result = await report();
-      assert.equal(result.error,undefined); assert.ok(result.generations>before);
-      assert.equal(result.source,'MotionBricks + bounded IK');
-      const raw = result.lastGeneration;
-      assert.ok(raw.frames>=18); assert.ok(result.motionSample.length===raw.frames);
-      assert.ok(raw.rawStart.some((p,j)=>distance(p,raw.rawEnd[j])>0.001),'Actual output has full-body motion');
-      assert.ok(result.root.every(Number.isFinite));
-      reports.push({example:label,report:result});
-      await writeFile(new URL(`${label}-motion.json`,output),JSON.stringify(result,null,2));
-      await page.screenshot({path:new URL(`${label}-generated.png`,output).pathname});
-    }
-    await page.locator('#strength').evaluate(input=>{input.value='0.8';input.dispatchEvent(new Event('input'));});
-    for (const [selection,label] of [['animasa','Animasa Miku'],['mmd','CG-CA Uka']]) {
-      await page.selectOption('#character',selection);
-      await page.waitForFunction(label=>JSON.parse(document.querySelector('#diagnostics').textContent).character===label,label);
-      await page.locator('#reset').click(); await page.locator('#reach').click();
-      const before = (await report()).generations;
-      await page.waitForFunction(n=>JSON.parse(document.querySelector('#diagnostics').textContent).generations>n,before,{timeout:180000});
-      await page.waitForTimeout(500); const result = await report();
-      assert.equal(result.character,label); assert.ok(result.mmd.steps>0); assert.ok(result.mmd.allocations>0);
-      reports.push({example:selection,report:result});
-      assert.equal(result.error,undefined); assert.ok(result.targetErrorMeters<0.08,`${label}: ${result.targetErrorMeters} m from target`);
-      await page.screenshot({path:new URL(`${selection}-generated.png`,output).pathname});
-    }
-    // Keep an actual mouse grab alive across an actual ONNX response. The
-    // effector must remain constrained and the camera must stay released only
-    // when this pointer is released, including while generation advances.
-    await page.locator('#reset').click(); await page.waitForTimeout(300);
-    const heldBefore = await report(), [hx,hy] = heldBefore.handles.LeftHand.screen;
-    await page.mouse.move(hx,hy); await page.mouse.down(); await page.mouse.move(hx+24,hy-25,{steps:10});
-    await page.waitForFunction(n=>JSON.parse(document.querySelector('#diagnostics').textContent).generations>n,heldBefore.generations,{timeout:180000});
-    await page.waitForTimeout(300); const heldResult = await report();
-    assert.ok(heldResult.active); assert.equal(heldResult.orbitEnabled,false);
-    assert.ok(heldResult.targetErrorMeters<0.08); assert.equal(heldResult.error,undefined);
-    reports.push({example:'held-pointer',report:heldResult});
-    await page.mouse.up();
-    await page.waitForFunction(()=>JSON.parse(document.querySelector('#diagnostics').textContent).orbitEnabled);
-    await page.locator('#pause').click();
-    await page.waitForFunction(()=>document.querySelector('#playback').textContent==='Paused');
-    const paused = await report();
-    await page.waitForTimeout(700); assert.ok(distance((await report()).root,paused.root)<0.001);
-    await page.locator('#pause').click();
-  } else {
-    await page.route(/mmm_v6_soma_fp32\.onnx$/,r=>r.fulfill({status:404,body:'Missing weights'}));
-    await page.locator('#load').click();
-    await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('HTTP 404'));
-    assert.equal((await report()).generations,0); assert.ok(await page.locator('#load').isEnabled());
-    await page.locator('#reach').click(); assert.ok((await report()).generations===0);
-    const noGPU = await browser.newPage();
-    await noGPU.addInitScript(()=>Object.defineProperty(navigator,'gpu',{get:()=>undefined}));
-    await noGPU.goto(url.href); await noGPU.waitForFunction(()=>document.querySelector('#interaction').textContent.includes('Rest pose'));
-    await noGPU.locator('#move').click(); await noGPU.locator('#reach').click(); await noGPU.locator('#generation-controls').evaluate(details=>{details.open=true;}); await noGPU.locator('#load').click();
-    await noGPU.waitForFunction(()=>document.querySelector('#status').textContent.includes('WebGPU is unavailable'));
-    await noGPU.waitForFunction(()=>{const text=document.querySelector('#diagnostics').textContent;return text && JSON.parse(text).edits>0;});
-    const fallback = JSON.parse(await noGPU.locator('#diagnostics').textContent());
-    assert.equal(fallback.generations,0); assert.equal(fallback.renderer,'WebGLBackend'); await noGPU.close();
-  }
+  await page.route(/mmm_v6_soma_fp32\.onnx$/,r=>r.fulfill({status:404,body:'Missing weights'}));
+  await page.locator('#load').click();
+  await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('HTTP 404'));
+  assert.equal((await report()).generations,0); assert.ok(await page.locator('#load').isEnabled());
+  await page.locator('#reach').click(); assert.ok((await report()).generations===0);
+  const noGPU = await browser.newPage();
+  await noGPU.addInitScript(()=>Object.defineProperty(navigator,'gpu',{get:()=>undefined}));
+  await noGPU.goto(url.href); await noGPU.waitForFunction(()=>document.querySelector('#interaction').textContent.includes('Rest pose'));
+  await noGPU.locator('#move').click(); await noGPU.locator('#reach').click(); await noGPU.locator('#generation-controls').evaluate(details=>{details.open=true;}); await noGPU.locator('#load').click();
+  await noGPU.waitForFunction(()=>document.querySelector('#status').textContent.includes('WebGPU is unavailable'));
+  await noGPU.waitForFunction(()=>{const text=document.querySelector('#diagnostics').textContent;return text && JSON.parse(text).edits>0;});
+  const fallback = JSON.parse(await noGPU.locator('#diagnostics').textContent());
+  assert.equal(fallback.generations,0); assert.equal(fallback.renderer,'WebGLBackend'); await noGPU.close();
+
   // Verify both directions of the production-prefixed page navigation.
   await page.getByRole('link',{name:'← Keyboard locomotion'}).click();
   await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('SOMA ready'));

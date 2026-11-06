@@ -9,7 +9,7 @@ export class MotionPlayer {
   private cursor = 3;
   revision = 0;
   generations = 0;
-  constructor(stance: Pose) {this.frames = Array.from({length: 4}, () => clonePose(stance));}
+  constructor(stance: Pose, private seam: 'fixed' | 'adaptive' = 'fixed') {this.frames = Array.from({length: 4}, () => clonePose(stance));}
   get pose(): Pose {
     const index = Math.floor(this.cursor);
     return blendPose(this.frames[index], this.frames[Math.min(index + 1, this.frames.length - 1)], this.cursor - index);
@@ -39,11 +39,16 @@ export class MotionPlayer {
     const rootDelta = anchor.root.clone().sub(segment[0].root);
     const rotationDeltas = anchor.rotations.map((q, i) => q.clone().multiply(segment[0].rotations[i].clone().invert()));
     const identity = new Quaternion();
-    // Endpoint correction preserves the displayed pose and fades over eight frames.
+    // Interaction uses a shorter fade for small offsets, independently per DOF.
+    // Large offsets retain the original eight-frame fade. This changes only
+    // stitching, never the decoded motion or the conditioning signal.
+    const duration = (distance: number, step: number) => this.seam==='fixed' ? 8 : Math.max(2,Math.min(8,Math.ceil(distance/step)));
+    const rootFrames = duration(rootDelta.length(),.01);
+    const rotationFrames = rotationDeltas.map(q=>duration(identity.angleTo(q),.06));
+    // Endpoint correction preserves the displayed pose and fades to raw output.
     const corrected = segment.map((pose, i) => {
-      const weight = Math.max(0, 1 - i / 8);
-      return {root: pose.root.clone().addScaledVector(rootDelta, weight),
-        rotations: pose.rotations.map((q, j) => identity.clone().slerp(rotationDeltas[j], weight).multiply(q))};
+      return {root: pose.root.clone().addScaledVector(rootDelta, Math.max(0,1-i/rootFrames)),
+        rotations: pose.rotations.map((q, j) => identity.clone().slerp(rotationDeltas[j], Math.max(0,1-i/rotationFrames[j])).multiply(q))};
     });
     this.frames.push(...corrected.slice(1));
     // Retain four history samples; bound memory over arbitrarily long sessions.

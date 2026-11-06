@@ -52,7 +52,8 @@ try {
   await page.goto(new URL('pose.html?captureMotion=1',origin).href,{waitUntil:'domcontentloaded',timeout:180000});
   const report=()=>page.locator('#diagnostics').textContent().then(JSON.parse);
   await page.waitForFunction(()=>document.querySelector('#diagnostics').textContent.includes('handles'),null,{timeout:180000});
-  assert.equal((await report()).mode,'push');
+  await page.locator('#push').click();
+  await page.waitForFunction(()=>JSON.parse(document.querySelector('#diagnostics').textContent).mode==='push');
   await page.selectOption('#push-size','0.07');const initial=await report();
   await page.locator('#push-left').click();
   await page.waitForFunction(()=>JSON.parse(document.querySelector('#diagnostics').textContent).balance.phase==='recovering');

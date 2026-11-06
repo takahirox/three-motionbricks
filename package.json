@@ -16,7 +16,9 @@
     "test:pose": "node scripts/pose-smoke.mjs",
     "assets:animasa": "tsx scripts/prepare-animasa.ts",
     "test:balance": "node scripts/balance-smoke.mjs",
-    "test:balance:conditioning": "node scripts/balance-conditioning.mjs"
+    "test:balance:conditioning": "node scripts/balance-conditioning.mjs",
+    "test:interaction": "node scripts/interaction-smoke.mjs",
+    "test:interaction:conditioning": "node scripts/interaction-conditioning.mjs"
   },
   "dependencies": {
     "ammojs-typed": "1.0.6",
