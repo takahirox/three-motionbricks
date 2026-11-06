@@ -95,6 +95,49 @@ test('rotation assistance depends on imposed orientation and excludes rigid turn
   assert.ok(responseCredit(rigid,base,req,rig,encodeProposal(req,rig,1,0))<1e-12);
 });
 
+test('moving and overshooting baselines spend the absolute hand position/orientation residual',()=> {
+  const trunk=(r:number)=>Array.from({length:18},()=> {
+    const p=clonePose(stance);rotateBranch(p,rig,3,new Quaternion().setFromAxisAngle(new Vector3(0,0,1),r));return p;
+  });
+  const target=trunk(.06)[0];
+  // Position and orientation are tested separately so one cannot hide a wrong
+  // sign in the other. Both baseline motion and overshoot must be accounted for.
+  for(const mode of ['position','rotation']) {
+    const control=new InteractionResponse(stance);
+    control.begin('LeftHand',mode==='position' ? positions(target,rig)[13] : undefined,
+      mode==='rotation' ? target.rotations[13] : undefined,0);
+    const req=control.request(1),encoded=encodeProposal(req,rig,1,0);
+    for(const [baseline,worse] of [[.04,.12],[.09,.14],[.06,.08]]) {
+      assert.equal(responseCredit(trunk(worse),trunk(baseline),req,rig,encoded),0,
+        `${mode}: further motion past the target cannot earn credit (baseline ${baseline})`);
+    }
+    for(const baseline of [.04,.09]) assert.ok(responseCredit(trunk(.06),trunk(baseline),req,rig,encoded)>0,
+      `${mode}: reaching the absolute target helps from either side`);
+    const moving=Array.from({length:18},(_,i)=>trunk(.02+.002*i)[0]);
+    const overshooting=Array.from({length:18},(_,i)=>trunk(.10+.002*i)[0]);
+    assert.equal(responseCredit(overshooting,moving,req,rig,encoded),0,
+      `${mode}: continuously moving baseline cannot make worsening overshoot helpful`);
+  }
+});
+
+test('pelvis stabilization compares the remaining imposed translation and existing trunk articulation',()=> {
+  const trunk=(r:number)=>Array.from({length:18},()=> {
+    const p=clonePose(stance);rotateBranch(p,rig,1,new Quaternion().setFromAxisAngle(new Vector3(0,0,1),r));return p;
+  });
+  const neutral=positions(stance,rig),help=positions(trunk(.03)[0],rig);
+  const displacement=help[3].clone().sub(neutral[3]).add(help[6].clone().sub(neutral[6])).multiplyScalar(-.5);
+  const control=new InteractionResponse(stance);control.begin('Hips',stance.root.clone().add(displacement),undefined,0);
+  const req=control.request(1),encoded=encodeProposal(req,rig,1,0);
+  const baseline=trunk(.03);
+  // The baseline already supplies the counterrotation. Repeating that demanded
+  // delta overshoots, while undoing an overshoot is useful.
+  assert.equal(responseCredit(trunk(.06),baseline,req,rig,encoded),0);
+  assert.ok(responseCredit(baseline,trunk(.06),req,rig,encoded)>0);
+  const moved=baseline.map(p=>{const c=clonePose(p);c.root.add(displacement);return c;});
+  assert.equal(responseCredit(trunk(.06),moved,req,rig,encoded),0,
+    'Already imposed baseline root translation must not create fresh trunk demand');
+});
+
 test('pelvis credit measures trunk stabilization rather than arm activity or imposed root travel',()=> {
   const base=Array.from({length:18},()=>clonePose(stance)), trunk=base.map(p=> {
     const c=clonePose(p);rotateBranch(c,rig,1,new Quaternion().setFromAxisAngle(new Vector3(0,0,1),.03));return c;

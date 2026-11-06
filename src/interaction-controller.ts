@@ -41,7 +41,7 @@ export function responseCredit(segment: Pose[], baseline: Pose[], request: Reque
   const c=request.control;
   if(!c || segment.length!==baseline.length) return 0;
   const selected=jointIndex(c.joint), owned=directJoints(request,rig), anchor=request.context[3];
-  const origin=positions(anchor,rig)[selected];let improvement=0;
+  const origin=positions(anchor,rig);let improvement=0;
   for(let i=0;i<segment.length;i++) {
     const base=baseline[i], isolated=clonePose(base), desired=desiredControl(request,encoded,i);
     for(let j=1;j<rig.parents.length;j++) {
@@ -50,17 +50,17 @@ export function responseCredit(segment: Pose[], baseline: Pose[], request: Reque
     }
     const bp=positions(base,rig), ip=positions(isolated,rig);
     if(desired.position) {
-      const demand=desired.position.clone().sub(origin);
       const landmarks=selected===0 ? [3,6] : [selected];
-      if(selected===0) demand.negate();
       for(const j of landmarks) {
-        const effect=ip[j].clone().sub(bp[j]);
-        improvement+=Math.max(-.04,Math.min(.04,demand.length()-effect.distanceTo(demand)))/landmarks.length;
+        // For pelvis, compare both trunks after the SAME remaining imposed root
+        // translation against the anchor landmarks. Other parts use the absolute
+        // trajectory target directly; baseline motion has already spent residual.
+        const target=selected===0 ? origin[j].clone().sub(desired.position.clone().sub(base.root)) : desired.position;
+        improvement+=Math.max(-.04,Math.min(.04,bp[j].distanceTo(target)-ip[j].distanceTo(target)))/landmarks.length;
       }
     }
     if(desired.rotation && selected!==0) {
-      const demand=desired.rotation.clone().multiply(anchor.rotations[selected].clone().invert()).multiply(base.rotations[selected]);
-      improvement+=.1*Math.max(-.1,Math.min(.1,base.rotations[selected].angleTo(demand)-isolated.rotations[selected].angleTo(demand)));
+      improvement+=.1*Math.max(-.1,Math.min(.1,base.rotations[selected].angleTo(desired.rotation)-isolated.rotations[selected].angleTo(desired.rotation)));
     }
   }
   return Math.max(0,Math.min(.04,improvement/segment.length));

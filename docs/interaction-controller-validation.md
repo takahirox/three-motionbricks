@@ -6,23 +6,43 @@ implemented and evaluated, but full Issue #22 acceptance remains unmet.** Keep
 PR #23 draft and the Issue open. No repeat approach-selection question is pending.
 
 This review applies to the ten runtime source SHA-256 hashes in the
-[current saved review result](interaction-response-quality-validation.json).
+[current saved review result](interaction-residual-validation.json).
 It retains the complete seven-criterion matrix; no acceptance field or human
 confirmation result is sent to a confirmation helper. The
-[current full traces](interaction-response-quality-traces.json.gz) contain all
+[recorded full traces](interaction-response-quality-traces.json.gz) contain all
 actual proposals, numeric conditioning, raw decoded poses/contact predictions,
 selected indices, displayed/player poses, direct corrections and timing. The
+[original capture summary](interaction-response-quality-validation.json) retains
+its original scores and source hashes for audit. The current result rescores
+those immutable actual proposals: nine captured runtime files are unchanged;
+only the scorer differs. All 201 selections remain unchanged. This is offline
+recomputation, not a fresh browser/inference or timing measurement. The
 [earlier controller result](interaction-controller-validation.json),
 [earlier full controller traces](interaction-controller-traces.json.gz), and
 [27-condition/21-rollout investigation](interaction-continuation-validation.md)
 remain historical evidence. The former controller's activity reward is superseded.
 
-## Corrected comparison and changed hypothesis
+## Corrected absolute-residual comparison
 
 The review found that capped unrelated local rotation could improve selection
 without helping the imposed interaction. That reward has been removed entirely.
 The new hypothesis tests **trajectory residual reduction against a matched actual
 no-control proposal**, rather than motion magnitude.
+
+A subsequent review found that the assistance calculation still used the
+target-minus-history-anchor displacement after the matched baseline had already
+moved. That could reward overshoot. Position assistance now subtracts reconstructed
+distance from baseline distance to the **same absolute trajectory point**.
+Orientation compares both quaternions to the **same absolute trajectory rotation**,
+without applying the requested delta to the moving baseline again. For pelvis,
+both trunk poses receive the same remaining translation from baseline root to
+imposed root and are compared against the same anchor chest/head positions.
+Existing root/direct-chain ownership exclusions and credit caps are unchanged.
+
+In the saved LeftHand/selection/down window at 2333.333 ms, the old score granted
+0.171 mm credit even though model-owned substitution worsened mean tracking by
+0.150 mm. Corrected credit is zero. The saved result retains old and new scores
+for every proposal, plus an explicit regression for that actual window.
 
 Each normal update makes two sequential actual ONNX calls with the same displayed
 history, neutral future pose frames, six-token budget and full-frame presence
@@ -49,8 +69,8 @@ The diagnostic reconstruction never reaches playback, conditioning, contact
 correction or retargeting. It is not a pose solver. Root movement and whole-body
 turning earn no response credit; unrelated opposite-arm activity cannot improve
 hand reach or pelvis trunk stability. Motion common to the matched baseline earns
-no credit. Motion in the wrong direction, excess motion beyond the residual and
-changes confined to the direct IK chain earn none. Per-frame positional improvement
+no credit. Motion that worsens the remaining residual and changes confined to the
+direct IK chain earn none. Per-frame positional improvement
 is capped at 4 cm; orientation contributes at most 1 cm equivalent, and final
 credit is capped at 4 cm equivalent with weight 0.5. Negative improvements offset
 positive ones before the final clamp. This bounds the incentive and relates it
@@ -66,7 +86,7 @@ history, stale-revision disposal, bounded feedback and worker inference. The
 load; three fast updates restore comparison. Heading/root guards, 300 ms maximum
 cooldown, selected-part correction limits, release fade and adaptive seams remain.
 
-## Fresh bounded real-checkpoint evaluation
+## Recorded real-checkpoint evaluation and current rescore
 
 The helper verified the existing 757,864,273-byte cache against SHA-256
 `856419dc72aeb14e591eebf4dd0ea05734a2506ddb00bcd39dd6dac2ad60f4fb`.
@@ -91,9 +111,11 @@ fixed-step clock pauses during inference; live pointer tests cover scheduling.
 | Pelvis maximum segment-mean grounded-foot drift | 6.36 / 7.03 cm | 3.60 / 3.60 cm |
 
 The neutral proposal was selected zero/one times for hand and five/five times for
-pelvis. Hand reach-assistance credit peaked at **1.23/1.52 mm**, with positive
-credit in five/seven of eleven updates. Pelvis trunk-assistance credit peaked at
-0.85 mm upward and was numerical zero downward. These small values expose the
+pelvis. Offline rescoring changes none of these selections or the displayed/raw
+trajectory metrics above. Corrected hand reach-assistance credit peaks at
+**1.27/1.39 mm**, with positive credit in seven/six of eleven updates. Corrected
+pelvis trunk-assistance credit peaks at 1.16 mm upward and is numerical zero
+downward. These small values expose the
 lack of substantial trajectory-helpful uncontrolled generation instead of
 rewarding unrelated activity. The new controller does not improve hand tracking.
 Pelvis heading/contact costs improve, with worse tracking and continuing direct
@@ -115,7 +137,7 @@ The raw row excludes seams and direct correction. These are not live footage,
 MMD physics or proof of a convincing interaction. The limited motion remains
 visible.
 
-### Actual resource timing
+### Recorded actual resource timing
 
 Local load/compile delivery took 2.41 s (worker load report 2.19 s). First cold
 inference took 215.3 ms, with a 219.9 ms batch. Subsequent actual inference ranged
@@ -133,7 +155,7 @@ queue timing is reported as a measurement.
 
 ## Pointer, attribution and regression evidence
 
-The fresh real-pointer suite passed on the development origin
+The original real-pointer suite passed on the development origin
 `http://127.0.0.1:5173/`, including primary Move/Rotate, hold, reversal, release,
 rotation, pointer cancel, reset, pause, preview-to-load continuity, genuine delayed
 results and stale revision disposal. It checks actual proposal counts, zero queue,
@@ -151,12 +173,18 @@ segment. MMD physics was enabled in both MMD cases.
 
 The saved-trace checker independently recomputed supported input features and
 scores for **201 windows / 318 proposals**, checked all ten current runtime source
-hashes, and verified correction bounds over **1,784 browser samples**. Feature
+hashes (nine capture-matched files plus the corrected scorer), and verified
+correction bounds over **1,784 recorded browser samples**. No ranking changes
+were found, so browser inference and the heavy motion experiments were not
+repeated for this arithmetic fix. Original timing and trajectory measurements
+retain their provenance. Feature
 comparison allows 1e-6 for browser/Node Float32/trigonometric rounding; masks and
 token constraints remain exact. Tests also demonstrate no reward for unrelated
 opposite-arm activity at multiple amplitudes, shared baseline activity, wrong
 trajectory direction, root travel or direct-chain motion, and positive credit for
-model-owned reach help/trunk stabilization. Scheduler cancellation, exclusion,
+model-owned reach help/trunk stabilization. New regressions cover moving and
+overshooting baselines for position and rotation, including time-varying motion,
+and already counterrotated/translated pelvis baselines. Scheduler cancellation, exclusion,
 slow-path recovery, invalid-baseline behavior and rejection backoff remain covered.
 
 The 0.45 rad correction bound passed. Hand direct IK changed the opposite hand by
@@ -178,15 +206,17 @@ feature acceptance.
 | --- | --- | --- |
 | 1. Primary continuous response | Actual Move/Rotate generations during movement and release, responsive preview; convincing response elsewhere remains unestablished. | Partial |
 | 2. Hand and pelvis/torso quality | Hand-first trial plus pelvis and three-character windows; neither demonstrates natural whole-body response; pelvis depends on direct root control. | Partial |
-| 3. Raw causality and baselines | Full inputs/all actual proposals/raw/displayed/IK-only/no-drag traces and matched same-history comparison; trajectory-grounded selection implemented, but substantive appropriate reaction remains unestablished. | Partial |
+| 3. Raw causality and baselines | Full inputs/all actual proposals/raw/displayed/IK-only/no-drag traces retained; corrected absolute-residual scoring rescored 201 windows/318 proposals with no ranking changes. Substantive appropriate reaction remains unestablished. | Partial |
 | 4. Bounded corrections and attribution | Correction/ownership bounds pass; seams remain material and pelvis mechanically translates upper body. Natural response cannot yet be attributed to generation. | Partial |
 | 5. Smooth lifecycle and motion quality | Held/reversed/released/cancelled/delayed/stale/preview-load tests pass with bounded work; natural settling and reliable contacts remain unestablished. | Partial |
-| 6. Three characters and regressions | Fresh SOMA/Animasa/Uka hand/pelvis ONNX windows with MMD physics; intended quality remains unestablished. Ordinary pose, system-Chrome keyboard/MMD and specialist balance regressions pass. | Partial |
-| 7. Tests, browser, Pages, docs | 54 unit tests pass, one optional external-source Animasa conversion skipped; build, Pages artifact and actual ONNX pointer checks pass. Full feature acceptance incomplete; merged Pages/public-origin verification remains future post-merge work. | Partial |
+| 6. Three characters and regressions | Recorded SOMA/Animasa/Uka hand/pelvis ONNX windows with MMD physics; intended quality remains unestablished. Recorded ordinary pose, system-Chrome keyboard/MMD and specialist balance regressions pass. | Partial |
+| 7. Tests, browser, Pages, docs | 56 unit tests pass, one optional external-source Animasa conversion skipped; current build, Pages artifact and offline rescore checks pass. Recorded browser evidence is retained; no new inference/timing claimed. Full feature acceptance incomplete; merged Pages/public-origin verification remains future post-merge work. | Partial |
 
-All 54 unit tests passed with one optional external-source Animasa conversion
-skip; the final focused controller suite passed all ten cases. Ordinary pose and
-specialist Balance browser suites passed. The ordinary keyboard/MMD suite first
+For this scoring revision, 56 unit tests passed with one optional external-source
+Animasa conversion skip; the focused controller suite passed all twelve cases.
+The saved-trace rescore/check, build and Pages artifact check passed. The following
+browser results are retained from the original capture, not rerun here:
+ordinary pose and specialist Balance browser suites passed. The ordinary keyboard/MMD suite first
 failed its physics screenshot comparison under bundled Playwright Chromium
 (0 changed pixels). The same suite passed using system Chrome, matching the
 browser used for actual ONNX trials; no application or assertion was changed to
@@ -200,25 +230,29 @@ claim GitHub CI success, deployment, human acceptance or approval.
 
 ## Reproduction and publication
 
-With dependencies installed and `npm run dev` running, point `MODEL_CACHE` at the
-existing verified checkpoint and `CHROME_BIN` at system Chrome:
+With dependencies installed, reproduce the current offline correction without
+inference or a model download using:
 
 ```sh
-node scripts/interaction-controller-experiment.mjs
-npm run test:interaction
-npx tsx scripts/summarize-interaction-controller.ts
+npx tsx scripts/check-interaction-response-quality.ts --write
 npx tsx scripts/check-interaction-response-quality.ts
-node scripts/render-interaction-controller.mjs
 npm test
 npm run build
 npm run check:pages
 ```
 
-Tools now write `.artifacts/interaction-response-quality/` and the current
-`interaction-response-quality-*` evidence. Historical controller and continuation
-files are preserved. Deterministic unit tensors are regression fixtures only,
-never real-model evidence. No unchanged heavy suite needs a repeat merely to
-publish these files.
+The first command writes `interaction-residual-validation.json`; the second
+verifies it against all original features, proposals and current source hashes.
+Both validate the actual review regression, ownership bounds and ranking impact.
+The seven-criterion matrix remains in that saved review result. Historical
+controller/continuation evidence and the original capture summary/compressed
+traces are preserved unchanged. The original capture used
+`interaction-controller-experiment.mjs`, `test:interaction` and
+`summarize-interaction-controller.ts` at the captured source hashes, followed by
+`render-interaction-controller.mjs` for snapshots. Do not overwrite that review
+fixture with a new capture. Deterministic unit tensors are regression fixtures
+only, never real-model evidence. No unchanged heavy suite needs a repeat merely
+to publish these files.
 
 The concrete limitation of this bounded current-controller experiment is **very
 small trajectory-helpful uncontrolled output, continuing seam/IK dominance and
