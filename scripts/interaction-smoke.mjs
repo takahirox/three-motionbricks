@@ -87,6 +87,15 @@ try {
       assert.ok(result.generations>held.generations,'Generation continues on release');
       assert.equal(result.error,undefined);assert.equal(result.rejectedReason,undefined);
       const samples=result.displayedInteraction;
+      for(const sequence of result.interactionSequences) {
+        const selection=sequence.selection;
+        assert.ok(selection && selection.candidates.length>=1 && selection.candidates.length<=2,'Bounded real proposal count');
+        assert.equal(selection.queued,0,'No proposal wait queue');
+        const chosen=selection.candidates.find(c=>c.index===selection.selected);
+        assert.ok(chosen && !chosen.quality.problem,'Only a raw proposal within trial bounds is selected');
+        assert.ok(selection.candidates.filter(c=>!c.quality.problem).every(c=>chosen.quality.score<=c.quality.score),'Select the best available raw score');
+        assert.deepEqual(sequence.rawMotion,chosen.rawMotion,'Selected output remains an actual decoded ONNX proposal');
+      }
       const distance=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
       const maxStep=Math.max(...samples.slice(1).map((s,i)=>distance(s.displayed.root,samples[i].displayed.root)));
       assert.ok(maxStep<.12,`Root jump ${maxStep}`);
@@ -112,6 +121,7 @@ try {
   for(let i=0;i<35;i++) {await page.mouse.move(dx+Math.sin(i/8)*15,dy-10);await page.waitForTimeout(80);}
   const delayed=await report();assert.ok(delayed.generations>delayedBefore.generations);
   assert.ok(await page.evaluate(()=>window.__motionTestDelayedResults>0),'Real worker delivery was delayed');
+  assert.ok(delayed.interactionSequences.some(s=>s.selection.degraded && s.selection.candidates.length===1),'Slow real delivery reduces proposal work');
   assert.equal(delayed.active,true);await page.mouse.up();
   // Wait until a fresh genuine result is explicitly held before delivery, then
   // reset inside that interval. This makes the stale-result assertion non-vacuous.

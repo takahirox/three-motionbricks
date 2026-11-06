@@ -1,5 +1,8 @@
 # Issue #22 continuation evidence
 
+Historical evidence before the owner-agreed controller. See the
+[current implementation and review](interaction-controller-validation.md).
+
 Refs #22. PR #23 remains **draft and incomplete**. The continuation preserves the
 existing implementation and fixes pointer-trajectory estimation and seam
 duration. It does not establish the user's success criterion: freely manipulating
@@ -195,26 +198,19 @@ but the tested alternatives introduce drift/tracking tradeoffs. Increasing
 deterministic authority or counting whole-body turning would not satisfy the
 original criterion. No alternate experimental strategy is promoted into the UI.
 
-The fallback is **not agreed or implemented**. Bounded options for a maintainer
-decision are:
+The owner subsequently **agreed to the bounded constraint-aware proposal/selection
+controller using the existing checkpoint** (reply: とりあえずそれでいいよ).
+That supersedes this report's earlier request to select an approach. The agreed
+controller has now been implemented and evaluated; see the
+[current controller report](interaction-controller-validation.md). The original
+27-condition/21-rollout evidence above remains historical, with no acceptance
+waiver. A different pretrained model, training, spending or provider change is
+not authorized by that decision.
 
-- Evaluate a constraint-aware proposal/selection controller around this exact
-  checkpoint: retain joint ownership, cap the number of real proposals, and
-  require raw control reach, heading/contact quality and uncontrolled causal
-  response together. This is a separately scoped controller investigation with
-  a WebGPU latency budget; it is not a promised solution or an accepted lowering
-  of the criterion.
-- Evaluate a different pretrained model only after identifying available
-  weights, license, browser/runtime and retargeting requirements, and verifying
-  explicit joint-trajectory conditioning with the same raw/IK baselines.
-- Adapt/train explicit sparse temporal and contact conditioning: requires a
-  data/license plan, training compute/budget, export/runtime plan and held-out
-  continuous interaction evaluation. No training or spending is authorized here.
-
-Keep Issue #22 open, PR #23 draft, and **Refs #22** in publication metadata.
-Do not repeatedly request unchanged fixes or claim the separate approach has
-already been selected. Resume dependent work after an explicit decision defining
-its scope; this report does not authorize or fabricate that decision.
+Keep Issue #22 open, PR #23 draft, and **Refs #22** in publication metadata while
+original acceptance remains unmet. There is no pending repeat approach-selection
+question. The current report identifies the measured limitation of the agreed
+controller and preserves its evidence.
 
 Required post-merge verification, if the full feature later becomes ready and
 is merged: verify the merge-triggered Pages deployment against the actual merged

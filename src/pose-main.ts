@@ -8,8 +8,9 @@ import { blendPose, clonePose, decode, encode, positions, type Pose } from './mo
 import { EFFECTORS, jointIndex, PoseIK, type Effector, type PoseConstraint } from './pose-ik';
 import { PosePointer, type Manipulation } from './pose-pointer';
 import { boundedCorrection, type PoseResponse, responseProblem } from './pose-response';
-import { encodeInteraction, InteractionResponse, jointChanges, serializePose } from './interaction';
+import { InteractionResponse, jointChanges, serializePose } from './interaction';
 import { Inference } from './inference';
+import { InteractionController } from './interaction-controller';
 import model from '../model-source.json';
 import './style.css';
 import './pose.css';
@@ -43,6 +44,7 @@ async function main() {
   let heldRotation: {joint:Effector; rotation:Quaternion} | undefined;
   let inference: Inference | undefined, pending = false, running = false, loaded = false, latency = 0;
   let edits = 0;
+  const proposalController = new InteractionController();
   const characters = new CharacterSelection<MMDCharacter>(mmd => {
     avatar.object.visible = !mmd; el('physics-control').hidden = !mmd;
     if (mmd) {mmd.setPhysics(physics.checked); scene.add(mmd.object);}
@@ -226,11 +228,33 @@ async function main() {
     const controller=response;
     const interactionRequest = isPush ? undefined : editor.request(strength);
     const request = interactionRequest ?? balance.request();
-    const encoded = interactionRequest ? encodeInteraction(interactionRequest,avatar.rig,strength) : encode(request.context,request.targets,avatar.rig);
-    const {features,placement} = encoded;
     try {
-      const result = await inference.run(features); latency = result.milliseconds;
-      const segment = decode(result.data,result.tokens,placement);
+      const session=inference;
+      const started=performance.now();
+      const currentRequest=()=>controller===response && request.revision===controller.revision && running;
+      const batch=interactionRequest ? await proposalController.select(interactionRequest,avatar.rig,strength,
+        features=>session.run(features),currentRequest) : undefined;
+      if(interactionRequest && !batch) {controller.discarded++;return;}
+      if(batch && !batch.selected) {
+        report.rejected=(report.rejected ?? 0)+1;report.rejectedReason='No proposal met raw trial bounds';
+        report.proposalSelection={milliseconds:batch.milliseconds,candidates:batch.candidates.map(c=>({variant:c.variant,quality:c.quality}))};
+        return;
+      }
+      const encoded=batch?.selected?.encoded ?? encode(request.context,request.targets,avatar.rig);
+      const {features,placement}=encoded;
+      const result=batch?.selected?.result ?? await session.run(features);
+      latency=performance.now()-started;
+      const segment=batch?.selected?.segment ?? decode(result.data,result.tokens,placement);
+      const selection=batch ? {milliseconds:batch.milliseconds,selectionMilliseconds:batch.selectionMilliseconds,
+        queued:batch.queued,requestAgeMilliseconds:performance.now()-started,
+        controlAgeMilliseconds:interactionRequest?.control ? performance.now()-interactionRequest.control.updatedAt : undefined,proposalLimit:batch.proposalLimit,degraded:batch.degraded,
+        selected:batch.selected?.index,candidates:batch.candidates.map(c=>({index:c.index,variant:c.variant,quality:c.quality,
+          inferenceMilliseconds:c.result.milliseconds,deliveryMilliseconds:c.deliveryMilliseconds,
+          ...(new URL(location.href).searchParams.has('captureMotion') ? {
+            features:Object.fromEntries(Object.entries(c.encoded.features).map(([k,v])=>[k,Array.from(v)])),
+            rawMotion:c.segment.map(serializePose),contacts:c.segment.map((_,i)=>Array.from(c.result.data.subarray((i+3)*366+362,(i+4)*366)))
+          } : {})}))} : undefined;
+      if(selection) {report.proposalSelection=selection;delete report.rejectedReason;}
       if (!isPush && controller===response && request.revision === controller.revision) {
         const problem = responseProblem(segment,avatar.rig);
         if (problem) {
@@ -261,7 +285,7 @@ async function main() {
         if(report.recoverySequences.length>6) report.recoverySequences.shift();
       }
       if(!isPush && current) {
-        const evidence = {generation:controller.generations+1,requestedAt:interactionRequest?.now,revision:request.revision,source:'Raw decoded MotionBricks ONNX',milliseconds:latency,
+        const evidence = {generation:controller.generations+1,requestedAt:interactionRequest?.now,revision:request.revision,source:'Raw decoded MotionBricks ONNX',milliseconds:latency,selection,
           tokens:result.tokens,context:request.context.map(serializePose),neutralTargets:request.targets.map(serializePose),
           control:interactionRequest?.control,controls:interactionRequest?.controls,
           features:Object.fromEntries(Object.entries(features).map(([k,v])=>[k,Array.from(v)])),
@@ -309,7 +333,7 @@ async function main() {
         const t=Math.min(1,(now-impulse.start)/240);balance.push(impulse.direction.clone().multiplyScalar(t),now);
         if(t===1) {impulse=undefined;balance.release(now);}
       }
-      if (running && loaded && !pending && (pointer.mode==='push' ? balance.ready(now) : response.ready(now) && response.remaining<.12)) void generate();
+      if (running && loaded && !pending && (pointer.mode==='push' ? balance.ready(now) : response.ready(now) && proposalController.ready(now) && response.remaining<.12)) void generate();
       if(pointer.mode==='push') balance.advance(delta,running);
       else response.advance(delta,running,running && editor.correctionWeight>0 ? constrain : undefined);
     }

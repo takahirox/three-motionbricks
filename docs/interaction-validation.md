@@ -239,5 +239,7 @@ the current reactions as general physical behavior.
 The continuation also tested supported feature/frame masking and continuous
 feedback before reassessing the fallback. See its measured tradeoffs and bounded
 options in the [continuation report](interaction-continuation-validation.md#decision-boundary).
-No separate controller, model or training scope has been agreed. No new model,
-training run or hand-authored reaction policy is substituted here.
+The owner subsequently agreed to the bounded proposal/selection controller using
+the existing checkpoint. Its implementation and fresh evidence are recorded in the
+[current controller report](interaction-controller-validation.md). No different
+model, training run or hand-authored reaction policy is substituted.

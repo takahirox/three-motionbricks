@@ -87,14 +87,15 @@ the other joints. Pointer changes coalesce during inference, and release fades
 the direct constraint. Pelvis input is an external root constraint, limited to
 25 cm / 0.4 rad, with optional **Pelvis foot contacts**; its mechanical translation
 is not counted as an AI reaction. Unrelated joints are not solved into future
-full-body IK goals. The model still accepts full pose frames, with sparse edits
-to selected features and neutral values elsewhere: it has **no native per-joint
-constraint mask**.
+full-body IK goals. The bounded controller compares generated proposals using selected-feature edits
+and omission of complete future pose frames while retaining root conditions.
+The model has **no native per-joint constraint mask**.
 
 Real A/B tests show causal uncontrolled-joint differences, but hand reactions are
 modest and seam blending can be larger than those differences. **General natural
 whole-body reaction quality remains unverified; Issue #22 remains open.** See
-[conditioning, ownership and real ONNX evidence](docs/interaction-validation.md).
+[conditioning, ownership and real ONNX evidence](docs/interaction-validation.md)
+and the [owner-agreed bounded controller trial](docs/interaction-controller-validation.md).
 MMD Toon, outlines, secondary physics and asset notices remain intact.
 
 **Push / Balance** retains the specialist standing recovery workflow. Load
