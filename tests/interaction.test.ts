@@ -68,6 +68,33 @@ test('pelvis conditioning preserves other world target points and consistent roo
   }
 });
 
+test('enabling playback after IK-only preview retains the displayed pose, history and active control',()=> {
+  for(const released of [false,true]) {
+    const response=new InteractionResponse(stance);
+    response.begin('LeftHand',points[13],undefined,0);
+    for(let frame=1;frame<=4;frame++) {
+      response.update(points[13].clone().add(new Vector3(0,frame*.03,-frame*.02)),undefined,frame*1000/30);
+      response.pose=ik.direct(response.pose,{joint:'LeftHand',target:response.control!.position!});
+      response.advance(1/30,false);
+    }
+    if(released) {response.release(140);response.advance(.4,false);}
+    const preview=clonePose(response.pose), request=response.request(1), weight=response.correctionWeight;
+    assert.ok(positions(preview,rig)[13].distanceTo(points[13])>.05,'Nontrivial preview edit');
+    if(!released) assert.notDeepEqual(request.context[0],request.context[3],'Recent trajectory is present');
+    response.reanchorPlayback();
+    assert.deepEqual(response.request(1),request,'Re-anchoring preserves history, revision and control');
+    assert.equal(response.correctionWeight,weight);
+    // No generated segment has arrived yet. Playback must hold the preview,
+    // even after released-part correction has faded away.
+    response.advance(1/30,true);
+    assert.ok(response.pose.root.distanceTo(preview.root)<1e-6);
+    assert.ok(response.pose.rotations.every((q,j)=>q.angleTo(preview.rotations[j])<1e-6));
+    assert.ok(response.accept(Array.from({length:18},()=>clonePose(stance)),request.revision));
+    response.advance(0,true);
+    assert.ok(positions(response.pose,rig)[13].distanceTo(positions(preview,rig)[13])<1e-6,'First ONNX seam starts at preview');
+  }
+});
+
 test('30 Hz displayed history replaces endpoint intent; movement/release accept in-flight motion without starvation',()=> {
   const response=new InteractionResponse(stance);
   response.begin('LeftHand',points[13],undefined,0);

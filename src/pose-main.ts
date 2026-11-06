@@ -208,6 +208,7 @@ async function main() {
       const result = await inference.load(modelURL,bytes => {status.textContent = bytes < model.bytes
         ? `Downloading ${(bytes/1e6).toFixed(0)} / 758 MB…` : 'Compiling WebGPU kernels…';});
       report.runtime = result.runtime; report.gpu = result.gpu; report.loadMs = result.milliseconds;
+      response.reanchorPlayback();
       loaded = true; running = true; pause.disabled = false; pause.textContent = 'Pause generation';
       status.textContent = 'Model loaded · waiting for ONNX response';
     } catch (error) {fail(error);} finally {pending = false;}

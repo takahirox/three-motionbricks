@@ -38,8 +38,26 @@ try {
   const report=()=>page.locator('#diagnostics').textContent().then(JSON.parse);
   await page.waitForFunction(()=>document.querySelector('#diagnostics').textContent.includes('handles'));
   assert.equal((await report()).mode,'move','Direct Move is primary');
+  // Release a real preview drag before loading. The first running frames must
+  // retain that displayed pose while genuine ONNX output is still in flight.
+  const initial=await report(), [px,py]=initial.handles.LeftHand.screen;
+  await page.mouse.move(px,py);await page.mouse.down();await page.mouse.move(px+24,py-32,{steps:12});await page.mouse.up();
+  await page.waitForTimeout(600);
+  const preview=await report();
+  const distance=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
+  assert.ok(distance(preview.handles.LeftHand.world,initial.handles.LeftHand.world)>.05,'Preview hand moved');
+  assert.equal(preview.active,false);assert.equal(preview.control,undefined);
+  await page.evaluate(()=>{window.__motionTestDelay=700;});
   await page.locator('#load').click();console.log('Loading real ONNX pointer test');
+  await page.waitForFunction(()=>JSON.parse(document.querySelector('#diagnostics').textContent).displayedInteraction?.length>0,{},{timeout:900000});
+  const first=(await report()).displayedInteraction[0];
+  assert.equal(first.generation,0,'Observe playback before the first model segment');
+  assert.ok(distance(first.displayed.root,preview.root)<1e-6,'Loading preserves preview root');
+  for(let j=0;j<preview.rotations.length;j++)
+    assert.ok(distance(first.displayed.rotations[j],preview.rotations[j])<1e-6,`Loading preserves preview joint ${j}`);
+  cases.push({name:'released preview-to-load continuity',previewHandTravel:distance(preview.handles.LeftHand.world,initial.handles.LeftHand.world),firstRunningGeneration:first.generation});
   await page.waitForFunction(()=>JSON.parse(document.querySelector('#diagnostics').textContent).generations>0,{},{timeout:900000});
+  await page.evaluate(()=>{window.__motionTestDelay=0;});
   const runtime=await report();
   for(const [character,label] of [['soma','SOMA'],['animasa','Animasa Miku'],['mmd','CG-CA Uka']]) {
     await page.selectOption('#character',character);
