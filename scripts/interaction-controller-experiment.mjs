@@ -6,7 +6,7 @@ import {gzipSync} from 'node:zlib';
 import {chromium} from 'playwright';
 import {verifiedModelCache} from './model-cache.mjs';
 import model from '../model-source.json' with {type:'json'};
-const output=new URL('../.artifacts/interaction-controller/',import.meta.url);
+const output=new URL('../.artifacts/interaction-response-quality/',import.meta.url);
 await mkdir(output,{recursive:true});
 const cache=await verifiedModelCache(process.env.MODEL_CACHE || new URL('../public/assets/mmm_v6_soma_fp32.onnx',import.meta.url),model);
 const browser=await chromium.launch({executablePath:process.env.CHROME_BIN || undefined,headless:true,args:['--enable-unsafe-webgpu']});
@@ -20,7 +20,7 @@ try {
       import('/src/avatar.ts'),import('/src/inference.ts'),import('/src/motion.ts'),import('/src/pose-ik.ts'),
       import('/src/interaction.ts'),import('/src/interaction-controller.ts'),import('/src/pose-response.ts')]);
     const avatar=await SomaAvatar.load('/assets/soma.glb'), inference=new Inference();
-    const runtime=await inference.load(url),{stance,rig}=avatar,ik=new PoseIK(rig,stance),points=m.positions(stance,rig),rollouts=[];
+    const loadStarted=performance.now(),runtime=await inference.load(url),loadMilliseconds=performance.now()-loadStarted,{stance,rig}=avatar,ik=new PoseIK(rig,stance),points=m.positions(stance,rig),rollouts=[];
     const {InteractionResponse,serializePose,jointChanges}=it;
     try {
       for(const joint of ['LeftHand','Hips']) for(const strategy of ['single','selection']) for(const [trajectory,sign] of [['no-drag',0],['up',1],['down',-1]]) {
@@ -58,7 +58,7 @@ try {
         }
         rollouts.push({joint,strategy,trajectory,sequences,displayed,ikOnly});
       }
-      return {capturedAt:new Date().toISOString(),model,runtime,rig:{parents:rig.parents,offsets:rig.offsets.map(v=>v.toArray())},rollouts};
+      return {hypothesis:'Matched no-control proposal and model-owned trajectory residual reduction, no activity reward',loadMilliseconds,capturedAt:new Date().toISOString(),model,runtime,rig:{parents:rig.parents,offsets:rig.offsets.map(v=>v.toArray())},rollouts};
     } finally {inference.dispose();avatar.dispose();}
   },{url:cache.url,model});
   assert.deepEqual(errors,[]);assert.equal(result.rollouts.length,12);

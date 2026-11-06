@@ -87,8 +87,10 @@ the other joints. Pointer changes coalesce during inference, and release fades
 the direct constraint. Pelvis input is an external root constraint, limited to
 25 cm / 0.4 rad, with optional **Pelvis foot contacts**; its mechanical translation
 is not counted as an AI reaction. Unrelated joints are not solved into future
-full-body IK goals. The bounded controller compares generated proposals using selected-feature edits
-and omission of complete future pose frames while retaining root conditions.
+full-body IK goals. The bounded controller compares selected-feature conditioning
+with an actual matched no-control proposal from the same displayed history. Its
+response credit measures bounded trajectory help from model-owned joints, rather
+than unrelated activity.
 The model has **no native per-joint constraint mask**.
 
 Real A/B tests show causal uncontrolled-joint differences, but hand reactions are

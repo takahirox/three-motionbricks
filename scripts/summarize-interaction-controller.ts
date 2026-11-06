@@ -6,7 +6,7 @@ import {blendPose,heading,positions,JOINTS,type Pose} from '../src/motion';
 import {jointChanges} from '../src/interaction';
 import {somaFixture} from '../tests/mmd-fixture';
 const read=async (s:string)=>JSON.parse(await readFile(new URL(s,import.meta.url),'utf8'));
-const experiment=JSON.parse(gunzipSync(await readFile(new URL('../.artifacts/interaction-controller/traces.json.gz',import.meta.url))).toString());
+const experiment=JSON.parse(gunzipSync(await readFile(new URL('../.artifacts/interaction-response-quality/traces.json.gz',import.meta.url))).toString());
 const {rig}=somaFixture();
 const pose=(p:any):Pose=>({root:new Vector3().fromArray(p.root),rotations:p.rotations.map((q:number[])=>new Quaternion().fromArray(q))});
 const mean=(a:number[])=>a.reduce((s,v)=>s+v,0)/Math.max(1,a.length);
@@ -52,6 +52,19 @@ const timing=['single','selection'].map(strategy=> {
     selectionOverhead:times(ss.map((s:any)=>s.milliseconds-s.candidates.reduce((n:number,c:any)=>n+c.deliveryMilliseconds,0))),
     candidateCounts:ss.map((s:any)=>s.candidates.length),queued:0};
 });
+// Preserve per-update matched causal evidence, in addition to the continuous
+// no-drag rollouts (whose histories diverge after accepting different output).
+const matched=experiment.rollouts.filter((r:any)=>r.strategy==='selection').map((r:any)=>({
+  joint:r.joint,trajectory:r.trajectory,sequences:r.sequences.map((s:any)=> {
+    const controlled=s.candidates.find((c:any)=>c.index===0),base=s.candidates.find((c:any)=>c.index===1);
+    return {requestedAt:s.requestedAt,selected:s.selected,available:!!base,
+      responseCredit:controlled.quality.response,baselineCredit:base?.quality.response,
+      perJoint:base ? JOINTS.map((joint,j)=> {
+        const changes=controlled.rawMotion.map((p:any,i:number)=>jointChanges(pose(base.rawMotion[i]),pose(p),rig)[j]);
+        return {joint,meanMeters:mean(changes.map((c:any)=>c.meters)),meanLocalRadians:mean(changes.map((c:any)=>c.localRadians))};
+      }) : []};
+  })
+}));
 const browser=await read('../.artifacts/interaction/browser-summary.json'),traces=[];
 for(const character of ['soma','animasa','mmd']) for(const joint of ['LeftHand','Hips']) {
   const r=await read(`../.artifacts/interaction/${character}-${joint}.json`),samples=r.displayedInteraction;
@@ -79,13 +92,13 @@ const runtimeSourceSha256=Object.fromEntries(await Promise.all([
 const sevenCriterionMatrix=[
   {criterion:1,status:'partial',evidence:'Continuous actual proposals while held/released; convincing uncontrolled response unestablished.'},
   {criterion:2,status:'partial',evidence:'Hand-first paired trial plus pelvis and three-character pointer windows; natural whole-body quality unestablished.'},
-  {criterion:3,status:'partial',evidence:'Full input/proposal/raw/displayed/IK-only/no-drag traces and heading-aligned per-joint causal differences; substantive appropriate reaction unestablished.'},
+  {criterion:3,status:'partial',evidence:'Full inputs/raw/displayed/IK-only/no-drag traces, matched same-history actual proposals and trajectory-grounded response credit; substantive appropriate reaction remains unestablished.'},
   {criterion:4,status:'partial',evidence:'Direct correction bounds pass and opposite hand IK is numerical zero; seams remain material. Canonical evidence excludes retargeting/secondary physics.'},
   {criterion:5,status:'partial',evidence:'Held/reversed/released/cancelled/stale/delayed pointer tests pass; natural settling and contact quality remain unproven.'},
   {criterion:6,status:'partial',evidence:'SOMA/Animasa/Uka pointer, ordinary pose, keyboard and specialist balance regressions pass; full reaction quality remains unestablished.'},
-  {criterion:7,status:'partial',evidence:'Unit/browser/build/Pages artifact checks pass locally; optional external-source conversion skipped. Full feature acceptance incomplete; merged Pages/public origin remains future post-merge work.'}
+  {criterion:7,status:'partial',evidence:'See current report for executed checks; optional external-source conversion skipped. Full feature acceptance incomplete; merged Pages/public origin remains future post-merge work.'}
 ];
-const summary={runtimeSourceSha256,sevenCriterionMatrix,capturedAt:experiment.capturedAt,model:experiment.model,runtime:experiment.runtime,timing,rollouts,comparisons,browser};
-await writeFile(new URL('../docs/interaction-controller-validation.json',import.meta.url),JSON.stringify(summary,null,2)+'\n');
-await writeFile(new URL('../docs/interaction-controller-traces.json.gz',import.meta.url),gzipSync(JSON.stringify({experiment,traces}),{level:9}));
+const summary={hypothesis:experiment.hypothesis,loadMilliseconds:experiment.loadMilliseconds,matched,runtimeSourceSha256,sevenCriterionMatrix,capturedAt:experiment.capturedAt,model:experiment.model,runtime:experiment.runtime,timing,rollouts,comparisons,browser};
+await writeFile(new URL('../docs/interaction-response-quality-validation.json',import.meta.url),JSON.stringify(summary,null,2)+'\n');
+await writeFile(new URL('../docs/interaction-response-quality-traces.json.gz',import.meta.url),gzipSync(JSON.stringify({experiment,traces}),{level:9}));
 console.log(JSON.stringify({timing,comparisons:comparisons.map((c:any)=>({...c,perJoint:c.perJoint.filter((j:any)=>['RightHand','Chest'].includes(j.joint))})),rollouts:rollouts.map(({perJoint,rawQuality,...r}:any)=>r)},null,2));

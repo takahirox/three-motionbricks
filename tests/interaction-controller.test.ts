@@ -1,44 +1,111 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Quaternion, Vector3 } from 'three';
-import { InteractionController, encodeProposal, proposalQuality } from '../src/interaction-controller.ts';
+import { InteractionController, encodeProposal, proposalQuality, responseCredit } from '../src/interaction-controller.ts';
 import { InteractionResponse } from '../src/interaction.ts';
 import { clonePose, positions } from '../src/motion.ts';
+import { rotateBranch } from '../src/pose-ik.ts';
 import { somaFixture } from './mmd-fixture.ts';
 const {stance,rig}=somaFixture();
 const response=new InteractionResponse(stance);
 response.begin('LeftHand',positions(stance,rig)[13],undefined,0);
 const request=response.request(1);
 // Deterministic tensor fixture for scheduler tests only; never model evidence.
-const data=new Float32Array(64*366);
+const data=new Float32Array(64*366), placement=encodeProposal(request,rig,1,0).placement;
+const inverse=placement.rotation.clone().invert();
 for(let f=0;f<64;f++) {
-  data[f*366+1]=1;
-  for(let j=0;j<30;j++) data.set([1,0,0,0,1,0],f*366+92+j*6);
+  data.set(stance.root.clone().sub(placement.origin).applyQuaternion(inverse).toArray(),f*366);
+  for(let j=0;j<30;j++) {
+    const q=inverse.clone().multiply(stance.rotations[j]);
+    data.set([...new Vector3(1,0,0).applyQuaternion(q).toArray(),...new Vector3(0,1,0).applyQuaternion(q).toArray()],f*366+92+j*6);
+  }
 }
 const output={data,tokens:6,milliseconds:20};
 
-test('proposal masks omit whole future poses, preserve history/root and never mutate request',()=> {
+test('matched neutral proposal preserves history and full-frame masks without mutating control',()=> {
   const before=response.request(1), a=encodeProposal(request,rig,1,0), b=encodeProposal(request,rig,1,1);
   assert.deepEqual(response.request(1),before);
-  assert.deepEqual([...b.features.has_local_poses],[1,1,1,1,0,0,0,0]);
-  assert.deepEqual(b.features.has_global_root_values,a.features.has_global_root_values);
-  assert.deepEqual(b.features.has_local_root_values,a.features.has_local_root_values);
-  assert.deepEqual(b.features.local_poses,a.features.local_poses);
+  const neutral=encodeProposal({...request,control:undefined,controls:[]},rig,1,0);
+  assert.deepEqual(b.features,neutral.features);
+  assert.deepEqual([...b.features.has_local_poses],[1,1,1,1,1,1,1,1]);
+  assert.deepEqual(b.features.local_poses.slice(0,4*267),a.features.local_poses.slice(0,4*267));
   assert.throws(()=>encodeProposal(request,rig,1,3));
 });
 
-test('raw selection penalizes rigid heading and does not reward unlimited local activity',()=> {
+test('matched neutral future removes hand and pelvis control features but retains identical observation history',()=> {
+  for(const joint of ['LeftHand','Hips'] as const) {
+    const control=new InteractionResponse(stance),index=joint==='Hips' ? 0 : 13;
+    control.begin(joint,positions(stance,rig)[index].clone().add(new Vector3(.1,.05,0)),undefined,0);
+    control.control!.velocity.set(.1,0,0);
+    const req=control.request(1),a=encodeProposal(req,rig,1,0),b=encodeProposal(req,rig,1,1);
+    assert.notDeepEqual(a.features.local_poses,b.features.local_poses);
+    for(const [name,width] of [['local_poses',267],['global_root_values',5],['local_root_values',4]] as const)
+      assert.deepEqual(a.features[name].slice(0,4*width),b.features[name].slice(0,4*width));
+    assert.deepEqual(b.features,encodeProposal({...req,control:undefined,controls:[]},rig,1,0).features);
+  }
+});
+
+test('raw selection penalizes rigid heading/root and never rewards unrelated arm activity',()=> {
   const encoded=encodeProposal(request,rig,1,0);
   const still=Array.from({length:18},()=>clonePose(stance));
   const turned=still.map(p=> {
-    p.rotations=p.rotations.map(q=>new Quaternion().setFromAxisAngle(new Vector3(0,1,0),1).multiply(q));return p;
+    const c=clonePose(p);rotateBranch(c,rig,0,new Quaternion().setFromAxisAngle(new Vector3(0,1,0),1));return c;
   });
   assert.match(proposalQuality(turned,request,rig,encoded).problem!,/heading/);
-  const activity=(r:number)=>still.map(p=> {const c=clonePose(p);c.rotations[17].premultiply(new Quaternion().setFromAxisAngle(new Vector3(0,0,1),r));return c;});
-  const small=proposalQuality(activity(.05),request,rig,encoded), large=proposalQuality(activity(1),request,rig,encoded);
-  assert.equal(small.activity,large.activity,'Activity credit saturates; flailing is not a better reaction');
+  for(const r of [.03,.3,1]) {
+    const activity=still.map(p=> {const c=clonePose(p);rotateBranch(c,rig,17,new Quaternion().setFromAxisAngle(new Vector3(0,0,1),r));return c;});
+    const small=proposalQuality(activity,request,rig,encoded,still), neutral=proposalQuality(still,request,rig,encoded,still);
+    assert.equal(small.response,0);
+    assert.equal(small.score,neutral.score,'Opposite-arm activity cannot improve an otherwise identical score');
+  }
   const shifted=still.map(p=> {const c=clonePose(p);c.root.x+=.5;return c;});
   assert.match(proposalQuality(shifted,request,rig,encoded).problem!,/root/);
+});
+
+test('response credit requires matched evidence and directional trajectory help from model-owned DOFs',()=> {
+  const base=Array.from({length:18},()=>clonePose(stance)), helpful=base.map(p=> {
+    const c=clonePose(p);rotateBranch(c,rig,3,new Quaternion().setFromAxisAngle(new Vector3(0,0,1),.06));return c;
+  });
+  const target=positions(helpful[0],rig)[13];
+  const control=new InteractionResponse(stance);control.begin('LeftHand',target,undefined,0);
+  const req=control.request(1), encoded=encodeProposal(req,rig,1,0);
+  const credit=responseCredit(helpful,base,req,rig,encoded);
+  assert.ok(credit>0 && credit<=.04,'Chest motion helps the imposed reach without direct-chain credit');
+  assert.equal(proposalQuality(helpful,req,rig,encoded).response,0,'No actual paired baseline means no credit');
+  assert.equal(responseCredit(helpful,helpful,req,rig,encoded),0,'Shared no-drag activity earns no credit');
+  control.begin('LeftHand',positions(stance,rig)[13].clone().multiplyScalar(2).sub(target),undefined,0);
+  const reversed=control.request(1);
+  assert.equal(responseCredit(helpful,base,reversed,rig,encodeProposal(reversed,rig,1,0)),0,'Same motion cannot help reversed demand');
+  const chain=base.map(p=> {const c=clonePose(p);rotateBranch(c,rig,11,new Quaternion().setFromAxisAngle(new Vector3(0,0,1),.06));return c;});
+  assert.equal(responseCredit(chain,base,req,rig,encoded),0,'Direct IK chain cannot earn generated response credit');
+  assert.equal(responseCredit(helpful,base,request,rig,encodeProposal(request,rig,1,0)),0,'No imposed displacement cannot reward unrelated motion');
+  const movingRoot=base.map(p=>{const c=clonePose(p);c.root.addScalar(.03);return c;});
+  assert.equal(responseCredit(movingRoot,base,req,rig,encoded),0,'Root translation cannot masquerade as response');
+});
+
+test('rotation assistance depends on imposed orientation and excludes rigid turning',()=> {
+  const base=Array.from({length:18},()=>clonePose(stance)),helpful=base.map(p=> {
+    const c=clonePose(p);rotateBranch(c,rig,3,new Quaternion().setFromAxisAngle(new Vector3(0,0,1),.06));return c;
+  });
+  const control=new InteractionResponse(stance);
+  control.begin('LeftHand',undefined,helpful[0].rotations[13],0);
+  const req=control.request(1);
+  assert.ok(responseCredit(helpful,base,req,rig,encodeProposal(req,rig,1,0))>0);
+  const rigid=base.map(p=>{const c=clonePose(p);rotateBranch(c,rig,0,new Quaternion().setFromAxisAngle(new Vector3(0,0,1),.06));return c;});
+  assert.ok(responseCredit(rigid,base,req,rig,encodeProposal(req,rig,1,0))<1e-12);
+});
+
+test('pelvis credit measures trunk stabilization rather than arm activity or imposed root travel',()=> {
+  const base=Array.from({length:18},()=>clonePose(stance)), trunk=base.map(p=> {
+    const c=clonePose(p);rotateBranch(c,rig,1,new Quaternion().setFromAxisAngle(new Vector3(0,0,1),.03));return c;
+  });
+  const displacement=positions(trunk[0],rig)[3].sub(positions(stance,rig)[3])
+    .add(positions(trunk[0],rig)[6].sub(positions(stance,rig)[6])).multiplyScalar(-.5);
+  const control=new InteractionResponse(stance);control.begin('Hips',stance.root.clone().add(displacement),undefined,0);
+  const req=control.request(1),encoded=encodeProposal(req,rig,1,0);
+  assert.ok(responseCredit(trunk,base,req,rig,encoded)>0);
+  const arm=base.map(p=> {const c=clonePose(p);rotateBranch(c,rig,17,new Quaternion().setFromAxisAngle(new Vector3(0,0,1),.3));return c;});
+  assert.ok(responseCredit(arm,base,req,rig,encoded)<1e-12,'Unrelated arm earns no credit beyond numerical reconstruction noise');
 });
 
 test('selection serializes two real-run slots, rejects overlap and disposes cancelled batches before another call',async()=> {
@@ -51,6 +118,9 @@ test('selection serializes two real-run slots, rejects overlap and disposes canc
   let active=0,maxActive=0;
   const result=await controller.select(request,rig,1,async()=>{active++;maxActive=Math.max(maxActive,active);await Promise.resolve();active--;return output;},()=>true);
   assert.equal(result!.candidates.length,2);assert.equal(maxActive,1);assert.equal(result!.queued,0);
+  assert.ok(result!.candidates.every(c=>c.quality.matchedBaseline));
+  const trajectory=encodeProposal(request,rig,1,0);
+  for(const c of result!.candidates) assert.deepEqual(c.quality,proposalQuality(c.segment,request,rig,trajectory,result!.candidates[1].segment),'Both candidates use the same imposed trajectory and baseline');
   await assert.rejects(controller.select(request,rig,1,async()=>{throw Error('worker failed');},()=>true));
   assert.ok(await other.select(request,rig,1,async()=>output,()=>true),'Failure releases global slot');
 });
@@ -74,6 +144,8 @@ test('all-rejected batches back off instead of scheduling a new pair every rende
   for(let f=0;f<64;f++) bad[f*366]=10;
   const result=await controller.select(request,rig,1,async()=>({...output,data:bad}),()=>true,{clock:()=>100});
   assert.equal(result!.selected,undefined);
+  assert.ok(result!.candidates.every(c=>!c.quality.matchedBaseline && c.quality.response===0),
+    'Rejected baseline cannot grant response credit');
   assert.equal(result!.candidates.length,2);
   assert.equal(controller.ready(399),false);assert.equal(controller.ready(400),true);
 });
@@ -85,7 +157,6 @@ test('raw tracking follows the forecast trajectory rather than demanding the hal
   const request=response.request(1),encoded=encodeProposal(request,rig,1,0);
   const raw=Array.from({length:18},(_,i)=>{const p=clonePose(stance);p.root.x+=.1*i/30;return p;});
   assert.ok(proposalQuality(raw,request,rig,encoded).tracking<1e-7);
-  assert.ok(proposalQuality(raw,request,rig,encoded).activity<1e-7,'Rigid translation earns no local-response credit');
-  for(const p of raw) p.rotations[17].premultiply(new Quaternion().setFromAxisAngle(new Vector3(0,0,1),.03));
-  assert.ok(proposalQuality(raw,request,rig,encoded).activity>.001,'Pelvis control leaves opposite arm local motion model-owned');
+  assert.ok(proposalQuality(raw,request,rig,encoded).response<1e-7,'Rigid translation earns no local-response credit');
+  assert.equal(proposalQuality(raw,request,rig,encoded).response,0,'No baseline means no reaction credit');
 });

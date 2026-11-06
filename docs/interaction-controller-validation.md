@@ -1,208 +1,238 @@
 # Issue #22 bounded proposal controller
 
-Refs #22. **The owner agreed to this controller trial using the existing
-MotionBricks checkpoint. It is implemented and evaluated here.** The earlier
-request to choose a controller/model/training approach is superseded. PR #23
-must remain draft and Issue #22 open: these measurements do not establish a
-convincing continuous hand interaction or full original acceptance.
+Refs #22. The owner agreed to the bounded proposal/selection trial using the
+existing MotionBricks checkpoint. **The trajectory-grounded comparison is now
+implemented and evaluated, but full Issue #22 acceptance remains unmet.** Keep
+PR #23 draft and the Issue open. No repeat approach-selection question is pending.
 
-This report describes the runtime source identified by SHA-256 in the
-[review result](interaction-controller-validation.json), including the complete
-seven-criterion matrix. The [full traces](interaction-controller-traces.json.gz)
-retain every proposal's numeric inputs, raw decoded output and raw contact
-channels, selected indices, timing, displayed/player poses, direct corrections,
-no-drag and IK-only baselines. The earlier
+This review applies to the ten runtime source SHA-256 hashes in the
+[current saved review result](interaction-response-quality-validation.json).
+It retains the complete seven-criterion matrix; no acceptance field or human
+confirmation result is sent to a confirmation helper. The
+[current full traces](interaction-response-quality-traces.json.gz) contain all
+actual proposals, numeric conditioning, raw decoded poses/contact predictions,
+selected indices, displayed/player poses, direct corrections and timing. The
+[earlier controller result](interaction-controller-validation.json),
+[earlier full controller traces](interaction-controller-traces.json.gz), and
 [27-condition/21-rollout investigation](interaction-continuation-validation.md)
-and its traces remain intact as historical evidence.
+remain historical evidence. The former controller's activity reward is superseded.
 
-## Implementation and hypothesis
+## Corrected comparison and changed hypothesis
 
-The new hypothesis is that selecting between complementary supported proposals
-can improve tracking without promoting the large turning seen in context-only
-experiments. This is a controller around the same checkpoint, not a new model,
-training effort, authored reaction, native sparse-joint mask or stochastic input.
+The review found that capped unrelated local rotation could improve selection
+without helping the imposed interaction. That reward has been removed entirely.
+The new hypothesis tests **trajectory residual reduction against a matched actual
+no-control proposal**, rather than motion magnitude.
 
-Each accepted update normally compares **two actual sequential ONNX calls**:
+Each normal update makes two sequential actual ONNX calls with the same displayed
+history, neutral future pose frames, six-token budget and full-frame presence
+masks. The first edits the selected part's future features with the existing
+bounded trajectory prediction. The second leaves those future frames neutral,
+removing the imposed future control features. The second is a matched
+counterfactual for the *future conditioning*, not a history without manipulation:
+both histories include the same previous externally corrected playback. Complete
+no-drag rollouts separately expose ongoing unconditioned motion. No unsupported
+joint masks, fabricated randomness or alternate model is used.
 
-1. The existing four-target conditioning, editing only the selected features.
-2. The same displayed history and targets with complete future pose feature
-   frames absent, retaining future global/local root conditions. Interaction
-   still influences observed history; this variant has no future hand channel.
+Both proposals are selectable and are scored against the **same imposed
+trajectory**. Raw controlled position/orientation error, heading, root travel and
+geometric grounded-foot drift remain the primary costs. To isolate potential
+uncontrolled assistance, scoring reconstructs a diagnostic pose using the
+baseline's root and direct-chain local rotations and the candidate's other local
+rotations. For a hand/foot/head/chest, credit measures reduction in the imposed
+position/orientation residual caused by those model-owned DOFs. For pelvis
+translation it measures whether model-owned trunk articulation reduces imposed
+world translation of the chest/head. The latter is a conservative trunk-stability
+hypothesis, not a claim that stationary landmarks are always a natural reaction.
 
-Both use the supported six-token segment. The implementation configures only two
-variants (below the absolute cap of three). One controller batch runs globally
-within the application, one ONNX call at a time; the existing pending gate also
-excludes specialist balance work. There is no job wait list or pointer backlog.
-After completion the next request samples the newest displayed history. Gesture,
-reset, mode/character/settings and pause revisions dispose stale work before
-another proposal and after each result. Movement within a gesture coalesces
-without invalidating every useful result. Rendering and immediate selected-part
-feedback continue while the worker runs.
+The diagnostic reconstruction never reaches playback, conditioning, contact
+correction or retargeting. It is not a pose solver. Root movement and whole-body
+turning earn no response credit; unrelated opposite-arm activity cannot improve
+hand reach or pelvis trunk stability. Motion common to the matched baseline earns
+no credit. Motion in the wrong direction, excess motion beyond the residual and
+changes confined to the direct IK chain earn none. Per-frame positional improvement
+is capped at 4 cm; orientation contributes at most 1 cm equivalent, and final
+credit is capped at 4 cm equivalent with weight 0.5. Negative improvements offset
+positive ones before the final clamp. This bounds the incentive and relates it
+to input and matched output, but does not certify naturalness or reward every
+possible useful counterbalance.
 
-Selection uses **raw output only**, before seams, direct IK, contacts, retargeting
-or secondary physics. Its cost includes the controlled point's time-aligned
-forecast error, orientation error, heading change, root displacement and grounded
-foot displacement. Uncontrolled local-rotation activity is a small, capped
-shortfall cost: credit saturates at 0.04 rad. It excludes the direct IK chain and pelvis support legs, measures local
-rotations, and cannot reward unlimited movement or rigid turning. This
-activity proxy does **not** certify appropriate causal motion; paired trajectories
-and no-drag evidence below are necessary and still do not establish naturalness.
-The selector is a feasibility heuristic, not a physical contact solver.
+A missing/rejected counterfactual grants zero credit. The cold/slow path still
+uses one actual proposal, never a fabricated baseline. The unchanged resource
+contract is normally two proposals, configured maximum two (below the absolute
+cap of three), one ONNX call in flight globally, no work queue, coalesced current
+history, stale-revision disposal, bounded feedback and worker inference. The
+150 ms initial soft target reduces candidate count and update frequency under
+load; three fast updates restore comparison. Heading/root guards, 300 ms maximum
+cooldown, selected-part correction limits, release fade and adaptive seams remain.
 
-Standing bounds remain, with additional trial guards of 0.65 rad heading change
-and 0.25 m root displacement from the current anchor (plus explicitly imposed
-pelvis displacement). A rejected batch waits at least 300 ms before retry.
-These are controller guards, not replacements for original acceptance.
-Raw heel/toe predictions are saved independently; geometric grounded-foot
-movement affects selection but authors no animation or planted-foot correction.
+## Fresh bounded real-checkpoint evaluation
 
-A batch exceeding the initial **150 ms soft target** stops adding proposals,
-reduces subsequent updates to one proposal and imposes a bounded cooldown of up
-to 300 ms. Three fast single-proposal updates restore comparison. Timing includes
-worker delivery, scoring and decoding; raw inference time and selection overhead
-are reported separately. No queued work is created. This is local load adaptation,
-not a universal hardware gate or a claim that every frame meets 150 ms.
-
-The prior 0.45 rad / 8 cm direct correction, 350 ms release fade, adaptive seam,
-preview-to-load continuity, held settings, Move/Rotate workflow and IK-only label
-remain. No full-body IK target is added. Keyboard locomotion, specialist Push /
-Balance, MMD assets, shading/physics and source/license pins remain intact.
-
-## Paired real-checkpoint trial
-
-The cache helper verified the existing 758 MB file against SHA-256
+The helper verified the existing 757,864,273-byte cache against SHA-256
 `856419dc72aeb14e591eebf4dd0ea05734a2506ddb00bcd39dd6dac2ad60f4fb`.
-No remote weight download was needed. System Headless Chrome used Apple Metal-3
-WebGPU, ORT Web 1.31.1 and its existing WASM fallback; timings are not GPU-only.
+No weights were downloaded. System Headless Chrome used Apple Metal-3 WebGPU,
+ORT Web 1.31.1 and its existing WASM fallback; timings are not GPU-only.
 
-The bounded experiment contains twelve five-second rollouts: prior single
-proposal and new selection, each with no-drag and two reversed trajectories,
-first hand then pelvis. Each has 150 displayed samples, three seconds held and
-two seconds released, eleven accepted generations, with no rejected batches.
-The simulation holds its 30 Hz clock during inference; actual pointer tests
-separately exercise live scheduling and delayed delivery. The single-proposal
-hand baseline reproduces the prior 4.85/5.99 cm maximum tracking errors.
+Twelve five-second rollouts compare prior single-proposal and changed selection
+under identical no-drag/upward-reversed/downward-reversed inputs, first hand then
+pelvis. Each records 150 fixed-step samples, three seconds held and two released,
+eleven generations, IK-only output and every candidate. There are 132 generation
+windows and 198 actual proposals, with no rejected batches. This evaluates the
+changed comparison; the old mask/velocity/quality sweep was not repeated. The
+fixed-step clock pauses during inference; live pointer tests cover scheduling.
 
-| Hand metric | Prior single proposal | Selected proposal |
+| Metric, up / down | Single proposal | Matched selection |
 | --- | ---: | ---: |
-| Maximum displayed controlled-point error, up / down | 4.85 / 5.99 cm | 4.57 / 5.56 cm |
-| Maximum displayed heading deviation, up / down | 0.101 / 0.132 rad | 0.045 / 0.100 rad |
-| Raw right-hand up/down difference, root and heading aligned | 4.38 cm | 2.38 cm |
-| Raw chest local up/down rotation difference | 0.044 rad | 0.039 rad |
+| Hand maximum displayed error | 4.85 / 5.99 cm | 4.85 / 5.99 cm |
+| Hand maximum segment-mean raw error | 12.47 / 16.11 cm | 12.47 / 16.11 cm |
+| Hand maximum displayed heading change | 0.101 / 0.132 rad | 0.101 / 0.133 rad |
+| Pelvis maximum displayed error | 0.49 / 0.29 cm | 0.76 / 1.50 cm |
+| Pelvis maximum displayed heading change | 0.151 / 0.232 rad | 0.140 / 0.060 rad |
+| Pelvis maximum segment-mean grounded-foot drift | 6.36 / 7.03 cm | 3.60 / 3.60 cm |
 
-The second proposal was selected in two upward and three downward hand updates.
-The tracking/heading gains are modest; uncontrolled causal differences do not
-become a convincing whole-body reaction. Maximum per-segment **mean raw**
-controlled-hand error is still 11.62/15.02 cm for selection. Displayed tracking
-therefore must not be attributed solely to generation. The raw grounded-foot
-movement cost reaches 3.60 cm in the hand trials. Contact quality is not solved.
+The neutral proposal was selected zero/one times for hand and five/five times for
+pelvis. Hand reach-assistance credit peaked at **1.23/1.52 mm**, with positive
+credit in five/seven of eleven updates. Pelvis trunk-assistance credit peaked at
+0.85 mm upward and was numerical zero downward. These small values expose the
+lack of substantial trajectory-helpful uncontrolled generation instead of
+rewarding unrelated activity. The new controller does not improve hand tracking.
+Pelvis heading/contact costs improve, with worse tracking and continuing direct
+root dependence. No natural reaction is inferred from those tradeoffs.
 
-For pelvis, the alternate proposal was selected three/four times. Maximum
-displayed error remains 0.49/0.29 cm with direct root control; displayed root
-travel is about 10.65 cm and is explicitly imposed movement. Raw heading-aligned
-opposite-hand up/down difference is 6.90 cm versus 5.66 cm for single proposal;
-chest local difference is 0.026 versus 0.044 rad. Maximum segment mean grounded
-foot displacement cost remains 5.89/6.82 cm. These results establish distinct
-non-rigid raw output, not appropriate natural pelvis reactions.
+Raw heading-aligned right-hand up/down differences are 4.37 cm for selected hand
+trials versus 4.38 cm single, and 4.72 cm for selected pelvis versus 5.66 cm single.
+Chest local differences are 0.044 rad for hand and 0.029 rad for pelvis. These
+continuous differences include history feedback, rather than isolating current
+future features. The JSON additionally saves per-joint differences from each
+same-history counterfactual, and the traces permit complete recomputation.
+Distinct raw output is measurable; substantive appropriate reaction remains
+unestablished.
 
-![Saved continuous hand trial: prior display, selected raw, selected display](images/interaction-controller-hand.png)
+![Current saved hand trial: single display, selected raw, selected display](images/interaction-response-quality-hand.png)
 
-These are rendered saved canonical poses at 0.50, 1.33, 2.17, 2.97 and 4.33 s,
-not live footage or physics. The raw row omits stitching and direct correction.
-The limited motion is visible; no convincing response is inferred from a
-headline displacement number.
+Snapshots show saved canonical poses at 0.50, 1.33, 2.17, 2.97 and 4.33 seconds.
+The raw row excludes seams and direct correction. These are not live footage,
+MMD physics or proof of a convincing interaction. The limited motion remains
+visible.
 
-Local model load/compile took 2.37 s. The first inference took 222.8 ms (227.4 ms
-batch). Warm single inference ranged from 39.6 to 62.8 ms; the median single batch was
-42.1 ms including the cold sample. All selection batches in this isolated trial
-used two proposals: median 83.2 ms, range 80.3–111.0 ms. Median selection overhead was 0.6 ms. There is no inference
-wait queue. Full delivery/scoring timing distributions are in the JSON report.
-Live MMD/rendering and diagnostics can exceed the soft target; recorded live
-windows include actual counts and timing rather than extrapolating this result
-across devices. Live batch medians ranged from 101 to 128 ms; Uka reached
-235 ms and exercised reduced proposal counts. The delayed-delivery test accepted
-two generations while moving despite a 700 ms delivery delay, then disposed one
-actual stale result across reset with a 1500 ms delivery delay.
+### Actual resource timing
 
-## Attribution and regressions
+Local load/compile delivery took 2.41 s (worker load report 2.19 s). First cold
+inference took 215.3 ms, with a 219.9 ms batch. Subsequent actual inference ranged
+from 38.9 to 67.4 ms. Single-batch median was 42.0 ms including the cold sample.
+All isolated comparison batches used two proposals: median **83.8 ms**, range
+79.7–112.1 ms; median selection/decoding overhead 0.8 ms, maximum 1.2 ms.
+There were zero queued jobs. These measurements meet the initial soft target on
+this local isolated setup, without establishing a cross-device gate.
 
-The live suite checks actual sustained reversed hand and pelvis pointer drags
-on SOMA, Animasa Miku and Uka, generation during hold and after release, rotation,
-cancel, reset, pause, preview/load continuity, delayed genuine worker output and
-stale revision disposal. It verifies one or two actual candidates, selection of
-the lowest valid cost, exact equality of selected raw output with the playback
-segment, zero queued jobs and reduction to one proposal under delayed delivery.
-MMD physics is enabled in the recorded windows. The JSON report retains their
-measured control errors, root steps, raw inputs and independent IK/seam metrics.
+Live three-character batch medians ranged from 75.2 to 122.0 ms, maxima reached
+207.5 ms and candidate counts reduced under load. The genuine 700 ms delayed
+worker-delivery regression accepted three generations during movement; a genuine
+result delayed by 1500 ms was disposed across reset. No synthetic inference or
+queue timing is reported as a measurement.
 
-Direct correction bounds pass. In hand windows, opposite-arm direct IK is
-numerical zero. Seams can still contribute centimetres and material rotations
-to that arm. Pelvis control mechanically translates upper-body positions while
-foot support changes legs; this is external constraint, not generated response.
-Canonical raw/correction measurements exclude MMD retargeting and secondary
-physics. Enabled MMD physics and Toon/outline checks are integration evidence,
-not proof of neural causality. No reaction is attributed to those extra layers.
+## Pointer, attribution and regression evidence
 
-## Original seven-criterion review
+The fresh real-pointer suite passed on the development origin
+`http://127.0.0.1:5173/`, including primary Move/Rotate, hold, reversal, release,
+rotation, pointer cancel, reset, pause, preview-to-load continuity, genuine delayed
+results and stale revision disposal. It checks actual proposal counts, zero queue,
+lowest valid raw cost and equality of selected raw poses with the playback
+segment. MMD physics was enabled in both MMD cases.
 
-No criterion is waived. This matrix applies to the saved runtime source hashes
-and this checkpoint, including corrected forecast scoring, local-DOF activity ownership and the retry bound.
+| Character / part | Generations during movement / after release | Maximum canonical control error |
+| --- | ---: | ---: |
+| SOMA / hand | 6 / 2 | 1.03 cm |
+| SOMA / pelvis | 6 / 3 | 2.17 cm |
+| Animasa / hand | 7 / 3 | 2.56 cm |
+| Animasa / pelvis | 7 / 3 | 0.065 cm |
+| Uka / hand | 14 / 3 | 1.39 cm |
+| Uka / pelvis | 14 / 3 | 0.043 cm |
 
-| Criterion | Current evidence and remaining scope | Status |
+The saved-trace checker independently recomputed supported input features and
+scores for **201 windows / 318 proposals**, checked all ten current runtime source
+hashes, and verified correction bounds over **1,784 browser samples**. Feature
+comparison allows 1e-6 for browser/Node Float32/trigonometric rounding; masks and
+token constraints remain exact. Tests also demonstrate no reward for unrelated
+opposite-arm activity at multiple amplitudes, shared baseline activity, wrong
+trajectory direction, root travel or direct-chain motion, and positive credit for
+model-owned reach help/trunk stabilization. Scheduler cancellation, exclusion,
+slow-path recovery, invalid-baseline behavior and rejection backoff remain covered.
+
+The 0.45 rad correction bound passed. Hand direct IK changed the opposite hand by
+less than 6e-16 m / 4.3e-8 rad. In SOMA's hand window, opposite-hand seam displacement
+still reached **2.44 cm / 0.452 rad**, exceeding the small matched reach-assistance
+credit (different metrics; they are not additive causes). Pelvis correction moved
+upper-body points by up to 8 cm mechanically. Neither can be attributed to
+independent neural reaction. Raw generation, direct IK and seam evidence remain
+separate; canonical measurements exclude retargeting and secondary MMD physics.
+Physics/shading checks establish integration, not neural causality.
+
+## All seven original criteria at current runtime source
+
+No criterion is waived. The complete matrix is also retained in the saved review
+result. Historical CI or prior motion-quality reports do not establish current
+feature acceptance.
+
+| Criterion | Current evidence and limitation | Status |
 | --- | --- | --- |
-| 1. Primary continuous interaction | Actual Move/Rotate proposals during hold/release; immediate preview; convincing response elsewhere unestablished. | Partial |
-| 2. Hand and pelvis/torso | Hand-first paired trials and three-character pointer windows; neither demonstrates the intended natural whole-body response. | Partial |
-| 3. Raw/IK causality and baselines | Full conditioning/all proposals/no-drag/IK-only/displayed traces and per-joint heading-aligned/local metrics; appropriate substantive reaction unestablished. | Partial |
-| 4. Bounded correction attribution | Bounds and unrelated-joint ownership pass; seams remain material; raw/IK/retargeting/physics distinguished. | Partial |
-| 5. Smooth lifecycle and quality | Held/reversed/released/cancelled/delayed/stale cases pass; natural settling/contact quality and large/unseen drags remain unproven. | Partial |
-| 6. Characters and existing workflows | Three-character real-model pointer tests, ordinary pose, keyboard and specialist balance regressions pass; intended reaction quality incomplete. | Partial |
-| 7. Tests/browser/Pages/docs | 50 unit tests pass, one optional external-source conversion skip; real pointer/pose/keyboard/balance suites, build and Pages artifact checks pass locally. Full feature acceptance incomplete; deployment remains future post-merge work. | Partial |
+| 1. Primary continuous response | Actual Move/Rotate generations during movement and release, responsive preview; convincing response elsewhere remains unestablished. | Partial |
+| 2. Hand and pelvis/torso quality | Hand-first trial plus pelvis and three-character windows; neither demonstrates natural whole-body response; pelvis depends on direct root control. | Partial |
+| 3. Raw causality and baselines | Full inputs/all actual proposals/raw/displayed/IK-only/no-drag traces and matched same-history comparison; trajectory-grounded selection implemented, but substantive appropriate reaction remains unestablished. | Partial |
+| 4. Bounded corrections and attribution | Correction/ownership bounds pass; seams remain material and pelvis mechanically translates upper body. Natural response cannot yet be attributed to generation. | Partial |
+| 5. Smooth lifecycle and motion quality | Held/reversed/released/cancelled/delayed/stale/preview-load tests pass with bounded work; natural settling and reliable contacts remain unestablished. | Partial |
+| 6. Three characters and regressions | Fresh SOMA/Animasa/Uka hand/pelvis ONNX windows with MMD physics; intended quality remains unestablished. Ordinary pose, system-Chrome keyboard/MMD and specialist balance regressions pass. | Partial |
+| 7. Tests, browser, Pages, docs | 54 unit tests pass, one optional external-source Animasa conversion skipped; build, Pages artifact and actual ONNX pointer checks pass. Full feature acceptance incomplete; merged Pages/public-origin verification remains future post-merge work. | Partial |
 
-The keyboard smoke exercises ordinary keyboard controls and the expected model
-load-failure fallback, not new real-model locomotion quality. Specialist balance
-uses its ordinary regression suite, not a new recovery capability claim. Local
-checks do not establish unpublished-head GitHub CI or deployed-site success.
+All 54 unit tests passed with one optional external-source Animasa conversion
+skip; the final focused controller suite passed all ten cases. Ordinary pose and
+specialist Balance browser suites passed. The ordinary keyboard/MMD suite first
+failed its physics screenshot comparison under bundled Playwright Chromium
+(0 changed pixels). The same suite passed using system Chrome, matching the
+browser used for actual ONNX trials; no application or assertion was changed to
+obtain that pass. Its keyboard check includes the expected model-host failure
+fallback, not a new real-model locomotion-quality claim.
+
+Build passed (existing large-chunk advisory). Pages artifact check passed: 27 files,
+44.1 MB, reviewed assets only. The optional source-conversion skip does not skip
+bundled MMD assets, retargeting or browser physics. Current local results do not
+claim GitHub CI success, deployment, human acceptance or approval.
 
 ## Reproduction and publication
 
-With dependencies installed and the dev server running, set `MODEL_CACHE` to the
-existing verified weights and `CHROME_BIN` to the installed Chrome executable:
+With dependencies installed and `npm run dev` running, point `MODEL_CACHE` at the
+existing verified checkpoint and `CHROME_BIN` at system Chrome:
 
 ```sh
 node scripts/interaction-controller-experiment.mjs
 npm run test:interaction
 npx tsx scripts/summarize-interaction-controller.ts
+npx tsx scripts/check-interaction-response-quality.ts
 node scripts/render-interaction-controller.mjs
 npm test
 npm run build
 npm run check:pages
 ```
 
-Experiment tools load one session and write ignored artifacts; no automatic
-model download is attempted. Decompress `interaction-controller-traces.json.gz`
-to inspect all proposal windows and browser attribution. Unit scheduler fixtures
-are deterministic synthetic tensors solely for regression tests, never reported
-as model evidence. After review corrected time-aligned scoring and local-DOF activity ownership,
-the paired trial and pointer suite were rerun; unchanged historical sweeps were not repeated.
+Tools now write `.artifacts/interaction-response-quality/` and the current
+`interaction-response-quality-*` evidence. Historical controller and continuation
+files are preserved. Deterministic unit tensors are regression fixtures only,
+never real-model evidence. No unchanged heavy suite needs a repeat merely to
+publish these files.
 
-Publication should describe **the implemented owner-agreed bounded controller
-and its measured quality limitation**, retain **Refs #22** and keep PR #23 draft.
-There is no outstanding question asking the owner to select this approach again.
-This node commits local files only; remote PR metadata is left for publication.
+The concrete limitation of this bounded current-controller experiment is **very
+small trajectory-helpful uncontrolled output, continuing seam/IK dominance and
+unreliable natural contact/settling quality**. It does not establish the original
+user intent. Preserve this result; do not rerun the same hypothesis or increase
+IK authority to claim success. A future separately authorized investigation could
+change supported conditioning with a demonstrably different response hypothesis,
+or investigate explicit sparse/contact conditioning through another model or
+training. None is started here; the owner-agreed controller decision remains in
+force and is not being asked again.
 
-The concrete new limitation is that comparison among these two supported
-proposals improves tracking modestly but still fails to establish convincing
-uncontrolled hand reaction and reliable contacts. The checkpoint has no sparse
-trajectory channel, and a capped activity proxy cannot judge natural causal
-appropriateness. Preserve this bounded result; do not run the same loop again or
-silently increase deterministic authority. Possible separately authorized work
-would need a new supported proposal/quality hypothesis or explicit sparse/contact
-conditioning through another model or training. None is started or requested as
-a repeat approach-selection decision here.
-
-Only after full pre-merge scope is independently approved and current-head CI
-passes may readiness/merge be considered under the workflow's authorization.
-Required merge-triggered Pages deployment and public-origin checks must verify
-the actual merged revision before Issue closure. They remain future post-merge
-work. No push, merge, deployment, confirmation-helper change or approval result
-is claimed in this checkpoint.
+Publication must retain **Refs #22**, describe the changed implementation and
+measured limitation, and keep PR #23 draft. No push, merge or PR metadata mutation
+is performed by this node. Readiness/merge requires full pre-merge scope to be
+independently approved and current-head CI passing. Required merge-triggered Pages
+deployment/public-origin checks must verify the actual merged revision before
+Issue closure; those remain future post-merge work.

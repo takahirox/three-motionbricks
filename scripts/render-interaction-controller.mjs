@@ -2,7 +2,7 @@
 import {readFile} from 'node:fs/promises';
 import {gunzipSync} from 'node:zlib';
 import {chromium} from 'playwright';
-const experiment=JSON.parse(gunzipSync(await readFile(new URL('../.artifacts/interaction-controller/traces.json.gz',import.meta.url))).toString());
+const experiment=JSON.parse(gunzipSync(await readFile(new URL('../.artifacts/interaction-response-quality/traces.json.gz',import.meta.url))).toString());
 const browser=await chromium.launch({executablePath:process.env.CHROME_BIN || undefined,headless:true});
 try {
   const page=await browser.newPage({viewport:{width:1250,height:1000}});
@@ -36,5 +36,5 @@ try {
       renderer.render(scene,camera);
     }
   },experiment.rollouts);
-  await page.screenshot({path:new URL('../docs/images/interaction-controller-hand.png',import.meta.url).pathname});
+  await page.screenshot({path:new URL('../docs/images/interaction-response-quality-hand.png',import.meta.url).pathname});
 } finally {await browser.close();}
