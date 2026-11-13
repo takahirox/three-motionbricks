@@ -293,8 +293,12 @@ does not establish that GitHub Pages has been configured or deployed successfull
 Required post-merge verification for Issue #13 remains pending: verify successful
 Pages deployment and automatic exact Animasa loading, file hashes/notices/network
 responses, real MotionBricks walk/run/turn/stop, physics, switching/error recovery
-and SOMA/Uka regressions at the public URL. Keep Issue #13 open until those checks
-succeed. A local production-prefix check does not establish published-origin success.
+and SOMA/Uka regressions at the public URL. Follow the current
+[merge and follow-up lifecycle](docs/development-flow.md#merge-and-follow-up):
+close complete work after merge, then record these checks honestly. This supersedes
+the former instruction to keep Issue #13 open until verification succeeds, without
+changing recorded results or required checks. A local production-prefix check does
+not establish published-origin success.
 
 ## Contributing
 

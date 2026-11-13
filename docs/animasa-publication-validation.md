@@ -106,7 +106,11 @@ not this implementation. Those results are not reported as current-change CI.
 This node commits locally and does not push or merge. After publishing its
 checkpoint to PR #14, update the title/body to describe automatic Animasa delivery,
 wait for the actual new head's build check, review that diff and only then mark
-ready if all mandatory checks pass. Keep a non-closing reference to Issue #13.
+ready if all mandatory checks pass. The former instruction to keep a non-closing
+reference solely for pending post-merge checks is superseded by the current
+[merge and follow-up lifecycle](development-flow.md#merge-and-follow-up): use
+`Closes #13` when implementation and mandatory pre-merge acceptance are complete.
+The dated CI observation and test outcomes above remain historical evidence.
 
 Suggested title: `feat: automatically load the pinned Animasa Miku demo asset (#13)`.
 The description should cover automatic same-origin delivery, original notices,
@@ -121,9 +125,11 @@ After an authorized merge, verify the successful Pages workflow at the merged
 revision and repeat the production browser checks (including real inference)
 at `https://takahirox.github.io/three-motionbricks/`. Confirm automatic exact-model
 loading, asset/notice hashes and successful network responses, Animasa
-walk/run/turn/stop, physics, switching/recovery and SOMA/Uka regressions. Keep
-Issue #13 open until those checks actually succeed. Do not substitute a locally
-supplied GLB for automatic public loading in the post-merge acceptance.
+walk/run/turn/stop, physics, switching/recovery and SOMA/Uka regressions. Close
+complete work after successful merge, then record these results honestly; the
+former instruction to keep Issue #13 open solely for these checks is superseded.
+Do not substitute a locally supplied GLB for automatic public loading in the
+post-merge verification.
 
 Optional validation: other browsers/GPUs, lower-memory devices and subjective
 animation polish remain unperformed.
