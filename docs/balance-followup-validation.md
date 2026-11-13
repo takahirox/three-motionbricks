@@ -253,6 +253,13 @@ resources and navigation. The fresh public evidence above targets merged PR #20,
 not this unmerged candidate. Do not mark the Task finished based on this local
 candidate or silently omit those public checks and contact limitations.
 
+The Issue status and results above record that checkpoint. Apply the current
+[merge and follow-up lifecycle](development-flow.md#merge-and-follow-up) to future
+closure decisions: genuine missing implementation or mandatory pre-merge acceptance
+remains blocking, while pending post-merge-only checks alone do not keep complete
+work open. This clarification does not change the recorded capability failure,
+contact limitations or required public checks.
+
 Publication retries remain zero. No connector upload was retried; no push, PR,
 merge, comment, deployment dispatch, provider/model change, usage reset,
 allowance purchase, port 8765 change or Project mutation was performed.

@@ -48,7 +48,9 @@ Genuinely required post-merge-only checks remain pending until performed and
 cannot be pre-merge prerequisites. In particular, merge-triggered deployment or
 publication is verified after merge; pre-merge tests do not establish its success.
 This does not waive implementation requirements or applicable pre-merge checks.
-Do not add post-merge work routinely.
+Pending post-merge-only verification does not make complete implementation partial.
+Do not add post-merge work routinely, including manual approval, physical-device,
+heavyweight model download or deployment gates for documentation changes.
 
 ## Review outcomes and merge
 
@@ -62,10 +64,24 @@ Do not add post-merge work routinely.
 - **Ready:** approve only when the claimed scope is complete, relevant mandatory
   pre-merge checks pass, no unjustified additions remain, and no blocking findings
   or genuinely necessary unanswered questions remain. For a partial PR, ensure
-  the remaining scope is explicit and the Issue stays open.
+  the remaining scope is explicit and the parent Issue stays open without a closing
+  reference. Missing implementation, mandatory pre-merge tests, required protections
+  and genuinely necessary pre-merge human acceptance remain blockers.
 
 Merge only under the repository/workflow's existing authorization, targeting
-`main` unless the Issue specifies otherwise. Pending required post-merge checks
-do not prevent approval when the pre-merge conditions hold. After merge, perform
-those checks and record actual results and any follow-up work; keep unperformed
-checks pending.
+`main` unless the Issue specifies otherwise. When the implementation is complete
+and pre-merge conditions hold, preserve `Closes #N`. Do not request removing it,
+keeping the source Issue open or withholding approval solely because a
+post-merge-only check is pending. That would cause the Review → Fix → Publish →
+Review loop described in the [development flow](development-flow.md#pr-review-and-revision).
+
+After successful merge of complete work, close the original Issue and then perform
+genuinely required checks under the [follow-up lifecycle](development-flow.md#merge-and-follow-up).
+Record accurate evidence in the merged PR, closed Issue or linked validation
+report. Closure does not turn pending, unperformed or environment-blocked checks
+into passes; environment unavailability alone does not establish a product defect.
+For an actual defect, check for an equivalent Issue before creating a new linked
+Issue with reproduction steps, affected revision, expected/actual behavior and
+original Issue/PR links. Do not reopen the original solely for this follow-up.
+The current lifecycle supersedes older closure instructions without rewriting
+historical results or waiving existing verification requirements.

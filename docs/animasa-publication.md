@@ -67,8 +67,11 @@ for this change. See [current validation and remaining checks](animasa-publicati
 Required post-merge verification remains pending: successful Pages deployment,
 automatic exact-model loading, asset/notice hashes and network responses,
 locomotion/physics/switching/recovery and SOMA/Uka regressions at
-`https://takahirox.github.io/three-motionbricks/`. Keep Issue #13 open until those
-checks succeed. Pre-merge local evidence cannot establish published-origin success.
+`https://takahirox.github.io/three-motionbricks/`. Apply the current
+[merge and follow-up lifecycle](development-flow.md#merge-and-follow-up) instead
+of the former instruction to keep Issue #13 open until these checks succeed. Close
+complete work after merge, then record verification evidence. Pre-merge local
+evidence cannot establish published-origin success.
 More devices and subjective animation polish are optional.
 
 ## Historical evidence (prior preparation)

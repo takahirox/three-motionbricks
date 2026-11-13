@@ -75,7 +75,10 @@ neither publication checks nor the displayed stability label resolve them.
 Contact-aware landing/settling conditioning remains the smallest proposed next
 experiment, with a separate balance policy or training if needed.
 
-Refs #19. Keep the Issue open while required verification or recovery behavior
-remains incomplete. Publication retries remain zero. No usage reset, allowance
-purchase, provider/model switch, deployment dispatch, port 8765 change or Project
-mutation was performed.
+Refs #19. Incomplete required recovery behavior remains a reason to keep the
+Issue open; pending post-merge verification alone does not. The current
+[merge and follow-up lifecycle](development-flow.md#merge-and-follow-up) supersedes
+the former instruction to keep it open for verification alone. The dated outcomes
+and evidence above are unchanged. Publication retries remain zero. No usage reset,
+allowance purchase, provider/model switch, deployment dispatch, port 8765 change
+or Project mutation was performed.

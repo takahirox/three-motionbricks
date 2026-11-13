@@ -215,6 +215,9 @@ is committed.
 
 Required post-merge verification remains pending: successful deployment and the
 same automatic loading, asset/notice hashes, inference, physics, switching and
-recovery checks on the published origin. Keep Issue #13 open until they succeed.
+recovery checks on the published origin. The current
+[merge and follow-up lifecycle](development-flow.md#merge-and-follow-up) supersedes
+the former instruction to keep Issue #13 open until they succeed; close complete
+work after merge, then record actual verification evidence.
 Historical #11 checks in `animasa-validation.json` are not current #13 evidence;
 see [current validation](animasa-publication-validation.md).
