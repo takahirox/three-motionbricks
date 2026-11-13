@@ -215,5 +215,9 @@ controller and preserves its evidence.
 Required post-merge verification, if the full feature later becomes ready and
 is merged: verify the merge-triggered Pages deployment against the actual merged
 revision and test its public origin. This is pending future post-merge work,
-not a prerequisite that can be demanded before merge. Do not close the Issue
-while its required acceptance or post-merge verification remains incomplete.
+not a prerequisite that can be demanded before merge. Missing implementation or
+mandatory pre-merge acceptance still blocks closure. The current
+[merge and follow-up lifecycle](development-flow.md#merge-and-follow-up) supersedes
+the former instruction to defer closure for post-merge verification alone: once
+complete, merge and close, then verify. The measured limitations and historical
+evidence above are unchanged.

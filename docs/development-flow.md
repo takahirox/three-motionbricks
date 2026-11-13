@@ -1,8 +1,10 @@
 # Development flow
 
 The normal flow for three-motionbricks is **Issue → implementation → PR → review
-→ revision as needed → merge**, followed by post-merge verification only when the
-Issue requires it. Target `main` unless the Issue says otherwise.
+→ revision as needed → merge and close the original Issue**, followed by
+post-merge verification only when the actual change requires it. Target `main`
+unless the Issue says otherwise. Intentionally partial work leaves the parent
+Issue open as described below.
 
 ## Collaboration language
 
@@ -58,7 +60,8 @@ structure, relative links and heading anchors, consistency, and whitespace using
 available tooling. Run `git diff --check` (or `git diff --cached --check` for staged
 changes) and review the complete diff, including new files. Do not add dependencies
 solely for these checks. This documentation baseline requires no runtime build,
-browser/hardware test, deployed-site check or human design approval.
+browser/hardware test, heavyweight model download, deployed-site check or human
+design approval.
 
 ## PR, review and revision
 
@@ -68,10 +71,14 @@ actually performed. Report passes, failures, skips and unavailable or unperforme
 checks honestly, with reasons. Separate optional validation and pending post-merge
 verification from mandatory pre-merge checks.
 
-Use closing keywords only when the implementation fully addresses the Issue.
-An intentionally partial PR must identify remaining scope, use a non-closing
-reference and leave the Issue open. Genuinely post-merge-only checks may remain
-pending without making an otherwise complete implementation partial.
+Use the normal `Closes #N` reference when the implementation fully addresses the
+Issue and applicable mandatory pre-merge checks are satisfied. An intentionally
+partial PR must identify remaining scope, use a non-closing reference and leave
+the parent Issue open. Genuinely post-merge-only checks may remain pending without
+making an otherwise complete implementation partial. Preserve the closing
+reference in that case: requesting its removal solely for pending post-merge
+verification makes review and ProjectWeave publication undo each other in a
+Review → Fix → Publish → Review loop.
 
 Apply the [review and merge guidelines](review-guidelines.md). Check for both
 missing requirements and unjustified additions. Fix agent-fixable findings, then
@@ -83,10 +90,26 @@ repeatedly request unchanged code fixes for them.
 
 Approve and merge only when the claimed scope is complete, relevant mandatory
 pre-merge checks pass, and no blocking findings or genuinely necessary unanswered
-questions remain. Follow the repository/workflow's existing merge authorization;
-this guide does not grant permission to merge.
+questions remain. Missing implementation, mandatory pre-merge tests, required
+protections and genuinely necessary pre-merge human acceptance remain blockers.
+Follow the repository/workflow's existing merge authorization; this guide does
+not grant permission to merge or bypass checks or reviews.
 
-Record required post-merge checks as pending until performed, then report actual
-results, failures and follow-up work. Pre-merge test results do not establish
-deployment or publication success. No post-merge verification is required for
-this documentation baseline.
+After a successful merge of complete work, close the original Issue, then perform
+genuinely required post-merge checks. Record evidence in the merged PR, closed
+Issue or a linked validation report, identifying the affected revision and actual
+results. Keep unperformed, pending or environment-blocked checks labeled honestly,
+with reasons; Issue closure does not claim they passed. Pre-merge test results do
+not establish deployment or publication success. An unavailable test environment
+alone is not evidence of a product defect.
+
+If verification finds an actual defect, check for an existing equivalent Issue
+first. Link that Issue or create a new linked Issue with reproduction steps,
+affected revision, expected/actual behavior and links to the original Issue/PR.
+Do not keep or reopen the original Issue solely for post-merge follow-up.
+
+This lifecycle supersedes older instructions in guides or validation reports to
+keep an implemented Issue open solely for post-merge verification. Preserve
+historical test outcomes and evidence; this changes closure handling, not results,
+implementation requirements or existing verification requirements. Do not add
+post-merge checks routinely. None are required for this documentation baseline.

@@ -268,5 +268,9 @@ Publication must retain **Refs #22**, describe the changed implementation and
 measured limitation, and keep PR #23 draft. No push, merge or PR metadata mutation
 is performed by this node. Readiness/merge requires full pre-merge scope to be
 independently approved and current-head CI passing. Required merge-triggered Pages
-deployment/public-origin checks must verify the actual merged revision before
-Issue closure; those remain future post-merge work.
+deployment/public-origin checks must verify the actual merged revision; those
+remain future post-merge work. The current
+[merge and follow-up lifecycle](development-flow.md#merge-and-follow-up) supersedes
+the former instruction to perform them before Issue closure. Once implementation
+and mandatory pre-merge acceptance are complete, merge and close, then verify.
+This does not change the measured limitations or historical evidence above.

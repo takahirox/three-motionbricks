@@ -21,7 +21,8 @@ Describe what should be true when this Issue is resolved.
 
 Include relevant discussion, examples, logs or related Issues. For reproducible
 problems, provide steps, expected results and actual results. State when
-reproduction does not apply.
+reproduction does not apply. For a defect found after merge, check for an equivalent
+Issue first; include the affected revision and original Issue/PR links here.
 
 ## Pre-merge acceptance criteria
 
@@ -42,5 +43,7 @@ List useful additional checks separately from mandatory criteria, or state
 List genuinely necessary checks possible only after merge, or state
 "None required." Keep these pending until performed. A merge-triggered deployment
 or publication cannot be a pre-merge prerequisite; pre-merge test results do not
-establish deployment success. See the
-[review and merge guidelines](https://github.com/takahirox/three-motionbricks/blob/main/docs/review-guidelines.md).
+establish deployment success. Complete work closes the original Issue after merge,
+before these checks; closure does not claim they passed. Record evidence and track
+actual defects in new or existing linked Issues under the
+[follow-up lifecycle](https://github.com/takahirox/three-motionbricks/blob/main/docs/development-flow.md#merge-and-follow-up).
